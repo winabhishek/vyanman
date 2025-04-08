@@ -36,6 +36,18 @@
     --ring: 265 88% 66%;
 
     --radius: 0.75rem;
+    
+    --vyanamana-50: 260 100% 97.6%;
+    --vyanamana-100: 260 95% 95.3%;
+    --vyanamana-200: 260 100% 91%;
+    --vyanamana-300: 260 100% 86.1%;
+    --vyanamana-400: 260 100% 77.6%;
+    --vyanamana-500: 265 88% 66.3%;
+    --vyanamana-600: 265.1 83.3% 53.9%;
+    --vyanamana-700: 266 91.9% 42.9%;
+    --vyanamana-800: 268 97.1% 32.5%;
+    --vyanamana-900: 271.5 98.2% 27.6%;
+    --vyanamana-950: 273.8 98.4% 18%;
   }
 
   .dark {
@@ -66,22 +78,52 @@
     --border: 260 20% 18%;
     --input: 260 20% 18%;
     --ring: 265 88% 66%;
+    
+    --vyanamana-50: 260 100% 97.6%;
+    --vyanamana-100: 260 95% 95.3%;
+    --vyanamana-200: 260 100% 91%;
+    --vyanamana-300: 260 100% 86.1%;
+    --vyanamana-400: 260 100% 77.6%;
+    --vyanamana-500: 265 88% 66.3%;
+    --vyanamana-600: 265.1 83.3% 53.9%;
+    --vyanamana-700: 266 91.9% 42.9%;
+    --vyanamana-800: 268 97.1% 32.5%;
+    --vyanamana-900: 271.5 98.2% 27.6%;
+    --vyanamana-950: 273.8 98.4% 18%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border selection:bg-vyanamana-400/20;
   }
+  
+  html {
+    @apply scroll-smooth;
+  }
+  
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+
+  /* Theme transition for smooth theme changes */
+  .theme-transition {
+    @apply transition-colors duration-300;
   }
 }
 
 @layer components {
   .glass-card {
     @apply bg-background/80 backdrop-blur-sm border border-border/50 shadow-sm;
+  }
+  
+  .glass-input {
+    @apply bg-background/50 backdrop-blur-sm focus:bg-background/80 transition-all;
   }
 
   .chat-bubble-user {
@@ -94,5 +136,41 @@
 
   .gradient-heading {
     @apply bg-gradient-to-r from-vyanamana-700 to-vyanamana-500 bg-clip-text text-transparent;
+  }
+  
+  .breathe-animation {
+    @apply animate-breathe;
+  }
+  
+  .pulse-animation {
+    @apply animate-pulse-subtle;
+  }
+}
+
+@layer utilities {
+  .glass-effect {
+    @apply backdrop-blur-md bg-white/10 dark:bg-black/10 border border-white/20 dark:border-gray-800/30;
+  }
+  
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
   }
 }

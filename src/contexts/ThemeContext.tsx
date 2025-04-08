@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 type Theme = 'light' | 'dark';
 
@@ -21,26 +22,46 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
-
+  
+  // Apply theme class to document
   useEffect(() => {
     // Update localStorage when theme changes
     localStorage.setItem('vyanamana-theme', theme);
     
-    // Update document's class list
+    // Update document's class list with animation
+    const root = document.documentElement;
+    
     if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+      root.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      root.classList.remove('dark');
     }
+    
+    // Add transition class temporarily
+    root.classList.add('theme-transition');
+    
+    // Remove transition class after transition completes to prevent transition on page load
+    const timer = setTimeout(() => {
+      root.classList.remove('theme-transition');
+    }, 300);
+    
+    return () => clearTimeout(timer);
   }, [theme]);
-
+  
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
-
+  
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="min-h-screen transition-colors duration-300 ease-in-out"
+      >
+        {children}
+      </motion.div>
     </ThemeContext.Provider>
   );
 };

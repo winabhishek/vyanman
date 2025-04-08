@@ -4,6 +4,7 @@ import { Message } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ThumbsUp, ThumbsDown, Meh } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface ChatMessageProps {
   message: Message;
@@ -31,16 +32,26 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   };
   
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
+    <motion.div 
+      className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       {!isUser && (
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center shrink-0 mr-2">
           <span className="text-white font-bold text-sm">V</span>
         </div>
       )}
       <div className="flex flex-col">
-        <div className={isUser ? 'chat-bubble-user' : 'chat-bubble-bot'}>
+        <motion.div 
+          className={isUser ? 'chat-bubble-user' : 'chat-bubble-bot'}
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.2 }}
+        >
           <p>{message.content}</p>
-        </div>
+        </motion.div>
         <div className={`flex items-center gap-1 mt-1 ${isUser ? 'justify-end' : 'justify-start'}`}>
           {message.sentiment && isUser && (
             <TooltipProvider>
@@ -61,7 +72,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
           </span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

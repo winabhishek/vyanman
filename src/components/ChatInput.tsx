@@ -3,6 +3,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Send } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { motion } from 'framer-motion';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -12,6 +14,7 @@ interface ChatInputProps {
 const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading = false }) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { t } = useLanguage();
   
   // Auto-resize the textarea based on content, with a maximum height
   useEffect(() => {
@@ -55,28 +58,34 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading = false 
   };
   
   return (
-    <form onSubmit={handleSubmit} className="flex items-end gap-2">
+    <motion.form 
+      onSubmit={handleSubmit} 
+      className="flex items-end gap-2"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="relative flex-1">
         <Textarea
           ref={textareaRef}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type your message here..."
-          className="resize-none min-h-[50px] pr-12 py-3"
+          placeholder={t('chat.placeholder')}
+          className="resize-none min-h-[50px] pr-12 py-3 glass-input"
           disabled={isLoading}
         />
         <Button
           type="submit"
           size="icon"
-          className="absolute bottom-1.5 right-1.5"
+          className="absolute bottom-1.5 right-1.5 bg-vyanamana-500 hover:bg-vyanamana-600"
           disabled={!message.trim() || isLoading}
         >
           <Send className="h-4 w-4" />
-          <span className="sr-only">Send</span>
+          <span className="sr-only">{t('chat.send')}</span>
         </Button>
       </div>
-    </form>
+    </motion.form>
   );
 };
 

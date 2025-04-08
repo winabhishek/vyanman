@@ -16,25 +16,40 @@ export const chatAPI = {
   },
 
   // Send a message and get a response
-  sendMessage: async (content: string): Promise<Message> => {
+  sendMessage: async (content: string, language: string = 'en'): Promise<Message> => {
     await delay(1000);
     
     // This would be a call to your backend which would then call OpenAI API
-    // For now, we'll generate a simple response
-    const botResponses = [
-      "I understand how you're feeling. Would you like to talk more about that?",
-      "Thank you for sharing that with me. How long have you been feeling this way?",
-      "That sounds challenging. What helps you cope when you feel like this?",
-      "I'm here to listen. Would you like to explore some techniques that might help?",
-      "Your feelings are valid. It takes courage to express them.",
-      "I hear you. Sometimes just talking about our feelings can help us process them better.",
-      "Would you like to try a quick mindfulness exercise to help center yourself?",
-      "It sounds like you're going through a lot. Remember to be kind to yourself during this time.",
-      "Have you spoken to anyone else about how you're feeling?",
-      "I'm glad you reached out today. Is there anything specific you'd like support with?",
-    ];
+    // For now, we'll generate a simple response based on the language
+    const botResponses = {
+      en: [
+        "I understand how you're feeling. Would you like to talk more about that?",
+        "Thank you for sharing that with me. How long have you been feeling this way?",
+        "That sounds challenging. What helps you cope when you feel like this?",
+        "I'm here to listen. Would you like to explore some techniques that might help?",
+        "Your feelings are valid. It takes courage to express them.",
+        "I hear you. Sometimes just talking about our feelings can help us process them better.",
+        "Would you like to try a quick mindfulness exercise to help center yourself?",
+        "It sounds like you're going through a lot. Remember to be kind to yourself during this time.",
+        "Have you spoken to anyone else about how you're feeling?",
+        "I'm glad you reached out today. Is there anything specific you'd like support with?",
+      ],
+      hi: [
+        "मैं समझता हूं कि आप कैसा महसूस कर रहे हैं। क्या आप इस बारे में अधिक बात करना चाहेंगे?",
+        "मुझे अपनी बात बताने के लिए धन्यवाद। आप कब से ऐसा महसूस कर रहे हैं?",
+        "यह चुनौतीपूर्ण लगता है। जब आप ऐसा महसूस करते हैं तो आपको क्या मदद करता है?",
+        "मैं सुनने के लिए यहां हूं। क्या आप कुछ तकनीकों का पता लगाना चाहेंगे जो मदद कर सकती हैं?",
+        "आपकी भावनाएं वैध हैं। उन्हें व्यक्त करने के लिए साहस की आवश्यकता होती है।",
+        "मैं आपकी बात सुन रहा हूं। कभी-कभी अपनी भावनाओं के बारे में बात करने से हमें उन्हें बेहतर तरीके से समझने में मदद मिल सकती है।",
+        "क्या आप खुद को केंद्रित करने में मदद के लिए एक त्वरित माइंडफुलनेस अभ्यास करना चाहेंगे?",
+        "ऐसा लगता है कि आप बहुत कुछ से गुजर रहे हैं। इस समय अपने प्रति दयालु रहना याद रखें।",
+        "क्या आपने अपनी भावनाओं के बारे में किसी और से बात की है?",
+        "मुझे खुशी है कि आपने आज संपर्क किया। क्या कोई विशेष बात है जिसके लिए आप समर्थन चाहते हैं?",
+      ]
+    };
     
-    const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+    const currentLanguageResponses = botResponses[language as keyof typeof botResponses] || botResponses.en;
+    const randomResponse = currentLanguageResponses[Math.floor(Math.random() * currentLanguageResponses.length)];
     
     // Mock sentiment analysis (in a real app, this would come from the backend)
     const mockSentiment = {

@@ -6,6 +6,8 @@ import { format } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { motion } from 'framer-motion';
 
 const moodEmojis: Record<string, string> = {
   joyful: '😄',
@@ -17,6 +19,18 @@ const moodEmojis: Record<string, string> = {
   stressed: '😫',
   angry: '😠',
   exhausted: '😴'
+};
+
+const moodLabelsHindi: Record<string, string> = {
+  joyful: 'आनंदित',
+  happy: 'खुश',
+  content: 'संतुष्ट',
+  neutral: 'सामान्य',
+  sad: 'उदास',
+  anxious: 'चिंतित',
+  stressed: 'तनावग्रस्त',
+  angry: 'गुस्सा',
+  exhausted: 'थका हुआ'
 };
 
 // Map mood to numerical value for chart
@@ -35,6 +49,7 @@ const moodValues: Record<string, number> = {
 const MoodHistory: React.FC = () => {
   const [moodEntries, setMoodEntries] = useState<MoodEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { language, t } = useLanguage();
   
   useEffect(() => {
     const fetchMoodEntries = async () => {
@@ -63,6 +78,13 @@ const MoodHistory: React.FC = () => {
       }));
   };
   
+  const getYAxisLabel = (value: number) => {
+    const labels = language === 'en' 
+      ? ['', 'Low', '', 'Neutral', '', 'High']
+      : ['', 'निम्न', '', 'मध्यम', '', 'उच्च'];
+    return labels[value] || '';
+  };
+  
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -74,10 +96,10 @@ const MoodHistory: React.FC = () => {
   
   if (moodEntries.length === 0) {
     return (
-      <Card>
+      <Card className="glass-card">
         <CardContent className="pt-6">
           <p className="text-center text-muted-foreground">
-            No mood entries yet. Start logging your mood to see your history.
+            {t('mood.nodata')}
           </p>
         </CardContent>
       </Card>
@@ -85,16 +107,23 @@ const MoodHistory: React.FC = () => {
   }
   
   return (
-    <div className="space-y-6">
-      <div className="h-[250px] w-full">
+    <motion.div 
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div 
+        className="h-[250px] w-full"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={formatChartData()}>
             <XAxis dataKey="date" />
             <YAxis
-              tickFormatter={(value) => {
-                const labels = ['', 'Low', '', 'Neutral', '', 'High'];
-                return labels[value] || '';
-              }}
+              tickFormatter={(value) => getYAxisLabel(value)}
             />
             <Tooltip
               content={({ active, payload }) => {
@@ -104,7 +133,7 @@ const MoodHistory: React.FC = () => {
                     <div className="p-2 bg-card border rounded-md shadow-sm">
                       <p className="text-sm">{data.date}</p>
                       <p className="text-sm font-medium flex items-center">
-                        {moodEmojis[data.mood]} {data.mood}
+                        {moodEmojis[data.mood]} {language === 'en' ? data.mood : moodLabelsHindi[data.mood]}
                       </p>
                     </div>
                   );
@@ -119,34 +148,48 @@ const MoodHistory: React.FC = () => {
             />
           </BarChart>
         </ResponsiveContainer>
-      </div>
+      </motion.div>
       
-      <div className="space-y-3">
-        <h3 className="text-lg font-medium">Recent Entries</h3>
+      <motion.div 
+        className="space-y-3"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+      >
+        <h3 className="text-lg font-medium">{t('mood.history')}</h3>
         <div className="space-y-2">
-          {moodEntries.slice(0, 5).map((entry) => (
-            <Card key={entry.id} className="overflow-hidden">
-              <CardContent className="p-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{moodEmojis[entry.mood]}</span>
-                    <div>
-                      <p className="font-medium capitalize">{entry.mood}</p>
-                      {entry.note && (
-                        <p className="text-sm text-muted-foreground">{entry.note}</p>
-                      )}
+          {moodEntries.slice(0, 5).map((entry, index) => (
+            <motion.div 
+              key={entry.id} 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 * index }}
+            >
+              <Card key={entry.id} className="overflow-hidden glass-card">
+                <CardContent className="p-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">{moodEmojis[entry.mood]}</span>
+                      <div>
+                        <p className="font-medium capitalize">
+                          {language === 'en' ? entry.mood : moodLabelsHindi[entry.mood as keyof typeof moodLabelsHindi]}
+                        </p>
+                        {entry.note && (
+                          <p className="text-sm text-muted-foreground">{entry.note}</p>
+                        )}
+                      </div>
                     </div>
+                    <p className="text-sm text-muted-foreground">
+                      {format(new Date(entry.timestamp), 'MMM dd, yyyy • h:mm a')}
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {format(new Date(entry.timestamp), 'MMM dd, yyyy • h:mm a')}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

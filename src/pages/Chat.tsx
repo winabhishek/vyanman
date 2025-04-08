@@ -2,16 +2,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import ChatMessage from '@/components/ChatMessage';
 import ChatInput from '@/components/ChatInput';
 import MoodTracker from '@/components/MoodTracker';
 import { Message } from '@/types';
 import { chatAPI } from '@/services/api';
 import { Button } from '@/components/ui/button';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, BarChart } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Chat: React.FC = () => {
   const { isAuthenticated, continueAsGuest } = useAuth();
+  const { language, t } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -27,7 +30,9 @@ const Chat: React.FC = () => {
           // Add a welcome message if there are no messages
           const welcomeMessage: Message = {
             id: 'welcome',
-            content: "Hello! I'm Vyānamana, your mental wellbeing companion. How are you feeling today?",
+            content: language === 'en' 
+              ? "Hello! I'm Vyānamana, your mental wellbeing companion. How are you feeling today?"
+              : "नमस्ते! मैं व्यानमन हूँ, आपका मानसिक स्वास्थ्य साथी। आज आप कैसा महसूस कर रहे हैं?",
             sender: 'bot',
             timestamp: new Date()
           };
@@ -43,7 +48,7 @@ const Chat: React.FC = () => {
     if (isAuthenticated) {
       loadMessages();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, language]);
   
   // Auto-scroll to bottom of messages
   useEffect(() => {
@@ -74,12 +79,18 @@ const Chat: React.FC = () => {
     setIsLoading(true);
     
     try {
-      const botResponse = await chatAPI.sendMessage(content);
+      // Add language to the message context
+      const botResponse = await chatAPI.sendMessage(content, language);
       setMessages(prev => [...prev, botResponse]);
       
       // Suggest mood tracking if appropriate
-      const moodKeywords = ['feeling', 'mood', 'emotions', 'stress', 'anxious', 'happy', 'sad'];
-      const shouldSuggestMoodTracking = moodKeywords.some(keyword => 
+      const moodKeywords = {
+        en: ['feeling', 'mood', 'emotions', 'stress', 'anxious', 'happy', 'sad'],
+        hi: ['महसूस', 'मूड', 'भावनाएं', 'तनाव', 'चिंतित', 'खुश', 'दुखी']
+      };
+      
+      const currentLanguageKeywords = moodKeywords[language];
+      const shouldSuggestMoodTracking = currentLanguageKeywords.some(keyword => 
         content.toLowerCase().includes(keyword)
       );
       
@@ -95,7 +106,9 @@ const Chat: React.FC = () => {
       // Add error message
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
-        content: "I'm sorry, I'm having trouble responding right now. Please try again in a moment.",
+        content: language === 'en'
+          ? "I'm sorry, I'm having trouble responding right now. Please try again in a moment."
+          : "क्षमा करें, मुझे अभी जवाब देने में परेशानी हो रही है। कृपया कुछ क्षण बाद पुनः प्रयास करें।",
         sender: 'bot',
         timestamp: new Date()
       };
@@ -113,7 +126,9 @@ const Chat: React.FC = () => {
     // Add a follow-up message
     const followUpMessage: Message = {
       id: `bot-${Date.now()}`,
-      content: "Thanks for logging your mood! Tracking regularly can help you notice patterns in how you feel. Is there anything specific about your mood you'd like to discuss?",
+      content: language === 'en'
+        ? "Thanks for logging your mood! Tracking regularly can help you notice patterns in how you feel. Is there anything specific about your mood you'd like to discuss?"
+        : "अपना मूड लॉग करने के लिए धन्यवाद! नियमित रूप से ट्रैक करने से आपको यह पता चल सकता है कि आप कैसा महसूस करते हैं। क्या आपके मूड के बारे में कोई विशेष बात है जिसके बारे में आप चर्चा करना चाहेंगे?",
       sender: 'bot',
       timestamp: new Date()
     };
@@ -121,29 +136,66 @@ const Chat: React.FC = () => {
     setMessages(prev => [...prev, followUpMessage]);
   };
   
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 }
+    }
+  };
+  
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-8">
+    <motion.div 
+      className="container mx-auto max-w-4xl px-4 py-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       <div className="flex flex-col h-[calc(100vh-16rem)]">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold font-heading">Chat with Vyānamana</h1>
+        <motion.div 
+          className="flex justify-between items-center mb-6"
+          variants={itemVariants}
+        >
+          <h1 className="text-2xl font-bold font-heading gradient-heading">
+            {language === 'en' ? 'Chat with Vyānamana' : 'व्यानमन से चैट करें'}
+          </h1>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => navigate('/mood-tracker')}
             className="flex items-center gap-2"
           >
-            View Mood History
+            <BarChart className="h-4 w-4" />
+            {language === 'en' ? 'View Mood History' : 'मूड इतिहास देखें'}
           </Button>
-        </div>
+        </motion.div>
         
-        <div className="flex-1 overflow-y-auto p-4 border rounded-lg mb-4 bg-card">
+        <motion.div 
+          className="flex-1 overflow-y-auto p-4 border rounded-lg mb-4 glass-card bg-card/30 backdrop-blur-sm"
+          variants={itemVariants}
+        >
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center">
               <p className="text-muted-foreground mb-4">
-                Start chatting with Vyānamana, your mental wellbeing companion.
+                {language === 'en' 
+                  ? 'Start chatting with Vyānamana, your mental wellbeing companion.'
+                  : 'व्यानमन के साथ चैट शुरू करें, आपका मानसिक स्वास्थ्य साथी।'}
               </p>
               <p className="text-sm text-muted-foreground">
-                Your conversations are private and secure.
+                {language === 'en'
+                  ? 'Your conversations are private and secure.'
+                  : 'आपकी बातचीत निजी और सुरक्षित है।'}
               </p>
             </div>
           ) : (
@@ -166,9 +218,12 @@ const Chat: React.FC = () => {
               )}
             </>
           )}
-        </div>
+        </motion.div>
         
-        <div className="sticky bottom-0 bg-background pt-2">
+        <motion.div 
+          className="sticky bottom-0 bg-background pt-2"
+          variants={itemVariants}
+        >
           <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
           
           {messages.length > 10 && (
@@ -184,19 +239,24 @@ const Chat: React.FC = () => {
                 className="flex items-center gap-2"
               >
                 <ArrowUp className="h-4 w-4" />
-                Scroll to bottom
+                {language === 'en' ? 'Scroll to bottom' : 'नीचे स्क्रॉल करें'}
               </Button>
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
       
       {showMoodTracker && (
-        <div className="mt-8">
+        <motion.div 
+          className="mt-8"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <MoodTracker onMoodLogged={handleMoodLogged} />
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
 
