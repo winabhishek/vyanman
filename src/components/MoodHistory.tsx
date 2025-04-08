@@ -1,10 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { format } from 'date-fns';
-import { MoodEntry, Mood } from '@/types';
+import { MoodEntry } from '@/types';
 import { moodAPI } from '@/services/api';
+import { format } from 'date-fns';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-const moodEmojis: Record<Mood, string> = {
+const moodEmojis: Record<string, string> = {
   joyful: '😄',
   happy: '😊',
   content: '🙂',
@@ -16,16 +19,17 @@ const moodEmojis: Record<Mood, string> = {
   exhausted: '😴'
 };
 
-const moodColorClasses: Record<Mood, string> = {
-  joyful: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
-  happy: 'bg-green-50 text-green-700 dark:bg-green-800 dark:text-green-50',
-  content: 'bg-blue-50 text-blue-700 dark:bg-blue-800 dark:text-blue-50',
-  neutral: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100',
-  sad: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-100',
-  anxious: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
-  stressed: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
-  angry: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
-  exhausted: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100'
+// Map mood to numerical value for chart
+const moodValues: Record<string, number> = {
+  joyful: 5,
+  happy: 4,
+  content: 3,
+  neutral: 2,
+  sad: 1,
+  anxious: 1,
+  stressed: 1,
+  angry: 1,
+  exhausted: 1
 };
 
 const MoodHistory: React.FC = () => {
@@ -47,76 +51,101 @@ const MoodHistory: React.FC = () => {
     fetchMoodEntries();
   }, []);
   
+  const formatChartData = () => {
+    return moodEntries
+      .sort((a, b) => {
+        return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+      })
+      .map(entry => ({
+        date: format(new Date(entry.timestamp), 'MMM dd'),
+        value: moodValues[entry.mood],
+        mood: entry.mood
+      }));
+  };
+  
   if (isLoading) {
     return (
-      <div className="animate-pulse space-y-4">
-        <div className="h-10 bg-muted rounded-md"></div>
-        <div className="h-20 bg-muted rounded-md"></div>
-        <div className="h-20 bg-muted rounded-md"></div>
+      <div className="space-y-4">
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-[200px] w-full" />
       </div>
     );
   }
   
   if (moodEntries.length === 0) {
     return (
-      <div className="text-center py-10 border rounded-lg">
-        <p className="text-muted-foreground">No mood entries yet. Start tracking how you feel!</p>
-      </div>
+      <Card>
+        <CardContent className="pt-6">
+          <p className="text-center text-muted-foreground">
+            No mood entries yet. Start logging your mood to see your history.
+          </p>
+        </CardContent>
+      </Card>
     );
   }
   
-  // Group entries by date
-  const entriesByDate = moodEntries.reduce<Record<string, MoodEntry[]>>((acc, entry) => {
-    const date = format(new Date(entry.timestamp), 'yyyy-MM-dd');
-    
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    
-    acc[date].push(entry);
-    return acc;
-  }, {});
-  
   return (
-    <div className="space-y-8">
-      {Object.entries(entriesByDate).map(([date, entries]) => (
-        <div key={date} className="space-y-2">
-          <h3 className="font-medium">
-            {format(new Date(date), 'EEEE, MMMM d, yyyy')}
-          </h3>
-          
-          <div className="space-y-3">
-            {entries.map((entry) => (
-              <div 
-                key={entry.id} 
-                className="p-4 rounded-lg border bg-card shadow-sm"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl" role="img" aria-label={entry.mood}>
-                      {moodEmojis[entry.mood]}
-                    </span>
-                    <div>
-                      <span className={`text-xs font-medium px-2 py-1 rounded-full ${moodColorClasses[entry.mood]}`}>
-                        {entry.mood.charAt(0).toUpperCase() + entry.mood.slice(1)}
-                      </span>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {format(new Date(entry.timestamp), 'h:mm a')}
+    <div className="space-y-6">
+      <div className="h-[250px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={formatChartData()}>
+            <XAxis dataKey="date" />
+            <YAxis
+              tickFormatter={(value) => {
+                const labels = ['', 'Low', '', 'Neutral', '', 'High'];
+                return labels[value] || '';
+              }}
+            />
+            <Tooltip
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  const data = payload[0].payload;
+                  return (
+                    <div className="p-2 bg-card border rounded-md shadow-sm">
+                      <p className="text-sm">{data.date}</p>
+                      <p className="text-sm font-medium flex items-center">
+                        {moodEmojis[data.mood]} {data.mood}
                       </p>
                     </div>
+                  );
+                }
+                return null;
+              }}
+            />
+            <Bar 
+              dataKey="value" 
+              fill="var(--vyanamana-500)" 
+              radius={[4, 4, 0, 0]} 
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      
+      <div className="space-y-3">
+        <h3 className="text-lg font-medium">Recent Entries</h3>
+        <div className="space-y-2">
+          {moodEntries.slice(0, 5).map((entry) => (
+            <Card key={entry.id} className="overflow-hidden">
+              <CardContent className="p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">{moodEmojis[entry.mood]}</span>
+                    <div>
+                      <p className="font-medium capitalize">{entry.mood}</p>
+                      {entry.note && (
+                        <p className="text-sm text-muted-foreground">{entry.note}</p>
+                      )}
+                    </div>
                   </div>
+                  <p className="text-sm text-muted-foreground">
+                    {format(new Date(entry.timestamp), 'MMM dd, yyyy • h:mm a')}
+                  </p>
                 </div>
-                
-                {entry.note && (
-                  <div className="mt-3 pl-9">
-                    <p className="text-sm">{entry.note}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 };
