@@ -1,73 +1,185 @@
-# Welcome to your Lovable project
 
-## Project info
+# Vyānamana - AI-Powered Mental Health Companion
 
-**URL**: https://lovable.dev/projects/0cb9e0bb-902b-40b8-845a-264144837622
+Vyānamana—derived from Sanskrit—means "to breathe intentionally" or "conscious awareness." Our platform embodies this principle by offering a space for mindful reflection on your mental wellbeing.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- 🧠 AI-powered chat companion for mental health support
+- 🌈 Mood tracking with emoji-based emotion logging
+- 📊 Sentiment analysis of conversations
+- 🔒 User authentication with anonymous mode option
+- 🌙 Light and dark mode support
+- 📱 Fully responsive design
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0cb9e0bb-902b-40b8-845a-264144837622) and start prompting.
+### Frontend
+- React.js
+- TypeScript
+- Tailwind CSS
+- shadcn/ui components
+- React Router
+- React Query
 
-Changes made via Lovable will be committed automatically to this repo.
+### Backend
+- FastAPI (Python)
+- MongoDB with Motor (async driver)
+- JWT authentication
+- OpenAI GPT-4 integration
+- HuggingFace transformers for sentiment analysis
 
-**Use your preferred IDE**
+## Project Structure
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```
+vyānamana/
+├── frontend/                  # React frontend
+│   ├── src/
+│   │   ├── components/        # Reusable UI components
+│   │   ├── contexts/          # React context providers
+│   │   ├── pages/             # Application pages
+│   │   ├── services/          # API service layer
+│   │   ├── types/             # TypeScript type definitions
+│   │   └── utils/             # Utility functions
+│   └── ...
+│
+├── backend/                   # FastAPI backend
+│   ├── models/                # Pydantic models for MongoDB
+│   │   ├── user.py            # User model
+│   │   ├── chat.py            # Chat models
+│   │   └── mood.py            # Mood tracking models
+│   ├── main.py                # Main FastAPI application
+│   └── requirements.txt       # Python dependencies
+│
+└── README.md                  # Project documentation
+```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Running the Application Locally
 
-Follow these steps:
+### Frontend
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+```bash
+# Navigate to the frontend directory
+cd frontend
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The frontend will be available at `http://localhost:8080`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Backend
 
-**Use GitHub Codespaces**
+```bash
+# Navigate to the backend directory
+cd backend
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Create a virtual environment
+python -m venv venv
 
-## What technologies are used for this project?
+# Activate the virtual environment
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
+source venv/bin/activate
 
-This project is built with:
+# Install dependencies
+pip install -r requirements.txt
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# Run the application
+uvicorn main:app --reload
+```
 
-## How can I deploy this project?
+The API will be available at `http://localhost:8000`.
 
-Simply open [Lovable](https://lovable.dev/projects/0cb9e0bb-902b-40b8-845a-264144837622) and click on Share -> Publish.
+## Environment Variables
 
-## Can I connect a custom domain to my Lovable project?
+### Frontend
+Create a `.env` file in the frontend directory with:
 
-Yes it is!
+```
+VITE_API_URL=http://localhost:8000
+VITE_APP_ENV=development
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Backend
+Create a `.env` file in the backend directory with:
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+```
+OPENAI_API_KEY=your_openai_api_key
+MONGODB_URL=mongodb://localhost:27017
+SECRET_KEY=your_secret_key_for_jwt
+```
+
+## MongoDB Schema
+
+### User Collection
+
+```json
+{
+  "_id": ObjectId,
+  "name": String,
+  "email": String,
+  "password_hash": String,
+  "is_anonymous": Boolean,
+  "created_at": DateTime,
+  "updated_at": DateTime,
+  "last_login": DateTime
+}
+```
+
+### Chat Collection
+
+```json
+{
+  "_id": ObjectId,
+  "user_id": ObjectId,
+  "name": String,
+  "created_at": DateTime,
+  "updated_at": DateTime
+}
+```
+
+### Message Collection
+
+```json
+{
+  "_id": ObjectId,
+  "chat_id": ObjectId,
+  "content": String,
+  "sender": String,
+  "timestamp": DateTime,
+  "sentiment": {
+    "score": Number,
+    "label": String
+  }
+}
+```
+
+### Mood Collection
+
+```json
+{
+  "_id": ObjectId,
+  "user_id": ObjectId,
+  "mood": String,
+  "note": String,
+  "timestamp": DateTime
+}
+```
+
+## Important Note
+
+The current implementation uses mock data for demonstration purposes. In a production environment, you would need to:
+
+1. Set up a MongoDB database
+2. Configure an OpenAI API key
+3. Deploy frontend and backend separately
+4. Add additional security measures
+
+## Disclaimer
+
+Vyānamana is not a substitute for professional mental health care. If you're experiencing a mental health crisis or need immediate support, please contact a mental health professional, visit your nearest emergency room, or call the 988 Suicide & Crisis Lifeline.
