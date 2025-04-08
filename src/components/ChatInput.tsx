@@ -13,11 +13,21 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading = false 
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
-  // Auto-resize the textarea based on content
+  // Auto-resize the textarea based on content, with a maximum height
   useEffect(() => {
     if (textareaRef.current) {
+      // Reset height to auto to get the correct scrollHeight
       textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      
+      // Calculate new height with a maximum limit
+      const maxHeight = 150; // approximately 5 rows
+      const scrollHeight = textareaRef.current.scrollHeight;
+      const newHeight = Math.min(scrollHeight, maxHeight);
+      
+      textareaRef.current.style.height = `${newHeight}px`;
+      
+      // Add scrollbar if content exceeds max height
+      textareaRef.current.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
     }
   }, [message]);
   
@@ -32,6 +42,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading = false 
     // Reset textarea height
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.overflowY = 'hidden';
     }
   };
   
@@ -53,7 +64,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading = false 
           onKeyDown={handleKeyDown}
           placeholder="Type your message here..."
           className="resize-none min-h-[50px] pr-12 py-3"
-          maxRows={5}
           disabled={isLoading}
         />
         <Button
