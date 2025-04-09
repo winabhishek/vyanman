@@ -7,6 +7,7 @@ type Theme = 'light' | 'dark';
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
+  setTheme: (theme: Theme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -14,14 +15,52 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Check if user has a theme preference in localStorage or prefers dark mode
   const [theme, setTheme] = useState<Theme>(() => {
+    // First check localStorage
     const savedTheme = localStorage.getItem('vyanamana-theme');
     
-    if (savedTheme) {
+    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
       return savedTheme as Theme;
     }
     
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    // Then check media query
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    
+    // Default to light
+    return 'light';
   });
+  
+  // Listen for system theme preference changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      const newTheme = e.matches ? 'dark' : 'light';
+      // Only update if user hasn't set a preference
+      if (!localStorage.getItem('vyanamana-theme')) {
+        setTheme(newTheme);
+      }
+    };
+    
+    // Add event listener for theme changes
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+    } else {
+      // Fallback for older browsers
+      mediaQuery.addListener(handleChange);
+    }
+    
+    // Clean up
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handleChange);
+      } else {
+        // Fallback for older browsers
+        mediaQuery.removeListener(handleChange);
+      }
+    };
+  }, []);
   
   // Apply theme class to document
   useEffect(() => {
@@ -43,7 +82,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Remove transition class after transition completes to prevent transition on page load
     const timer = setTimeout(() => {
       root.classList.remove('theme-transition');
-    }, 300);
+    }, 500);
     
     return () => clearTimeout(timer);
   }, [theme]);
@@ -53,12 +92,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
   
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="min-h-screen transition-colors duration-300 ease-in-out"
+        className="min-h-screen transition-colors duration-500 ease-in-out"
       >
         {children}
       </motion.div>

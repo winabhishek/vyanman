@@ -17,15 +17,23 @@ const ThemeToggle: React.FC = () => {
     >
       <Button
         variant="ghost"
-        size="icon"
+        size="sm"
         onClick={toggleTheme}
         aria-label={t('theme.toggle')}
+        className="glass-effect"
       >
-        {theme === 'dark' ? (
-          <Sun className="h-5 w-5 text-yellow-400" />
-        ) : (
-          <Moon className="h-5 w-5 text-vyanamana-700" />
-        )}
+        <motion.div
+          initial={{ rotate: 0 }}
+          animate={{ rotate: theme === 'dark' ? 180 : 0 }}
+          transition={{ duration: 0.5, type: "spring" }}
+          className="relative w-5 h-5"
+        >
+          {theme === 'dark' ? (
+            <Sun className="absolute inset-0 h-5 w-5 text-yellow-400 transition-all" />
+          ) : (
+            <Moon className="absolute inset-0 h-5 w-5 text-deepPurple transition-all" />
+          )}
+        </motion.div>
         <span className="sr-only">{t('theme.toggle')}</span>
       </Button>
     </motion.div>

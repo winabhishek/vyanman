@@ -119,6 +119,19 @@ const Profile: React.FC = () => {
   const mostCommonMood = getMostCommonMood();
   const averageMoodScore = getAverageMoodScore();
   
+  // Format account creation date safely
+  const getFormattedJoinDate = () => {
+    // Check if user exists and has a createdAt property that can be converted to a date
+    if (user && 'createdAt' in user && user.createdAt) {
+      try {
+        return format(new Date(user.createdAt as string), 'MMM dd, yyyy');
+      } catch (error) {
+        return 'Today';
+      }
+    }
+    return 'Today';
+  };
+  
   if (!isAuthenticated) {
     return (
       <div className="container mx-auto max-w-4xl px-4 py-16 text-center">
@@ -159,7 +172,7 @@ const Profile: React.FC = () => {
                 <div className="flex justify-between mb-2">
                   <span className="text-muted-foreground">Joined:</span>
                   <span className="font-medium">
-                    {user?.createdAt ? format(new Date(user.createdAt), 'MMM dd, yyyy') : 'Today'}
+                    {getFormattedJoinDate()}
                   </span>
                 </div>
                 <div className="flex justify-between mb-2">
