@@ -5,6 +5,7 @@ export interface Message {
   sender: 'user' | 'bot';
   timestamp: Date;
   sentiment?: SentimentAnalysis;
+  language?: 'en' | 'hi'; // Add language field to Message interface
 }
 
 export interface SentimentAnalysis {
@@ -38,6 +39,7 @@ export interface User {
   isAnonymous: boolean;
   createdAt: Date;
   updatedAt: Date;
+  preferredLanguage?: 'en' | 'hi'; // Add preferredLanguage field
 }
 
 export interface ChatSession {
