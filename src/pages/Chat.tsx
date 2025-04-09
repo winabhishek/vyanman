@@ -7,7 +7,7 @@ import ChatMessage from '@/components/ChatMessage';
 import ChatInput from '@/components/ChatInput';
 import MoodTracker from '@/components/MoodTracker';
 import { Message } from '@/types';
-import { chatAPI } from '@/services/api';
+import { chatAPI } from '@/services'; // Updated import path
 import { Button } from '@/components/ui/button';
 import { ArrowUp, BarChart } from 'lucide-react';
 import { motion } from 'framer-motion';

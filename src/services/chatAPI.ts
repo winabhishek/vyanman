@@ -1,8 +1,5 @@
 
-// This file would normally contain actual API calls to our backend
-// For now, we'll use mock data and localStorage
-
-import { Message, MoodEntry, Mood, User } from '../types';
+import { Message } from '../types';
 
 // Mock delay function to simulate API latency
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -23,7 +20,7 @@ export const chatAPI = {
   },
 
   // Send a message and get a response
-  sendMessage: async (content: string, language?: string): Promise<Message> => {
+  sendMessage: async (content: string, language?: 'en' | 'hi'): Promise<Message> => {
     await delay(1000);
     
     // Auto-detect language if not specified
@@ -59,7 +56,7 @@ export const chatAPI = {
     };
     
     // Enhanced response selection with some basic context awareness
-    let currentLanguageResponses = botResponses[detectedLanguage as keyof typeof botResponses] || botResponses.en;
+    let currentLanguageResponses = botResponses[detectedLanguage] || botResponses.en;
     
     // Improved sentiment analysis (in a real app, this would come from an AI model)
     // Let's add some basic keyword detection for sentiment
@@ -111,222 +108,5 @@ export const chatAPI = {
     localStorage.setItem('vyanamana-messages', JSON.stringify(messages));
     
     return botMessage;
-  }
-};
-
-export const moodAPI = {
-  // Get all mood entries for the current user
-  getMoodEntries: async (): Promise<MoodEntry[]> => {
-    await delay(500);
-    const storedMoods = localStorage.getItem('vyanamana-moods');
-    return storedMoods ? JSON.parse(storedMoods) : [];
-  },
-  
-  // Add a new mood entry
-  addMoodEntry: async (mood: Mood, note?: string): Promise<MoodEntry> => {
-    await delay(500);
-    
-    const newEntry: MoodEntry = {
-      id: `mood-${Date.now()}`,
-      userId: 'current-user', // In a real app, this would be the actual user ID
-      mood,
-      note,
-      timestamp: new Date()
-    };
-    
-    // Save to localStorage
-    const storedMoods = localStorage.getItem('vyanamana-moods');
-    const moods = storedMoods ? JSON.parse(storedMoods) : [];
-    moods.push(newEntry);
-    localStorage.setItem('vyanamana-moods', JSON.stringify(moods));
-    
-    return newEntry;
-  },
-  
-  // Get mood analytics (new method)
-  getMoodAnalytics: async (): Promise<{
-    averageMood: number;
-    moodCounts: Record<Mood, number>;
-    mostFrequentMood: Mood;
-  }> => {
-    await delay(700);
-    
-    const storedMoods = localStorage.getItem('vyanamana-moods');
-    const moods: MoodEntry[] = storedMoods ? JSON.parse(storedMoods) : [];
-    
-    if (moods.length === 0) {
-      return {
-        averageMood: 2.5, // Neutral
-        moodCounts: {
-          joyful: 0,
-          happy: 0,
-          content: 0,
-          neutral: 0,
-          sad: 0,
-          anxious: 0,
-          stressed: 0,
-          angry: 0,
-          exhausted: 0
-        },
-        mostFrequentMood: 'neutral'
-      };
-    }
-    
-    // Calculate mood counts
-    const moodCounts: Record<Mood, number> = {
-      joyful: 0,
-      happy: 0,
-      content: 0,
-      neutral: 0,
-      sad: 0,
-      anxious: 0,
-      stressed: 0,
-      angry: 0,
-      exhausted: 0
-    };
-    
-    moods.forEach(entry => {
-      moodCounts[entry.mood]++;
-    });
-    
-    // Calculate most frequent mood
-    const mostFrequentMood = Object.entries(moodCounts)
-      .reduce((max, [mood, count]) => count > max.count ? { mood: mood as Mood, count } : max, { mood: 'neutral' as Mood, count: 0 })
-      .mood;
-    
-    // Calculate average mood (simple implementation)
-    const moodValues: Record<Mood, number> = {
-      joyful: 5,
-      happy: 4,
-      content: 3.5,
-      neutral: 2.5,
-      sad: 1.5,
-      anxious: 1,
-      stressed: 1,
-      angry: 0.5,
-      exhausted: 1
-    };
-    
-    const totalMoodValue = moods.reduce((sum, entry) => sum + moodValues[entry.mood], 0);
-    const averageMood = totalMoodValue / moods.length;
-    
-    return {
-      averageMood,
-      moodCounts,
-      mostFrequentMood
-    };
-  }
-};
-
-export const authAPI = {
-  // Login with email and password
-  login: async (email: string, password: string): Promise<User> => {
-    await delay(1000);
-    
-    // In a real app, this would be a call to your backend
-    if (email && password) {
-      const user = {
-        id: 'user-123',
-        name: email.split('@')[0],
-        email,
-        isAnonymous: false,
-        preferredLanguage: 'en',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      
-      // Store user in localStorage for session persistence
-      localStorage.setItem('vyanamana-user', JSON.stringify(user));
-      
-      return user;
-    }
-    
-    throw new Error('Invalid credentials');
-  },
-  
-  // Register a new user
-  register: async (name: string, email: string, password: string, preferredLanguage: string = 'en'): Promise<User> => {
-    await delay(1000);
-    
-    // In a real app, this would be a call to your backend
-    if (name && email && password) {
-      const user = {
-        id: `user-${Date.now()}`,
-        name,
-        email,
-        isAnonymous: false,
-        preferredLanguage,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      
-      // Store user in localStorage for session persistence
-      localStorage.setItem('vyanamana-user', JSON.stringify(user));
-      
-      return user;
-    }
-    
-    throw new Error('Invalid registration data');
-  },
-  
-  // Continue as guest
-  loginAsGuest: async (preferredLanguage: string = 'en'): Promise<User> => {
-    await delay(500);
-    
-    const guestUser = {
-      id: `guest-${Date.now()}`,
-      name: 'Anonymous User',
-      email: '',
-      isAnonymous: true,
-      preferredLanguage,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    
-    // Store user in localStorage for session persistence
-    localStorage.setItem('vyanamana-user', JSON.stringify(guestUser));
-    
-    return guestUser;
-  },
-  
-  // Get current user
-  getCurrentUser: async (): Promise<User | null> => {
-    await delay(300);
-    
-    const storedUser = localStorage.getItem('vyanamana-user');
-    return storedUser ? JSON.parse(storedUser) : null;
-  },
-  
-  // Update user profile
-  updateUserProfile: async (userId: string, updates: Partial<User>): Promise<User> => {
-    await delay(800);
-    
-    const storedUser = localStorage.getItem('vyanamana-user');
-    if (!storedUser) {
-      throw new Error('User not found');
-    }
-    
-    const user: User = JSON.parse(storedUser);
-    
-    if (user.id !== userId) {
-      throw new Error('Unauthorized');
-    }
-    
-    const updatedUser = {
-      ...user,
-      ...updates,
-      updatedAt: new Date()
-    };
-    
-    localStorage.setItem('vyanamana-user', JSON.stringify(updatedUser));
-    
-    return updatedUser;
-  },
-  
-  // Logout
-  logout: async (): Promise<void> => {
-    await delay(500);
-    localStorage.removeItem('vyanamana-user');
-    // In a real app, this would also invalidate tokens, etc.
   }
 };
