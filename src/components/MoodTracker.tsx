@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { moodAPI } from '@/services'; // Updated import
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Mood } from '@/types';
 
 const MoodTracker: React.FC<{ onMoodLogged: () => void }> = ({ onMoodLogged }) => {
   const [moodValue, setMoodValue] = useState(2.5); // Neutral
@@ -17,7 +19,7 @@ const MoodTracker: React.FC<{ onMoodLogged: () => void }> = ({ onMoodLogged }) =
   };
   
   const handleSubmit = async () => {
-    const moodMap = {
+    const moodMap: Record<number, Mood> = {
       0: 'angry',
       1: 'anxious',
       2: 'sad',
@@ -62,7 +64,7 @@ const MoodTracker: React.FC<{ onMoodLogged: () => void }> = ({ onMoodLogged }) =
           max={5}
           step={0.1}
           aria-label="mood-slider"
-          onChange={handleMoodChange}
+          onValueChange={handleMoodChange}
         />
         <div className="flex justify-between text-sm text-muted-foreground mt-1">
           <span>{language === 'en' ? 'Angry' : 'गुस्सा'}</span>
