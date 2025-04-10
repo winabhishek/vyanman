@@ -12,6 +12,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import LandingPage from "./pages/LandingPage";
 import Chat from "./pages/Chat";
 import MoodTrackerPage from "./pages/MoodTrackerPage";
+import MeditationPage from "./pages/MeditationPage";
+import DigitalDetoxPage from "./pages/DigitalDetoxPage";
 import Login from "./pages/Login";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
@@ -39,6 +41,8 @@ const App = () => (
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/chat" element={<Chat />} />
                     <Route path="/mood-tracker" element={<MoodTrackerPage />} />
+                    <Route path="/meditation" element={<MeditationPage />} />
+                    <Route path="/digital-detox" element={<DigitalDetoxPage />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/about" element={<About />} />
                     <Route path="/profile" element={<Profile />} />

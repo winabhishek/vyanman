@@ -211,4 +211,36 @@
   }
 }
 
-/* ... keep existing code (custom animations) */
+/* Custom animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Prevent overflow of chat bubbles on small screens */
+.chat-bubble-user, .chat-bubble-bot {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
