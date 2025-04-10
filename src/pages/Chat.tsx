@@ -1,25 +1,24 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import ChatMessage from '@/components/ChatMessage';
 import ChatInput from '@/components/ChatInput';
 import MoodTracker from '@/components/MoodTracker';
 import { Message } from '@/types';
 import { chatAPI } from '@/services'; 
-import { Button } from '@/components/ui/button';
-import { ArrowUp, BarChart } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { ScrollArea } from '@/components/ui/scroll-area';
+
+// Newly created components
+import ChatHeader from '@/components/chat/ChatHeader';
+import ChatContainer from '@/components/chat/ChatContainer';
+import ScrollButton from '@/components/chat/ScrollButton';
 
 const Chat: React.FC = () => {
   const { isAuthenticated, continueAsGuest } = useAuth();
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const [showMoodTracker, setShowMoodTracker] = useState(false);
   
   // Fetch existing messages
@@ -141,6 +140,12 @@ const Chat: React.FC = () => {
     setMessages(prev => [...prev, followUpMessage]);
   };
   
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -148,15 +153,6 @@ const Chat: React.FC = () => {
       transition: {
         staggerChildren: 0.1
       }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 }
     }
   };
   
@@ -168,88 +164,31 @@ const Chat: React.FC = () => {
       animate="visible"
     >
       <div className="flex flex-col h-[calc(100vh-16rem)]">
-        <motion.div 
-          className="flex justify-between items-center mb-6"
-          variants={itemVariants}
-        >
-          <h1 className="text-2xl font-bold font-heading gradient-heading">
-            {language === 'en' ? 'Chat with Vyānamana' : 'व्यानमन से चैट करें'}
-          </h1>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => navigate('/mood-tracker')}
-            className="flex items-center gap-2"
-          >
-            <BarChart className="h-4 w-4" />
-            {language === 'en' ? 'View Mood History' : 'मूड इतिहास देखें'}
-          </Button>
-        </motion.div>
+        <ChatHeader />
         
-        <motion.div 
-          className="flex-1 overflow-hidden p-4 border rounded-lg mb-4 glass-card bg-card/30 backdrop-blur-sm"
-          variants={itemVariants}
-        >
-          <ScrollArea className="h-full pr-4">
-            {messages.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center">
-                <p className="text-muted-foreground mb-4">
-                  {language === 'en' 
-                    ? 'Start chatting with Vyānamana, your mental wellbeing companion.'
-                    : 'व्यानमन के साथ चैट शुरू करें, आपका मानसिक स्वास्थ्य साथी।'}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {language === 'en'
-                    ? 'Your conversations are private and secure.'
-                    : 'आपकी बातचीत निजी और सुरक्षित है।'}
-                </p>
-              </div>
-            ) : (
-              <>
-                {messages.map(message => (
-                  <ChatMessage key={message.id} message={message} />
-                ))}
-                
-                {isLoading && (
-                  <div className="flex justify-start mb-4">
-                    <div className="chat-bubble-bot">
-                      <div className="flex space-x-2">
-                        <div className="w-2 h-2 rounded-full bg-current animate-bounce"></div>
-                        <div className="w-2 h-2 rounded-full bg-current animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                        <div className="w-2 h-2 rounded-full bg-current animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </>
-            )}
-          </ScrollArea>
-        </motion.div>
+        <ChatContainer 
+          messages={messages} 
+          isLoading={isLoading} 
+          messagesEndRef={messagesEndRef} 
+        />
         
         <motion.div 
           className="sticky bottom-0 bg-background pt-2"
-          variants={itemVariants}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.5 }
+            }
+          }}
         >
           <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
           
-          {messages.length > 10 && (
-            <div className="flex justify-center mt-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  if (messagesEndRef.current) {
-                    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                className="flex items-center gap-2"
-              >
-                <ArrowUp className="h-4 w-4" />
-                {language === 'en' ? 'Scroll to bottom' : 'नीचे स्क्रॉल करें'}
-              </Button>
-            </div>
-          )}
+          <ScrollButton 
+            onClick={scrollToBottom} 
+            visible={messages.length > 10} 
+          />
         </motion.div>
       </div>
       
