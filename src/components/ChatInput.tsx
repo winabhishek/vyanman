@@ -40,12 +40,13 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading = false 
     if (!message.trim() || isLoading) return;
     
     onSendMessage(message.trim());
-    setMessage('');
+    setMessage(''); // Explicitly clear the input after sending
     
     // Reset textarea height
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.overflowY = 'hidden';
+      textareaRef.current.focus(); // Refocus the textarea for better UX
     }
   };
   
