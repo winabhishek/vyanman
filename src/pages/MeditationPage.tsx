@@ -1,10 +1,19 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Play, Pause, Clock } from 'lucide-react';
+import { Play, Pause, Clock, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import ThreeBreathingAnimation from '@/components/ThreeBreathingAnimation';
+import { Slider } from '@/components/ui/slider';
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext 
+} from '@/components/ui/carousel';
 
 // Mock data for meditations
 const MEDITATIONS = [
@@ -32,10 +41,42 @@ const MEDITATIONS = [
     category: 'intermediate',
     thumbnail: 'https://images.unsplash.com/photo-1516914589923-f105f1539f8d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fG1lZGl0YXRpb258ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60',
   },
+  {
+    id: '4',
+    title: 'Mindful Walking',
+    description: 'Connect with your body through mindful movement',
+    duration: 12,
+    category: 'advanced',
+    thumbnail: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60',
+  },
+  {
+    id: '5',
+    title: 'Sleep Meditation',
+    description: 'Gentle guidance to help you drift into restful sleep',
+    duration: 15,
+    category: 'beginner',
+    thumbnail: 'https://images.unsplash.com/photo-1520206183501-b80df61043c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60',
+  },
+];
+
+// Background sounds for meditation
+const BACKGROUND_SOUNDS = [
+  { id: 'nature', name: 'Nature Sounds', icon: '🌳' },
+  { id: 'rain', name: 'Gentle Rain', icon: '🌧️' },
+  { id: 'waves', name: 'Ocean Waves', icon: '🌊' },
+  { id: 'white-noise', name: 'White Noise', icon: '🌫️' },
+  { id: 'none', name: 'No Sound', icon: '🔇' },
 ];
 
 const MeditationPage = () => {
   const { t } = useLanguage();
+  const [activeMeditation, setActiveMeditation] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(300); // 5 minutes in seconds
+  const [volume, setVolume] = useState(70);
+  const [isMuted, setIsMuted] = useState(false);
+  const [selectedSound, setSelectedSound] = useState(BACKGROUND_SOUNDS[0].id);
   
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -52,10 +93,30 @@ const MeditationPage = () => {
     visible: { y: 0, opacity: 1, transition: { duration: 0.5 } }
   };
   
-  // Placeholder for the actual meditation player functionality
   const startMeditation = (id: string) => {
-    console.log(`Starting meditation with ID: ${id}`);
-    // This would integrate with actual audio/video player 
+    const meditation = MEDITATIONS.find(m => m.id === id);
+    if (meditation) {
+      setActiveMeditation(id);
+      setDuration(meditation.duration * 60);
+      setCurrentTime(0);
+      setIsPlaying(true);
+      // This would integrate with actual audio player
+      console.log(`Starting meditation with ID: ${id}`);
+    }
+  };
+  
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+  
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+  };
+  
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
   
   return (
@@ -74,48 +135,179 @@ const MeditationPage = () => {
         </p>
       </motion.div>
       
-      <motion.div 
+      {/* 3D Breathing Animation */}
+      <motion.section
         variants={itemVariants}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        className="mb-16 relative"
       >
-        {MEDITATIONS.map((meditation) => (
-          <Card key={meditation.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300 glass-card">
-            <div className="relative h-48 overflow-hidden">
-              <img 
-                src={meditation.thumbnail} 
-                alt={meditation.title} 
-                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-              <div className="absolute bottom-2 right-2 bg-background/70 backdrop-blur-sm rounded-full px-2 py-1 text-sm flex items-center">
-                <Clock className="h-3 w-3 mr-1" />
-                <span>{meditation.duration} min</span>
-              </div>
-            </div>
-            
-            <CardHeader>
-              <CardTitle>{meditation.title}</CardTitle>
-              <CardDescription>{meditation.category}</CardDescription>
+        <div className="absolute inset-0 bg-gradient-radial from-lavender/20 to-transparent -z-10 rounded-3xl blur-3xl"></div>
+        <h2 className="text-2xl font-bold mb-6 text-center">Breathing Exercise</h2>
+        <ThreeBreathingAnimation />
+      </motion.section>
+      
+      {/* Featured Meditations Carousel */}
+      <motion.section
+        variants={itemVariants}
+        className="mb-16"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Featured Meditations</h2>
+        <Carousel className="w-full">
+          <CarouselContent>
+            {MEDITATIONS.map((meditation) => (
+              <CarouselItem key={meditation.id} className="md:basis-1/2 lg:basis-1/3">
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 glass-card h-full">
+                  <div className="relative h-48 overflow-hidden">
+                    <img 
+                      src={meditation.thumbnail} 
+                      alt={meditation.title} 
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+                    <div className="absolute bottom-2 right-2 bg-background/70 backdrop-blur-sm rounded-full px-2 py-1 text-sm flex items-center">
+                      <Clock className="h-3 w-3 mr-1" />
+                      <span>{meditation.duration} min</span>
+                    </div>
+                  </div>
+                  
+                  <CardHeader>
+                    <CardTitle>{meditation.title}</CardTitle>
+                    <CardDescription>{meditation.category}</CardDescription>
+                  </CardHeader>
+                  
+                  <CardContent>
+                    <p className="text-sm">{meditation.description}</p>
+                  </CardContent>
+                  
+                  <CardFooter>
+                    <Button 
+                      onClick={() => startMeditation(meditation.id)}
+                      className="w-full bg-vyanamana-500 hover:bg-vyanamana-600"
+                    >
+                      <Play className="h-4 w-4 mr-2" />
+                      Start Meditation
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      </motion.section>
+      
+      {/* Meditation Player */}
+      {activeMeditation && (
+        <motion.section
+          variants={itemVariants}
+          className="mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card className="glass-card overflow-hidden border border-vyanamana-200 dark:border-vyanamana-800">
+            <CardHeader className="bg-gradient-to-r from-vyanamana-500 to-vyanamana-700 text-white">
+              <CardTitle>
+                {MEDITATIONS.find(m => m.id === activeMeditation)?.title || "Meditation"}
+              </CardTitle>
+              <CardDescription className="text-white/80">
+                {MEDITATIONS.find(m => m.id === activeMeditation)?.description}
+              </CardDescription>
             </CardHeader>
             
-            <CardContent>
-              <p className="text-sm">{meditation.description}</p>
+            <CardContent className="p-6">
+              {/* Progress Bar */}
+              <div className="mb-4">
+                <div className="relative pt-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <span className="text-xs font-semibold inline-block text-vyanamana-600">
+                        {formatTime(currentTime)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold inline-block text-vyanamana-600">
+                        {formatTime(duration)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="overflow-hidden h-2 mb-4 flex rounded bg-vyanamana-200 dark:bg-vyanamana-900">
+                    <motion.div 
+                      className="bg-gradient-to-r from-vyanamana-500 to-vyanamana-600" 
+                      style={{ width: `${(currentTime / duration) * 100}%` }}
+                      animate={{ width: `${(currentTime / duration) * 100}%` }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Controls */}
+              <div className="flex justify-center items-center space-x-6 mb-8">
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  onClick={toggleMute}
+                  className="hover:text-vyanamana-500"
+                >
+                  {isMuted ? (
+                    <VolumeX className="h-6 w-6" />
+                  ) : (
+                    <Volume2 className="h-6 w-6" />
+                  )}
+                </Button>
+                
+                <Button 
+                  size="icon" 
+                  className="h-14 w-14 rounded-full bg-vyanamana-500 hover:bg-vyanamana-600 text-white shadow-lg"
+                  onClick={togglePlayPause}
+                >
+                  {isPlaying ? (
+                    <Pause className="h-6 w-6" />
+                  ) : (
+                    <Play className="h-6 w-6 ml-1" />
+                  )}
+                </Button>
+                
+                <div className="w-24">
+                  <Slider
+                    value={[volume]}
+                    max={100}
+                    step={1}
+                    className={isMuted ? "opacity-50" : ""}
+                    onValueChange={(vals) => setVolume(vals[0])}
+                  />
+                </div>
+              </div>
+              
+              {/* Background Sounds */}
+              <div>
+                <h4 className="text-sm font-medium mb-3">Background Sound</h4>
+                <div className="flex flex-wrap gap-2">
+                  {BACKGROUND_SOUNDS.map(sound => (
+                    <Button 
+                      key={sound.id}
+                      variant={selectedSound === sound.id ? "default" : "outline"}
+                      size="sm"
+                      className={selectedSound === sound.id 
+                        ? "bg-vyanamana-500 hover:bg-vyanamana-600" 
+                        : "hover:border-vyanamana-300"
+                      }
+                      onClick={() => setSelectedSound(sound.id)}
+                    >
+                      <span className="mr-2">{sound.icon}</span>
+                      {sound.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </CardContent>
-            
-            <CardFooter>
-              <Button 
-                onClick={() => startMeditation(meditation.id)}
-                className="w-full bg-vyanamana-500 hover:bg-vyanamana-600"
-              >
-                <Play className="h-4 w-4 mr-2" />
-                Start Meditation
-              </Button>
-            </CardFooter>
           </Card>
-        ))}
-      </motion.div>
+        </motion.section>
+      )}
       
-      <motion.div 
+      {/* Benefits Section */}
+      <motion.section 
         variants={itemVariants}
         className="mt-16 text-center p-8 rounded-xl glass-card"
       >
@@ -160,7 +352,7 @@ const MeditationPage = () => {
             <p className="text-sm text-muted-foreground">Sharpen concentration and enhance attention span</p>
           </div>
         </div>
-      </motion.div>
+      </motion.section>
     </motion.div>
   );
 };

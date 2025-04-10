@@ -1,3 +1,4 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -11,11 +12,13 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em rgba(155, 135, 245, 0.7));
 }
+
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em rgba(51, 195, 240, 0.7));
 }
 
 @keyframes logo-spin {
@@ -39,4 +42,86 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Premium UI Elements */
+.premium-button {
+  background: linear-gradient(135deg, #9b87f5 0%, #33C3F0 100%);
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(155, 135, 245, 0.25);
+}
+
+.premium-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(155, 135, 245, 0.35);
+}
+
+.glass-card-premium {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  transition: all 0.3s ease;
+}
+
+.glass-card-premium:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(31, 38, 135, 0.2);
+}
+
+/* Animated gradients */
+.animated-gradient {
+  background: linear-gradient(-45deg, #9b87f5, #33C3F0, #0EA5E9, #E5DEFF);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Breathing animation */
+.breathing-element {
+  animation: breathing 6s ease-in-out infinite;
+}
+
+@keyframes breathing {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Glow effect */
+.glow-effect {
+  box-shadow: 0 0 15px rgba(155, 135, 245, 0.5);
+  transition: box-shadow 0.3s ease;
+}
+
+.glow-effect:hover {
+  box-shadow: 0 0 25px rgba(155, 135, 245, 0.8);
+}
+
+/* Text gradient */
+.text-gradient {
+  background: linear-gradient(to right, #9b87f5, #33C3F0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }

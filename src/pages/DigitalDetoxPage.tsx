@@ -25,13 +25,13 @@ const DETOX_TIPS = [
   {
     id: '3',
     title: 'Create Phone-Free Zones',
-    description: 'Designate areas in your home where phones and devices aren't allowed, like the dinner table or bedroom.',
+    description: 'Designate areas in your home where phones and devices aren\'t allowed, like the dinner table or bedroom.',
     icon: Check,
   },
   {
     id: '4',
     title: 'Practice Mindful Scrolling',
-    description: 'Before opening an app, pause and ask yourself why you're doing it and if it's necessary.',
+    description: 'Before opening an app, pause and ask yourself why you\'re doing it and if it\'s necessary.',
     icon: Heart,
   },
 ];
@@ -259,6 +259,123 @@ const DigitalDetoxPage = () => {
               Save Reflection
             </Button>
           </CardFooter>
+        </Card>
+      </motion.section>
+      
+      {/* Screen Time Tracking */}
+      <motion.section 
+        variants={itemVariants}
+        className="mb-16"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Screen Time Tracking</h2>
+        <Card className="glass-card p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Today's Usage</h3>
+              <div className="relative h-48 w-48 mx-auto">
+                <svg className="w-full h-full" viewBox="0 0 100 100">
+                  <circle 
+                    cx="50" 
+                    cy="50" 
+                    r="45" 
+                    fill="none" 
+                    stroke="#e2e8f0" 
+                    strokeWidth="10" 
+                  />
+                  <circle 
+                    cx="50" 
+                    cy="50" 
+                    r="45" 
+                    fill="none" 
+                    stroke="hsl(var(--vyanamana-500))" 
+                    strokeWidth="10" 
+                    strokeDasharray="283" 
+                    strokeDashoffset="70" 
+                    transform="rotate(-90 50 50)" 
+                  />
+                  <text 
+                    x="50" 
+                    y="55" 
+                    textAnchor="middle" 
+                    dominantBaseline="middle" 
+                    className="text-xl font-bold fill-current"
+                  >
+                    3h 24m
+                  </text>
+                </svg>
+                <div className="text-center mt-2 text-muted-foreground">Daily Target: 5h</div>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-4">App Breakdown</h3>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span>Social Media</span>
+                    <span className="text-vyanamana-500">1h 45m</span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                    <div className="bg-vyanamana-500 h-2.5 rounded-full" style={{ width: '60%' }}></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span>Productivity</span>
+                    <span className="text-vyanamana-600">45m</span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                    <div className="bg-vyanamana-600 h-2.5 rounded-full" style={{ width: '25%' }}></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span>Entertainment</span>
+                    <span className="text-vyanamana-400">54m</span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                    <div className="bg-vyanamana-400 h-2.5 rounded-full" style={{ width: '35%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </motion.section>
+      
+      {/* Mood vs Screen Time Graph */}
+      <motion.section 
+        variants={itemVariants}
+        className="mb-16"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Mood vs Screen Time</h2>
+        <Card className="glass-card p-6">
+          <div className="h-64 flex items-center justify-center">
+            <div className="text-center p-6 border border-dashed border-muted-foreground rounded-lg w-full">
+              <Smartphone className="h-8 w-8 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-muted-foreground">Mood vs screen time correlation graph would appear here</p>
+              <p className="text-sm text-muted-foreground mt-2">Track your mood and screen time regularly to see trends</p>
+            </div>
+          </div>
+          <div className="mt-6 grid grid-cols-2 gap-4">
+            <Card className="p-4 bg-muted/50">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-sm text-muted-foreground">Average Mood</p>
+                  <p className="text-xl font-semibold">Positive</p>
+                </div>
+                <div className="text-2xl">😊</div>
+              </div>
+            </Card>
+            <Card className="p-4 bg-muted/50">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-sm text-muted-foreground">When Screen Time Below 3h</p>
+                  <p className="text-xl font-semibold">Very Positive</p>
+                </div>
+                <div className="text-2xl">😄</div>
+              </div>
+            </Card>
+          </div>
         </Card>
       </motion.section>
     </motion.div>
