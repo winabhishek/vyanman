@@ -21,7 +21,7 @@ import Profile from "./pages/Profile";
 
 // Layout Components
 import Header from "./components/Header";
-import Footer from "./components/Footer";
+import FooterNew from "./components/FooterNew";
 
 // Create QueryClient with better defaults for API interactions
 const queryClient = new QueryClient({
@@ -59,7 +59,7 @@ const App = () => (
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </main>
-                <Footer />
+                <FooterNew />
               </div>
             </BrowserRouter>
           </TooltipProvider>

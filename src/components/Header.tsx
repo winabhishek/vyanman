@@ -5,21 +5,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
+import AuthButton from './auth/AuthButton';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
-import { Menu, X, MessageCircle, BarChart, User, LogOut, Headphones, Smartphone } from 'lucide-react';
+  Menu, X, MessageCircle, BarChart, Headphones, Smartphone 
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAuthenticated, user, logout } = useAuth();
   const location = useLocation();
   const { t } = useLanguage();
 
@@ -29,11 +23,6 @@ const Header: React.FC = () => {
 
   const closeMenu = () => {
     setIsMenuOpen(false);
-  };
-
-  const handleLogout = async () => {
-    await logout();
-    closeMenu();
   };
 
   const navLinks = [
@@ -50,10 +39,10 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-background/80 border-b border-border/40">
+    <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-background/80 border-b border-border/40 shadow-sm">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2" onClick={closeMenu}>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center shadow-sm hover:shadow-md transition-all">
             <span className="text-white font-bold text-sm">V</span>
           </div>
           <span className="font-heading font-bold text-xl gradient-heading">
@@ -68,7 +57,7 @@ const Header: React.FC = () => {
               <Button
                 variant={location.pathname === link.path ? "default" : "ghost"}
                 size="sm"
-                className="flex items-center gap-1 relative overflow-hidden group"
+                className="flex items-center gap-1 relative overflow-hidden group hover:shadow-sm transition-shadow rounded-lg"
               >
                 <span className="flex items-center gap-1">
                   {link.icon}
@@ -88,49 +77,24 @@ const Header: React.FC = () => {
             </Link>
           ))}
           
-          <div className="flex items-center ml-2 gap-1">
+          <div className="flex items-center ml-3 gap-2">
             <ThemeToggle />
             <LanguageToggle />
-            
-            {isAuthenticated ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full ml-1">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={`https://api.dicebear.com/7.x/micah/svg?seed=${user?.name || 'anonymous'}`} />
-                      <AvatarFallback>{user?.name?.charAt(0) || 'A'}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem asChild>
-                    <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
-                      <User className="h-4 w-4" />
-                      <span>{t('nav.profile')}</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer">
-                    <LogOut className="h-4 w-4" />
-                    <span>{t('nav.logout')}</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Link to="/login">
-                <Button variant="outline" size="sm">
-                  {t('nav.login')}
-                </Button>
-              </Link>
-            )}
+            <AuthButton />
           </div>
         </nav>
 
         {/* Mobile Menu Button */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-3 md:hidden">
           <ThemeToggle />
           <LanguageToggle />
-          <Button variant="ghost" size="icon" onClick={toggleMenu}>
+          <AuthButton />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleMenu}
+            className="rounded-full hover:shadow-sm transition-shadow"
+          >
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
@@ -146,12 +110,12 @@ const Header: React.FC = () => {
             animate="visible"
             exit="exit"
           >
-            <nav className="flex flex-col gap-2 p-4 bg-background border-b border-border/40">
+            <nav className="flex flex-col gap-2 p-4 bg-background border-b border-border/40 shadow-md">
               {navLinks.map((link) => (
                 <Link key={link.path} to={link.path} onClick={closeMenu}>
                   <Button
                     variant={location.pathname === link.path ? "default" : "ghost"}
-                    className="w-full justify-start gap-2 relative overflow-hidden"
+                    className="w-full justify-start gap-2 relative overflow-hidden hover:shadow-sm transition-shadow rounded-lg"
                   >
                     {link.icon}
                     {link.label}
@@ -168,31 +132,6 @@ const Header: React.FC = () => {
                   </Button>
                 </Link>
               ))}
-              
-              {isAuthenticated ? (
-                <>
-                  <Link to="/profile" onClick={closeMenu}>
-                    <Button variant="ghost" className="w-full justify-start gap-2">
-                      <User className="h-4 w-4" />
-                      {t('nav.profile')}
-                    </Button>
-                  </Link>
-                  <Button 
-                    variant="ghost" 
-                    className="w-full justify-start gap-2 text-destructive" 
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="h-4 w-4" />
-                    {t('nav.logout')}
-                  </Button>
-                </>
-              ) : (
-                <Link to="/login" onClick={closeMenu}>
-                  <Button variant="outline" className="w-full">
-                    {t('nav.login')}
-                  </Button>
-                </Link>
-              )}
             </nav>
           </motion.div>
         )}

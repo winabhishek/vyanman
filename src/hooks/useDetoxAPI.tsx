@@ -62,13 +62,13 @@ export const useDetoxAPI = () => {
         {
           id: '4',
           title: 'Mindful Social Media',
-          content: 'Before opening any social app, take three deep breaths and set an intention for why you're logging in.',
+          content: 'Before opening any social app, take three deep breaths and set an intention for why you\'re logging in.',
           icon: 'instagram'
         },
         {
           id: '5',
           title: 'App Time Limits',
-          content: 'Use your phone's built-in screen time tools to set daily limits on apps that tend to drain your energy.',
+          content: 'Use your phone\'s built-in screen time tools to set daily limits on apps that tend to drain your energy.',
           icon: 'clock'
         }
       ];
