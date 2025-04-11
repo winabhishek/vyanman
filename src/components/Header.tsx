@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { Menu, X, MessageCircle, BarChart, User, LogOut } from 'lucide-react';
+import { Menu, X, MessageCircle, BarChart, User, LogOut, Headphones, Smartphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Header: React.FC = () => {
@@ -39,6 +39,8 @@ const Header: React.FC = () => {
   const navLinks = [
     { path: '/chat', label: t('nav.chat'), icon: <MessageCircle className="h-4 w-4" /> },
     { path: '/mood-tracker', label: t('nav.mood'), icon: <BarChart className="h-4 w-4" /> },
+    { path: '/meditation', label: t('nav.meditation'), icon: <Headphones className="h-4 w-4" /> },
+    { path: '/digital-detox', label: t('nav.detox'), icon: <Smartphone className="h-4 w-4" /> },
   ];
 
   const menuVariants = {
@@ -66,10 +68,22 @@ const Header: React.FC = () => {
               <Button
                 variant={location.pathname === link.path ? "default" : "ghost"}
                 size="sm"
-                className="flex items-center gap-1"
+                className="flex items-center gap-1 relative overflow-hidden group"
               >
-                {link.icon}
-                <span>{link.label}</span>
+                <span className="flex items-center gap-1">
+                  {link.icon}
+                  <span>{link.label}</span>
+                </span>
+                
+                {location.pathname === link.path && (
+                  <motion.div 
+                    className="absolute bottom-0 left-0 h-0.5 w-full bg-vyanamana-500"
+                    layoutId="navbar-indicator"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                )}
               </Button>
             </Link>
           ))}
@@ -137,10 +151,20 @@ const Header: React.FC = () => {
                 <Link key={link.path} to={link.path} onClick={closeMenu}>
                   <Button
                     variant={location.pathname === link.path ? "default" : "ghost"}
-                    className="w-full justify-start gap-2"
+                    className="w-full justify-start gap-2 relative overflow-hidden"
                   >
                     {link.icon}
                     {link.label}
+                    
+                    {location.pathname === link.path && (
+                      <motion.div 
+                        className="absolute bottom-0 left-0 h-0.5 w-full bg-vyanamana-500"
+                        layoutId="navbar-indicator-mobile"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    )}
                   </Button>
                 </Link>
               ))}

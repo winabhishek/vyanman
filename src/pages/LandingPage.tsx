@@ -1,10 +1,10 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion, useAnimation } from 'framer-motion';
-import { ArrowRight, MessageCircle, BarChart, Shield, Activity, Star, Heart } from 'lucide-react';
+import { ArrowRight, MessageCircle, BarChart, Shield, Activity, Star, Heart, Headphones, Smartphone } from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
+import ThreeDSphere from '@/components/ThreeDSphere';
 
 const LandingPage: React.FC = () => {
   const controls = useAnimation();
@@ -176,6 +176,35 @@ const LandingPage: React.FC = () => {
           </motion.div>
         </section>
         
+        {/* 3D Visualization Section */}
+        <section className="py-16 relative overflow-hidden bg-gradient-to-b from-vyanamana-50/50 to-white dark:from-vyanamana-950/30 dark:to-background">
+          <div className="container mx-auto px-4">
+            <motion.div 
+              className="text-center mb-10"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-gradient-premium">Visualize Your Journey</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Watch as your mental landscape transforms through our interactive visualizations
+              </p>
+            </motion.div>
+            
+            <ThreeDSphere className="glass-card mx-auto max-w-4xl shadow-xl" />
+            
+            <div className="text-center mt-8">
+              <Link to="/meditation">
+                <Button variant="outline" className="mt-4 border-vyanamana-300 dark:border-vyanamana-700 hover:bg-vyanamana-100/30 dark:hover:bg-vyanamana-900/30">
+                  <Headphones className="mr-2 h-4 w-4" />
+                  Try Guided Meditation
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+        
         {/* Features Section */}
         <section className="py-24 bg-vyanamana-50/50 dark:bg-vyanamana-950/30 relative overflow-hidden">
           <div className="absolute inset-0 bg-mesh-gradient opacity-30"></div>
@@ -196,7 +225,7 @@ const LandingPage: React.FC = () => {
               </p>
             </motion.div>
             
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-4 gap-8">
               <motion.div 
                 className="glass-card rounded-2xl p-8 shadow-glass hover:shadow-premium transition-all duration-300"
                 variants={itemVariants}
@@ -205,10 +234,16 @@ const LandingPage: React.FC = () => {
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-vyanamana-100 to-vyanamana-200 dark:from-vyanamana-900 dark:to-vyanamana-800 text-vyanamana-600 dark:text-lavender flex items-center justify-center mb-6 shadow-md">
                   <MessageCircle className="h-7 w-7" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Supportive AI Companion</h3>
+                <h3 className="text-xl font-semibold mb-3">AI Companion</h3>
                 <p className="text-muted-foreground">
-                  Chat with our empathetic AI that's designed to listen, provide support, and offer evidence-based coping strategies in English or Hindi.
+                  Chat with our empathetic AI that's designed to listen, provide support, and offer evidence-based coping strategies.
                 </p>
+                <Link to="/chat" className="inline-block mt-4">
+                  <Button variant="link" className="p-0 h-auto text-vyanamana-600 dark:text-vyanamana-400">
+                    Start chatting
+                    <ArrowRight className="ml-1 h-3 w-3" />
+                  </Button>
+                </Link>
               </motion.div>
               
               <motion.div 
@@ -221,8 +256,14 @@ const LandingPage: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Mood Tracking</h3>
                 <p className="text-muted-foreground">
-                  Log your emotions daily and visualize patterns over time to gain insights into your emotional wellbeing and identify triggers.
+                  Log your emotions daily and visualize patterns over time to gain insights into your emotional wellbeing.
                 </p>
+                <Link to="/mood-tracker" className="inline-block mt-4">
+                  <Button variant="link" className="p-0 h-auto text-vyanamana-600 dark:text-vyanamana-400">
+                    Track mood
+                    <ArrowRight className="ml-1 h-3 w-3" />
+                  </Button>
+                </Link>
               </motion.div>
               
               <motion.div 
@@ -231,12 +272,38 @@ const LandingPage: React.FC = () => {
                 whileHover={{ y: -5 }}
               >
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-vyanamana-100 to-vyanamana-200 dark:from-vyanamana-900 dark:to-vyanamana-800 text-vyanamana-600 dark:text-lavender flex items-center justify-center mb-6 shadow-md">
-                  <Shield className="h-7 w-7" />
+                  <Headphones className="h-7 w-7" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Private & Secure</h3>
+                <h3 className="text-xl font-semibold mb-3">Meditation</h3>
                 <p className="text-muted-foreground">
-                  Your mental health data is private. We use strong encryption and never share your data with third parties.
+                  Practice mindfulness with guided meditation sessions designed to calm your mind and reduce anxiety.
                 </p>
+                <Link to="/meditation" className="inline-block mt-4">
+                  <Button variant="link" className="p-0 h-auto text-vyanamana-600 dark:text-vyanamana-400">
+                    Meditate now
+                    <ArrowRight className="ml-1 h-3 w-3" />
+                  </Button>
+                </Link>
+              </motion.div>
+              
+              <motion.div 
+                className="glass-card rounded-2xl p-8 shadow-glass hover:shadow-premium transition-all duration-300"
+                variants={itemVariants}
+                whileHover={{ y: -5 }}
+              >
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-vyanamana-100 to-vyanamana-200 dark:from-vyanamana-900 dark:to-vyanamana-800 text-vyanamana-600 dark:text-lavender flex items-center justify-center mb-6 shadow-md">
+                  <Smartphone className="h-7 w-7" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Digital Detox</h3>
+                <p className="text-muted-foreground">
+                  Reduce digital anxiety with screen time tracking and tips for establishing healthier tech habits.
+                </p>
+                <Link to="/digital-detox" className="inline-block mt-4">
+                  <Button variant="link" className="p-0 h-auto text-vyanamana-600 dark:text-vyanamana-400">
+                    Start detox
+                    <ArrowRight className="ml-1 h-3 w-3" />
+                  </Button>
+                </Link>
               </motion.div>
             </div>
           </motion.div>

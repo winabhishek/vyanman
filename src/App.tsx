@@ -23,7 +23,16 @@ import Profile from "./pages/Profile";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
-const queryClient = new QueryClient();
+// Create QueryClient with better defaults for API interactions
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60000, // 1 minute
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  }
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
