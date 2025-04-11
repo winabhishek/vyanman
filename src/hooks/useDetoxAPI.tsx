@@ -45,32 +45,32 @@ export const useDetoxAPI = () => {
           id: '1',
           title: 'Set Phone-Free Zones',
           content: 'Designate spaces in your home as phone-free zones, such as your bedroom or dining area.',
-          icon: 'home',
+          icon: 'home'
         },
         {
           id: '2',
           title: 'Digital Sunset',
           content: 'Turn off screens at least 1 hour before bedtime to improve sleep quality.',
-          icon: 'moon',
+          icon: 'moon'
         },
         {
           id: '3',
           title: 'Notification Detox',
           content: 'Turn off non-essential notifications to reduce distractions and anxiety triggers.',
-          icon: 'bell-off',
+          icon: 'bell-off'
         },
         {
           id: '4',
           title: 'Mindful Social Media',
           content: 'Before opening any social app, take three deep breaths and set an intention for why you're logging in.',
-          icon: 'instagram',
+          icon: 'instagram'
         },
         {
           id: '5',
           title: 'App Time Limits',
           content: 'Use your phone's built-in screen time tools to set daily limits on apps that tend to drain your energy.',
-          icon: 'clock',
-        },
+          icon: 'clock'
+        }
       ];
       
       setIsLoading(false);
@@ -113,7 +113,7 @@ export const useDetoxAPI = () => {
             social: parseFloat((hours * (0.3 + Math.random() * 0.2)).toFixed(1)),
             productivity: parseFloat((hours * (0.2 + Math.random() * 0.1)).toFixed(1)),
             entertainment: parseFloat((hours * (0.25 + Math.random() * 0.15)).toFixed(1)),
-            other: parseFloat((hours * (0.1 + Math.random() * 0.1)).toFixed(1)),
+            other: parseFloat((hours * (0.1 + Math.random() * 0.1)).toFixed(1))
           }
         };
       });
