@@ -7,6 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import ScreenTimeTracker from '@/components/ScreenTimeTracker';
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious 
+} from '@/components/ui/carousel';
 
 // Mock data for detox tips
 const DETOX_TIPS = [
@@ -70,6 +78,40 @@ const JOURNAL_PROMPTS = [
   "When do I find myself mindlessly reaching for my phone, and what triggers this behavior?",
 ];
 
+// Digital Wellbeing Tips for Carousel
+const WELLBEING_TIPS = [
+  {
+    title: "Set App Limits",
+    description: "Use your phone's built-in tools to set time limits for social media and entertainment apps.",
+    icon: "⏱️"
+  },
+  {
+    title: "Grayscale Mode",
+    description: "Turn on grayscale mode to make your phone less visually appealing and reduce the dopamine hit.",
+    icon: "📱"
+  },
+  {
+    title: "Notification Batching",
+    description: "Configure your notifications to arrive in batches at specific times rather than constantly.",
+    icon: "🔔"
+  },
+  {
+    title: "Digital Sunset",
+    description: "Stop using screens 1-2 hours before bedtime to improve sleep quality.",
+    icon: "🌙"
+  },
+  {
+    title: "Phone-Free Meals",
+    description: "Make mealtimes a phone-free zone to enjoy your food and company fully.",
+    icon: "🍽️"
+  },
+  {
+    title: "Mindful Mornings",
+    description: "Wait 30 minutes after waking up before checking your phone.",
+    icon: "🌅"
+  }
+];
+
 const DigitalDetoxPage = () => {
   const { t } = useLanguage();
   const [activeChallenge, setActiveChallenge] = useState(false);
@@ -126,6 +168,37 @@ const DigitalDetoxPage = () => {
         </p>
       </motion.div>
       
+      {/* Digital Wellbeing Tips Carousel */}
+      <motion.section
+        variants={itemVariants}
+        className="mb-16"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Digital Wellbeing Tips</h2>
+        <Carousel className="w-full">
+          <CarouselContent>
+            {WELLBEING_TIPS.map((tip, index) => (
+              <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  <Card className="glass-card-premium h-full flex flex-col">
+                    <CardHeader>
+                      <div className="text-3xl mb-2">{tip.icon}</div>
+                      <CardTitle className="text-xl">{tip.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground">{tip.description}</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="flex justify-center mt-4 gap-4">
+            <CarouselPrevious className="relative static translate-y-0 left-0" />
+            <CarouselNext className="relative static translate-y-0 right-0" />
+          </div>
+        </Carousel>
+      </motion.section>
+      
       {/* Daily Challenge Section */}
       <motion.section 
         variants={itemVariants}
@@ -172,6 +245,15 @@ const DigitalDetoxPage = () => {
             )}
           </CardContent>
         </Card>
+      </motion.section>
+      
+      {/* Screen Time Tracking */}
+      <motion.section 
+        variants={itemVariants}
+        className="mb-16"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Screen Time Tracking</h2>
+        <ScreenTimeTracker />
       </motion.section>
       
       {/* Tips Section */}
@@ -259,86 +341,6 @@ const DigitalDetoxPage = () => {
               Save Reflection
             </Button>
           </CardFooter>
-        </Card>
-      </motion.section>
-      
-      {/* Screen Time Tracking */}
-      <motion.section 
-        variants={itemVariants}
-        className="mb-16"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Screen Time Tracking</h2>
-        <Card className="glass-card p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Today's Usage</h3>
-              <div className="relative h-48 w-48 mx-auto">
-                <svg className="w-full h-full" viewBox="0 0 100 100">
-                  <circle 
-                    cx="50" 
-                    cy="50" 
-                    r="45" 
-                    fill="none" 
-                    stroke="#e2e8f0" 
-                    strokeWidth="10" 
-                  />
-                  <circle 
-                    cx="50" 
-                    cy="50" 
-                    r="45" 
-                    fill="none" 
-                    stroke="hsl(var(--vyanamana-500))" 
-                    strokeWidth="10" 
-                    strokeDasharray="283" 
-                    strokeDashoffset="70" 
-                    transform="rotate(-90 50 50)" 
-                  />
-                  <text 
-                    x="50" 
-                    y="55" 
-                    textAnchor="middle" 
-                    dominantBaseline="middle" 
-                    className="text-xl font-bold fill-current"
-                  >
-                    3h 24m
-                  </text>
-                </svg>
-                <div className="text-center mt-2 text-muted-foreground">Daily Target: 5h</div>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-4">App Breakdown</h3>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span>Social Media</span>
-                    <span className="text-vyanamana-500">1h 45m</span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                    <div className="bg-vyanamana-500 h-2.5 rounded-full" style={{ width: '60%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span>Productivity</span>
-                    <span className="text-vyanamana-600">45m</span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                    <div className="bg-vyanamana-600 h-2.5 rounded-full" style={{ width: '25%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span>Entertainment</span>
-                    <span className="text-vyanamana-400">54m</span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                    <div className="bg-vyanamana-400 h-2.5 rounded-full" style={{ width: '35%' }}></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </Card>
       </motion.section>
       
