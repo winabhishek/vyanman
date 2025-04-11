@@ -13,23 +13,22 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Check if user has a theme preference in localStorage or prefers dark mode
-  const [theme, setTheme] = useState<Theme>(() => {
+  // Declare the useState hook correctly
+  const [theme, setTheme] = useState<Theme>('light');
+  
+  // Initialize theme from localStorage or system preference on client-side only
+  useEffect(() => {
     // First check localStorage
     const savedTheme = localStorage.getItem('vyanamana-theme');
     
     if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
-      return savedTheme as Theme;
+      setTheme(savedTheme as Theme);
     }
-    
     // Then check media query
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
+    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme('dark');
     }
-    
-    // Default to light
-    return 'light';
-  });
+  }, []);
   
   // Listen for system theme preference changes
   useEffect(() => {
