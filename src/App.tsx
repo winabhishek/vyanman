@@ -20,6 +20,11 @@ import About from "./pages/About";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
+// Add Google Fonts - these will be loaded via our index.css import
+// The fonts imported are:
+// - Inter: Clean, modern sans-serif for body text
+// - Poppins: Contemporary, friendly heading font
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

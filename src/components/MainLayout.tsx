@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 import { Button } from '@/components/ui/button';
@@ -32,15 +32,34 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     { path: '/meditation', label: 'Meditation', icon: <Headphones className="h-4 w-4" /> },
   ];
 
+  // Page transition variants
+  const pageVariants = {
+    initial: { opacity: 0, y: 10 },
+    enter: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    exit: { opacity: 0, y: -10, transition: { duration: 0.3, ease: "easeIn" } }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <header className="sticky top-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/40">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center">
+          <Link to="/" className="flex items-center gap-2 group">
+            <motion.div 
+              className="w-8 h-8 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center"
+              initial={{ scale: 1 }}
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
               <span className="text-white font-bold text-sm">V</span>
-            </div>
-            <span className="font-bold text-xl gradient-heading">Vyānamana</span>
+            </motion.div>
+            <motion.span 
+              className="font-bold text-xl gradient-heading"
+              initial={{ x: 0 }}
+              whileHover={{ x: 3 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              Vyānamana
+            </motion.span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -50,7 +69,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 <Button
                   variant={location.pathname === link.path ? "default" : "ghost"}
                   size="sm"
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 relative"
                 >
                   {link.icon}
                   <span>{link.label}</span>
@@ -74,7 +93,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </nav>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center md:hidden">
+          <div className="flex items-center md:hidden gap-2">
             <ThemeToggle />
             <Button 
               variant="ghost" 
@@ -87,45 +106,50 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </div>
 
         {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <motion.div
-            className="md:hidden border-b"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <nav className="flex flex-col p-4 gap-2">
-              {navLinks.map((link) => (
-                <Link 
-                  key={link.path} 
-                  to={link.path}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Button
-                    variant={location.pathname === link.path ? "default" : "ghost"}
-                    className="w-full justify-start gap-2"
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              className="md:hidden border-b"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <nav className="flex flex-col p-4 gap-2">
+                {navLinks.map((link) => (
+                  <Link 
+                    key={link.path} 
+                    to={link.path}
+                    onClick={() => setIsMenuOpen(false)}
                   >
-                    {link.icon}
-                    {link.label}
-                  </Button>
-                </Link>
-              ))}
-            </nav>
-          </motion.div>
-        )}
+                    <Button
+                      variant={location.pathname === link.path ? "default" : "ghost"}
+                      className="w-full justify-start gap-2"
+                    >
+                      {link.icon}
+                      {link.label}
+                    </Button>
+                  </Link>
+                ))}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
       
       <main className="flex-1">
-        <motion.div
-          key={location.pathname}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {children}
-        </motion.div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial="initial"
+            animate="enter"
+            exit="exit"
+            variants={pageVariants}
+            className="h-full"
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
       </main>
       
       <footer className="py-6 border-t border-border/40">
