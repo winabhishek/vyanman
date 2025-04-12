@@ -1,386 +1,356 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { Smartphone, Clock, Check, Heart, Instagram, Twitter, Facebook } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
-import ScreenTimeTracker from '@/components/ScreenTimeTracker';
-import { 
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious 
-} from '@/components/ui/carousel';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Slider } from '@/components/ui/slider';
+import { Leaf, Cloud, Sun, Moon, Check, Bird, Timer, Trophy, Calendar } from 'lucide-react';
 
-// Mock data for detox tips
-const DETOX_TIPS = [
-  {
-    id: '1',
-    title: 'Schedule Tech-Free Time',
-    description: 'Set aside specific times during the day when you disconnect from all digital devices.',
-    icon: Clock,
-  },
-  {
-    id: '2',
-    title: 'Turn Off Notifications',
-    description: 'Disable non-essential notifications to reduce the constant urge to check your phone.',
-    icon: Smartphone,
-  },
-  {
-    id: '3',
-    title: 'Create Phone-Free Zones',
-    description: 'Designate areas in your home where phones and devices aren\'t allowed, like the dinner table or bedroom.',
-    icon: Check,
-  },
-  {
-    id: '4',
-    title: 'Practice Mindful Scrolling',
-    description: 'Before opening an app, pause and ask yourself why you\'re doing it and if it\'s necessary.',
-    icon: Heart,
-  },
-];
-
-// Mock data for social media anxiety tips
-const SOCIAL_MEDIA_TIPS = [
-  {
-    id: '1',
-    platform: 'Instagram',
-    tip: 'Remember that Instagram posts are curated highlights, not reality. Unfollow accounts that make you feel inadequate.',
-    icon: Instagram,
-    color: 'bg-gradient-to-r from-purple-500 to-pink-500',
-  },
-  {
-    id: '2',
-    platform: 'Twitter',
-    tip: 'Use lists to curate your feed with positive content. Set time limits for how long you spend scrolling through tweets.',
-    icon: Twitter,
-    color: 'bg-gradient-to-r from-blue-400 to-blue-600',
-  },
-  {
-    id: '3',
-    platform: 'Facebook',
-    tip: 'Adjust your news feed preferences to see more of what makes you happy. Consider taking regular breaks from checking Facebook.',
-    icon: Facebook,
-    color: 'bg-gradient-to-r from-blue-600 to-blue-800',
-  },
-];
-
-// Journaling prompts
-const JOURNAL_PROMPTS = [
-  "How did I feel before and after using social media today?",
-  "What content made me feel good today, and what content made me feel anxious or inadequate?",
-  "What's one way I can improve my relationship with technology this week?",
-  "If I couldn't use social media for a week, what would I miss most and why?",
-  "When do I find myself mindlessly reaching for my phone, and what triggers this behavior?",
-];
-
-// Digital Wellbeing Tips for Carousel
-const WELLBEING_TIPS = [
-  {
-    title: "Set App Limits",
-    description: "Use your phone's built-in tools to set time limits for social media and entertainment apps.",
-    icon: "⏱️"
-  },
-  {
-    title: "Grayscale Mode",
-    description: "Turn on grayscale mode to make your phone less visually appealing and reduce the dopamine hit.",
-    icon: "📱"
-  },
-  {
-    title: "Notification Batching",
-    description: "Configure your notifications to arrive in batches at specific times rather than constantly.",
-    icon: "🔔"
-  },
-  {
-    title: "Digital Sunset",
-    description: "Stop using screens 1-2 hours before bedtime to improve sleep quality.",
-    icon: "🌙"
-  },
-  {
-    title: "Phone-Free Meals",
-    description: "Make mealtimes a phone-free zone to enjoy your food and company fully.",
-    icon: "🍽️"
-  },
-  {
-    title: "Mindful Mornings",
-    description: "Wait 30 minutes after waking up before checking your phone.",
-    icon: "🌅"
-  }
-];
-
-const DigitalDetoxPage = () => {
-  const { t } = useLanguage();
-  const [activeChallenge, setActiveChallenge] = useState(false);
-  const [journalEntry, setJournalEntry] = useState('');
-  const [currentPrompt, setCurrentPrompt] = useState(JOURNAL_PROMPTS[0]);
-  
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.5 } }
-  };
-  
-  const handleChallengeToggle = () => {
-    setActiveChallenge(!activeChallenge);
-  };
-  
-  const getNewPrompt = () => {
-    const currentIndex = JOURNAL_PROMPTS.indexOf(currentPrompt);
-    const nextIndex = (currentIndex + 1) % JOURNAL_PROMPTS.length;
-    setCurrentPrompt(JOURNAL_PROMPTS[nextIndex]);
-  };
-  
-  const saveJournalEntry = () => {
-    if (journalEntry.trim()) {
-      console.log('Saving journal entry:', journalEntry);
-      // Here we would save the entry to a database
-      setJournalEntry('');
-      getNewPrompt();
-    }
-  };
+// Floating nature icons animation
+const NatureElements = () => {
+  const elements = [
+    { icon: <Leaf className="text-green-400 h-5 w-5" />, delay: 0 },
+    { icon: <Cloud className="text-blue-300 h-6 w-6" />, delay: 1.2 },
+    { icon: <Sun className="text-yellow-300 h-5 w-5" />, delay: 0.5 },
+    { icon: <Bird className="text-cyan-300 h-4 w-4" />, delay: 0.8 },
+    { icon: <Moon className="text-indigo-200 h-4 w-4" />, delay: 1.5 },
+    { icon: <Leaf className="text-emerald-300 h-3 w-3" />, delay: 2 },
+    { icon: <Cloud className="text-violet-200 h-5 w-5" />, delay: 0.3 },
+  ];
   
   return (
-    <motion.div 
-      className="container mx-auto max-w-5xl px-4 py-12"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <motion.div variants={itemVariants} className="mb-12 text-center">
-        <h1 className="text-3xl md:text-4xl font-bold gradient-heading mb-4">
-          {t('nav.digitalDetox') || 'Digital Wellness & Social Media Anxiety Relief'}
-        </h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          Find balance in your digital life with our tools and tips designed to help you develop healthier relationships with technology.
-        </p>
-      </motion.div>
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      {elements.map((element, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          initial={{ 
+            x: Math.random() * 100 - 50,
+            y: Math.random() * 100 - 50,
+            opacity: 0 
+          }}
+          animate={{ 
+            x: [
+              Math.random() * 100 - 50,
+              Math.random() * 100 - 50,
+              Math.random() * 100 - 50,
+              Math.random() * 100 - 50
+            ],
+            y: [
+              Math.random() * 100,
+              Math.random() * 100 - 200,
+              Math.random() * 100 - 100,
+              Math.random() * 100
+            ],
+            opacity: [0, 1, 1, 0]
+          }}
+          transition={{ 
+            duration: 20 + Math.random() * 10,
+            times: [0, 0.3, 0.7, 1],
+            repeat: Infinity,
+            delay: element.delay,
+            ease: "easeInOut"
+          }}
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`
+          }}
+        >
+          {element.icon}
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
+const formatTime = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  
+  return [
+    hours.toString().padStart(2, '0'),
+    minutes.toString().padStart(2, '0'),
+    secs.toString().padStart(2, '0')
+  ].join(':');
+};
+
+const DigitalDetoxPage = () => {
+  const [activeTab, setActiveTab] = useState('timer');
+  const [timerDuration, setTimerDuration] = useState(25 * 60); // 25 minutes in seconds
+  const [timeRemaining, setTimeRemaining] = useState(timerDuration);
+  const [isActive, setIsActive] = useState(false);
+  const [goalDays, setGoalDays] = useState(7);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  
+  // Reset timer when duration changes
+  useEffect(() => {
+    if (!isActive) {
+      setTimeRemaining(timerDuration);
+    }
+  }, [timerDuration, isActive]);
+  
+  // Timer logic
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (isActive && timeRemaining > 0) {
+      interval = setInterval(() => {
+        setTimeRemaining(prev => prev - 1);
+      }, 1000);
+    } else if (isActive && timeRemaining === 0) {
+      setIsActive(false);
+      // Here you could trigger a notification
+      setCurrentStreak(prev => prev + 1);
+    }
+    
+    return () => clearInterval(interval);
+  }, [isActive, timeRemaining]);
+  
+  const toggleTimer = () => {
+    if (timeRemaining === 0) {
+      setTimeRemaining(timerDuration);
+    }
+    setIsActive(!isActive);
+  };
+  
+  const resetTimer = () => {
+    setIsActive(false);
+    setTimeRemaining(timerDuration);
+  };
+  
+  const handleDurationChange = (value: number[]) => {
+    const newDuration = value[0] * 60; // Convert minutes to seconds
+    setTimerDuration(newDuration);
+    if (!isActive) {
+      setTimeRemaining(newDuration);
+    }
+  };
+  
+  const handleGoalChange = (value: number[]) => {
+    setGoalDays(value[0]);
+  };
+  
+  const progressPercentage = (currentStreak / goalDays) * 100;
+  
+  return (
+    <div className="relative py-12 min-h-[80vh]">
+      <NatureElements />
       
-      {/* Digital Wellbeing Tips Carousel */}
-      <motion.section
-        variants={itemVariants}
-        className="mb-16"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Digital Wellbeing Tips</h2>
-        <Carousel className="w-full">
-          <CarouselContent>
-            {WELLBEING_TIPS.map((tip, index) => (
-              <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                <div className="p-1">
-                  <Card className="glass-card-premium h-full flex flex-col">
-                    <CardHeader>
-                      <div className="text-3xl mb-2">{tip.icon}</div>
-                      <CardTitle className="text-xl">{tip.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground">{tip.description}</p>
-                    </CardContent>
-                  </Card>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <div className="flex justify-center mt-4 gap-4">
-            <CarouselPrevious className="relative static translate-y-0 left-0" />
-            <CarouselNext className="relative static translate-y-0 right-0" />
-          </div>
-        </Carousel>
-      </motion.section>
-      
-      {/* Daily Challenge Section */}
-      <motion.section 
-        variants={itemVariants}
-        className="mb-16"
-      >
-        <Card className="overflow-hidden border-2 border-vyanamana-200 dark:border-vyanamana-800">
-          <CardHeader className="bg-gradient-to-r from-vyanamana-500 to-vyanamana-700 text-white">
-            <CardTitle className="text-center">Daily Digital Detox Challenge</CardTitle>
-            <CardDescription className="text-white/80 text-center">
-              Take a simple step today toward digital wellness
-            </CardDescription>
-          </CardHeader>
+      <div className="container mx-auto px-4 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-10 text-center"
+        >
+          <h1 className="text-3xl md:text-4xl font-bold gradient-heading mb-3">
+            Digital Detox
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+            Take time away from screens and reconnect with yourself
+          </p>
+        </motion.div>
+        
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-3xl mx-auto">
+          <TabsList className="grid grid-cols-2 mb-8">
+            <TabsTrigger value="timer">Focus Timer</TabsTrigger>
+            <TabsTrigger value="goals">Detox Goals</TabsTrigger>
+          </TabsList>
           
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-semibold">2-Hour Phone-Free Evening</h3>
-                <p className="text-muted-foreground mt-1">
-                  Set aside 2 hours this evening to completely disconnect from all digital devices.
-                </p>
-              </div>
-              <Switch
-                checked={activeChallenge}
-                onCheckedChange={handleChallengeToggle}
-                className="data-[state=checked]:bg-vyanamana-600"
-              />
-            </div>
-            
-            {activeChallenge && (
-              <motion.div 
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="mt-4 p-4 bg-vyanamana-50 dark:bg-vyanamana-900/20 rounded-lg"
-              >
-                <h4 className="font-medium mb-2">Challenge Accepted! Tips:</h4>
-                <ul className="list-disc pl-5 space-y-1 text-sm">
-                  <li>Put your phone in another room</li>
-                  <li>Let friends/family know you'll be offline</li>
-                  <li>Prepare alternative activities (book, puzzle, walk)</li>
-                  <li>Notice how you feel during and after the break</li>
-                </ul>
-              </motion.div>
-            )}
-          </CardContent>
-        </Card>
-      </motion.section>
-      
-      {/* Screen Time Tracking */}
-      <motion.section 
-        variants={itemVariants}
-        className="mb-16"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Screen Time Tracking</h2>
-        <ScreenTimeTracker />
-      </motion.section>
-      
-      {/* Tips Section */}
-      <motion.section 
-        variants={itemVariants}
-        className="mb-16"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Digital Wellness Tips</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {DETOX_TIPS.map((tip) => (
-            <Card key={tip.id} className="glass-card">
-              <CardHeader>
-                <div className="flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-vyanamana-100 dark:bg-vyanamana-800 flex items-center justify-center mr-3">
-                    <tip.icon className="h-5 w-5 text-vyanamana-600 dark:text-vyanamana-400" />
+          <TabsContent value="timer">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <Card className="glass-card">
+                <CardHeader>
+                  <CardTitle>Mindful Break Timer</CardTitle>
+                  <CardDescription>
+                    Set a timer for your digital detox period
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-center py-8">
+                    <motion.div
+                      animate={{ scale: isActive ? [1, 1.03, 1] : 1 }}
+                      transition={{ 
+                        repeat: isActive ? Infinity : 0, 
+                        duration: 4,
+                        ease: "easeInOut" 
+                      }}
+                      className="text-5xl md:text-6xl font-mono font-bold gradient-heading"
+                    >
+                      {formatTime(timeRemaining)}
+                    </motion.div>
                   </div>
-                  <CardTitle className="text-xl">{tip.title}</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">{tip.description}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </motion.section>
-      
-      {/* Social Media Anxiety Tips */}
-      <motion.section 
-        variants={itemVariants}
-        className="mb-16"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Social Media Anxiety Relief</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {SOCIAL_MEDIA_TIPS.map((item) => (
-            <Card key={item.id} className="overflow-hidden glass-card">
-              <div className={`h-2 ${item.color}`}></div>
-              <CardHeader className="flex flex-row items-center gap-4">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${item.color} text-white`}>
-                  <item.icon className="h-6 w-6" />
-                </div>
-                <CardTitle>{item.platform}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">{item.tip}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </motion.section>
-      
-      {/* Reflective Journaling */}
-      <motion.section 
-        variants={itemVariants}
-        className="mb-16"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Reflective Journaling</h2>
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle>Today's Prompt</CardTitle>
-            <CardDescription>
-              Reflect on your relationship with technology
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-4 p-4 bg-muted rounded-lg">
-              <p className="italic">{currentPrompt}</p>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Timer Duration: {Math.floor(timerDuration / 60)} minutes
+                    </label>
+                    <Slider
+                      value={[timerDuration / 60]}
+                      min={5}
+                      max={60}
+                      step={5}
+                      onValueChange={handleDurationChange}
+                      disabled={isActive}
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter className="flex gap-3 justify-center">
+                  <Button 
+                    onClick={toggleTimer}
+                    className="w-32"
+                    variant={isActive ? "outline" : "default"}
+                  >
+                    {isActive ? "Pause" : timeRemaining === 0 ? "Restart" : "Start"}
+                  </Button>
+                  <Button 
+                    onClick={resetTimer} 
+                    variant="outline"
+                    disabled={!isActive && timeRemaining === timerDuration}
+                  >
+                    Reset
+                  </Button>
+                </CardFooter>
+              </Card>
+              
+              <Card className="glass-card">
+                <CardHeader>
+                  <CardTitle>Mindfulness Tips</CardTitle>
+                  <CardDescription>
+                    Activities to engage with during your digital detox
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-4">
+                    {[
+                      "Take deep breaths and focus on your breathing",
+                      "Look around and identify 5 things you can see",
+                      "Write in a journal about your thoughts",
+                      "Stretch your body or do light exercise",
+                      "Drink a glass of water mindfully"
+                    ].map((tip, i) => (
+                      <motion.li 
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 + 0.5 }}
+                        className="flex items-start gap-3"
+                      >
+                        <div className="mt-1 text-vyanamana-500">
+                          <Check size={16} />
+                        </div>
+                        <p>{tip}</p>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
             </div>
-            <Textarea
-              placeholder="Write your thoughts here..."
-              value={journalEntry}
-              onChange={(e) => setJournalEntry(e.target.value)}
-              className="min-h-[150px]"
-            />
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button variant="outline" onClick={getNewPrompt}>
-              New Prompt
-            </Button>
-            <Button 
-              onClick={saveJournalEntry} 
-              disabled={!journalEntry.trim()}
-              className="bg-vyanamana-500 hover:bg-vyanamana-600"
-            >
-              Save Reflection
-            </Button>
-          </CardFooter>
-        </Card>
-      </motion.section>
-      
-      {/* Mood vs Screen Time Graph */}
-      <motion.section 
-        variants={itemVariants}
-        className="mb-16"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Mood vs Screen Time</h2>
-        <Card className="glass-card p-6">
-          <div className="h-64 flex items-center justify-center">
-            <div className="text-center p-6 border border-dashed border-muted-foreground rounded-lg w-full">
-              <Smartphone className="h-8 w-8 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">Mood vs screen time correlation graph would appear here</p>
-              <p className="text-sm text-muted-foreground mt-2">Track your mood and screen time regularly to see trends</p>
+          </TabsContent>
+          
+          <TabsContent value="goals">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <Card className="glass-card">
+                <CardHeader>
+                  <CardTitle>Detox Challenge</CardTitle>
+                  <CardDescription>
+                    Track your progress towards your digital detox goal
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>Goal: {goalDays} days</span>
+                      <span>Current streak: {currentStreak} days</span>
+                    </div>
+                    <div className="w-full h-3 bg-secondary rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(progressPercentage, 100)}%` }}
+                        transition={{ duration: 1, delay: 0.5 }}
+                        className="h-full bg-gradient-to-r from-vyanamana-400 to-vyanamana-600 rounded-full"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Set Your Goal (days)
+                    </label>
+                    <Slider
+                      value={[goalDays]}
+                      min={1}
+                      max={30}
+                      step={1}
+                      onValueChange={handleGoalChange}
+                    />
+                  </div>
+                  
+                  <div className="pt-4">
+                    <Button className="w-full gap-2">
+                      <Trophy size={16} />
+                      Complete Today's Detox
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="glass-card">
+                <CardHeader>
+                  <CardTitle>Schedule Your Detox</CardTitle>
+                  <CardDescription>
+                    Plan regular digital detox sessions
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Daily Reminder Time
+                    </label>
+                    <Input type="time" defaultValue="18:00" />
+                  </div>
+                  
+                  <div className="pt-4">
+                    <div className="flex flex-wrap gap-2">
+                      {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, i) => (
+                        <Button
+                          key={i}
+                          variant="outline"
+                          className="flex-1 min-w-[40px]"
+                        >
+                          {day}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4">
+                    <Button className="w-full gap-2">
+                      <Calendar size={16} />
+                      Save Schedule
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-          </div>
-          <div className="mt-6 grid grid-cols-2 gap-4">
-            <Card className="p-4 bg-muted/50">
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-sm text-muted-foreground">Average Mood</p>
-                  <p className="text-xl font-semibold">Positive</p>
-                </div>
-                <div className="text-2xl">😊</div>
-              </div>
-            </Card>
-            <Card className="p-4 bg-muted/50">
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-sm text-muted-foreground">When Screen Time Below 3h</p>
-                  <p className="text-xl font-semibold">Very Positive</p>
-                </div>
-                <div className="text-2xl">😄</div>
-              </div>
-            </Card>
-          </div>
-        </Card>
-      </motion.section>
-    </motion.div>
+          </TabsContent>
+        </Tabs>
+        
+        <div className="text-center mt-12 max-w-md mx-auto">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+            className="text-muted-foreground italic"
+          >
+            "The richness of life doesn't come from devices, but from the moments in between."
+          </motion.p>
+        </div>
+      </div>
+    </div>
   );
 };
 

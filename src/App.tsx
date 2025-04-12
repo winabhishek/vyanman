@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import Layout from "./components/Layout";
+import MainLayout from "./components/MainLayout";
 
 // Import all page components
 import LandingPage from "./pages/LandingPage";
@@ -39,7 +39,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <Layout>
+              <MainLayout>
                 <Routes>
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/chat" element={<Chat />} />
@@ -52,7 +52,7 @@ const App = () => (
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </Layout>
+              </MainLayout>
             </BrowserRouter>
           </TooltipProvider>
         </AuthProvider>

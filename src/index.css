@@ -1,217 +1,114 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 260 30% 99%;
-    --foreground: 260 10% 15%;
-
-    --card: 260 30% 99%;
-    --card-foreground: 260 10% 15%;
-
-    --popover: 260 30% 99%;
-    --popover-foreground: 260 10% 15%;
-
-    --primary: 265 88% 66%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 260 20% 96%;
-    --secondary-foreground: 260 10% 15%;
-
-    --muted: 260 15% 95%;
-    --muted-foreground: 260 10% 40%;
-
-    --accent: 265 70% 90%;
-    --accent-foreground: 260 10% 15%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 260 15% 90%;
-    --input: 260 15% 90%;
-    --ring: 265 88% 66%;
-
-    --radius: 1rem;
+    --background: 234 25% 15%;
+    --foreground: 0 0% 85%;
     
-    --vyanamana-50: 270 100% 97.6%;
-    --vyanamana-100: 268 95% 95.3%;
-    --vyanamana-200: 268 100% 91%;
-    --vyanamana-300: 268 100% 86.1%;
-    --vyanamana-400: 267 100% 77.6%;
-    --vyanamana-500: 267 88% 66.3%;  /* #8B5CF6 */
-    --vyanamana-600: 266 83.3% 53.9%;
-    --vyanamana-700: 266 91.9% 42.9%; /* #6B46C1 */
-    --vyanamana-800: 267 97.1% 32.5%;
-    --vyanamana-900: 267 98.2% 27.6%;
-    --vyanamana-950: 268 98.4% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 234 25% 15%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 234 25% 15%;
+    
+    --primary: 245 100% 69%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 234 25% 15%;
+    
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 56%;
+    
+    --accent: 245 100% 69%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 245 100% 69%;
+    
+    --radius: 0.75rem;
+
+    /* Custom Vyānamana color palette */
+    --vyanamana-bg: 234 25% 15%; /* #1E1F2F */
+    --vyanamana-primary: 245 100% 69%; /* #6C63FF */
+    --vyanamana-text: 0 0% 85%; /* #D9D9D9 */
+    --vyanamana-highlight: 0 0% 95%; /* soft white */
+
+    --vyanamana-50: 246 100% 97%;
+    --vyanamana-100: 245 100% 94%;
+    --vyanamana-200: 245 100% 89%;
+    --vyanamana-300: 245 100% 84%;
+    --vyanamana-400: 245 100% 76%;
+    --vyanamana-500: 245 100% 69%; /* #6C63FF - Primary */
+    --vyanamana-600: 245 86% 62%;
+    --vyanamana-700: 245 72% 52%;
+    --vyanamana-800: 245 69% 42%;
+    --vyanamana-900: 246 68% 35%;
+    --vyanamana-950: 247 71% 22%;
   }
 
   .dark {
-    --background: 260 20% 8%;
-    --foreground: 260 10% 90%;
-
-    --card: 260 20% 10%;
-    --card-foreground: 260 10% 90%;
-
-    --popover: 260 20% 10%;
-    --popover-foreground: 260 10% 90%;
-
-    --primary: 265 88% 66%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 260 20% 15%;
-    --secondary-foreground: 260 10% 90%;
-
-    --muted: 260 20% 18%;
-    --muted-foreground: 260 10% 70%;
-
-    --accent: 265 30% 30%;
-    --accent-foreground: 260 10% 90%;
-
-    --destructive: 0 62.8% 50.6%;
-    --destructive-foreground: 260 10% 90%;
-
-    --border: 260 20% 20%;
-    --input: 260 20% 20%;
-    --ring: 265 88% 66%;
+    --background: 234 25% 15%;
+    --foreground: 0 0% 85%;
     
-    --vyanamana-50: 270 100% 97.6%;
-    --vyanamana-100: 268 95% 95.3%;
-    --vyanamana-200: 268 100% 91%;
-    --vyanamana-300: 268 100% 86.1%;
-    --vyanamana-400: 267 100% 77.6%;
-    --vyanamana-500: 267 88% 66.3%;
-    --vyanamana-600: 266 83.3% 53.9%;
-    --vyanamana-700: 266 91.9% 42.9%;
-    --vyanamana-800: 267 97.1% 32.5%;
-    --vyanamana-900: 267 98.2% 27.6%;
-    --vyanamana-950: 268 98.4% 18%;
+    --card: 234 25% 19%;
+    --card-foreground: 0 0% 85%;
+    
+    --popover: 234 25% 19%;
+    --popover-foreground: 0 0% 85%;
+    
+    --primary: 245 100% 69%;
+    --primary-foreground: 0 0% 98%;
+    
+    --secondary: 234 25% 22%;
+    --secondary-foreground: 0 0% 85%;
+    
+    --muted: 234 25% 22%;
+    --muted-foreground: 240 5% 65%;
+    
+    --accent: 245 100% 69%;
+    --accent-foreground: 0 0% 98%;
+    
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 234 25% 25%;
+    --input: 234 25% 25%;
+    --ring: 245 100% 69%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border selection:bg-vyanamana-400/20;
+    @apply border-border;
   }
-  
-  html {
-    @apply scroll-smooth;
-  }
-  
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading font-semibold;
-  }
-
-  /* Theme transition for smooth theme changes */
-  .theme-transition {
-    @apply transition-colors duration-500;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-background/60 backdrop-blur-xl border border-white/10 dark:border-white/5 shadow-glass;
+    @apply backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300;
   }
   
-  .frost-panel {
-    @apply bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-glass;
-  }
-  
-  .glass-input {
-    @apply bg-background/30 backdrop-blur-xl focus:bg-background/50 transition-all border-white/20 dark:border-white/10;
-  }
-
-  .chat-bubble-user {
-    @apply bg-gradient-user-bubble text-white rounded-2xl rounded-br-sm px-4 py-2 max-w-[80%] shadow-sm;
-  }
-
-  .chat-bubble-bot {
-    @apply bg-gradient-bot-bubble dark:bg-[#2D3748]/80 text-foreground rounded-2xl rounded-bl-sm px-4 py-2 max-w-[80%] shadow-sm backdrop-blur-sm;
-  }
-
   .gradient-heading {
-    @apply bg-gradient-to-r from-deepPurple to-vyanamana-500 dark:from-vyanamana-400 dark:to-lavender bg-clip-text text-transparent;
-  }
-  
-  .premium-button {
-    @apply bg-gradient-premium text-white shadow-premium hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5;
-  }
-  
-  .breathe-animation {
-    @apply animate-breathe;
-  }
-  
-  .pulse-animation {
-    @apply animate-pulse-subtle;
-  }
-  
-  .shimmer {
-    @apply relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:animate-shimmer;
-  }
-  
-  .parallax-container {
-    @apply relative overflow-hidden;
-  }
-  
-  .parallax-layer {
-    @apply absolute transition-transform duration-500 ease-out;
-  }
-  
-  .floating-element {
-    @apply animate-float;
-  }
-  
-  .typing-animation {
-    @apply overflow-hidden whitespace-nowrap border-r-2 border-vyanamana-500 animate-typing animate-blink-caret;
-  }
-  
-  .glow-on-hover {
-    @apply hover:shadow-glow transition-shadow duration-300;
-  }
-  
-  .gradient-border {
-    @apply relative before:absolute before:inset-0 before:p-[1px] before:bg-gradient-to-r before:from-vyanamana-400 before:to-vyanamana-600 before:rounded-[inherit] before:-z-10;
-  }
-  
-  .rotating-3d {
-    @apply animate-rotate-3d;
-  }
-}
-
-@layer utilities {
-  .glass-effect {
-    @apply backdrop-blur-xl bg-white/10 dark:bg-black/10 border border-white/20 dark:border-gray-800/30;
+    @apply bg-gradient-to-r from-vyanamana-400 to-vyanamana-600 bg-clip-text text-transparent;
   }
   
   .text-balance {
     text-wrap: balance;
   }
-  
-  .text-gradient-premium {
-    @apply bg-gradient-to-r from-deepPurple to-lavender bg-clip-text text-transparent;
-  }
-  
-  .text-gradient-accent {
-    @apply bg-gradient-to-r from-mint to-blue-300 bg-clip-text text-transparent;
-  }
-  
-  .bg-mesh-gradient {
-    background-image: 
-      radial-gradient(at 100% 0%, hsla(268, 100%, 97%, 0.3) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, hsla(266, 97%, 61%, 0.2) 0px, transparent 50%);
-  }
 }
 
-/* Custom animations */
 @keyframes float {
   0%, 100% {
     transform: translateY(0);
@@ -221,26 +118,20 @@
   }
 }
 
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
 @keyframes breathe {
   0%, 100% {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.2);
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
+.breathing-animation {
+  animation: breathe 6s ease-in-out infinite;
 }
 
-/* Prevent overflow of chat bubbles on small screens */
-.chat-bubble-user, .chat-bubble-bot {
-  word-break: break-word;
-  overflow-wrap: break-word;
-}
