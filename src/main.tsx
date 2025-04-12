@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
-// Strict mode ensures best practices for React
 // Access the root element and create a root for it, if it exists
 const rootElement = document.getElementById("root");
 
