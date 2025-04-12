@@ -1,473 +1,267 @@
-import React, { useEffect } from 'react';
+
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { motion, useAnimation } from 'framer-motion';
-import { ArrowRight, MessageCircle, BarChart, Shield, Activity, Star, Heart, Headphones, Smartphone } from 'lucide-react';
-import { useInView } from 'react-intersection-observer';
-import ThreeDSphere from '@/components/ThreeDSphere';
+import { motion } from 'framer-motion';
+import { MessageCircle, Calendar, HeartPulse, Activity, Send, Music, Volume2, VolumeX, MessageSquare } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import FeedbackModal from '@/components/FeedbackModal';
+import { useState } from 'react';
+import BreathingCircle from '@/components/BreathingCircle';
 
 const LandingPage: React.FC = () => {
-  const controls = useAnimation();
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   
-  useEffect(() => {
-    if (inView) {
-      controls.start('visible');
-    }
-  }, [controls, inView]);
-  
-  const containerVariants = {
+  const container = {
     hidden: { opacity: 0 },
-    visible: {
+    show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2
+        staggerChildren: 0.2,
+        delayChildren: 0.3
       }
     }
   };
-  
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: [0.6, 0.05, 0.01, 0.99] }
-    }
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
   
-  const floatingParticles = Array.from({ length: 20 }).map((_, i) => ({
-    id: i,
-    top: `${Math.random() * 100}%`,
-    left: `${Math.random() * 100}%`,
-    size: `${Math.random() * 2 + 0.5}rem`,
-    delay: Math.random() * 5,
-    duration: 15 + Math.random() * 15
-  }));
+  const toggleMusic = () => {
+    setIsMusicPlaying(!isMusicPlaying);
+    // Music playing logic would go here
+  };
 
   return (
-    <div className="flex flex-col min-h-screen overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {floatingParticles.map((particle) => (
+    <div className="pb-24 relative">
+      {/* Hero Section */}
+      <section className="py-16 md:py-24">
+        <motion.div 
+          className="text-center max-w-3xl mx-auto px-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight bg-gradient-to-r from-violet-600 to-indigo-500 bg-clip-text text-transparent">
+            Vyānamana
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8">
+            Your AI-Powered Mental Wellness Companion
+          </p>
           <motion.div
-            key={particle.id}
-            className="absolute rounded-full bg-gradient-radial from-lavender/10 to-transparent dark:from-deepPurple/5 blur-xl"
-            style={{
-              top: particle.top,
-              left: particle.left,
-              width: particle.size,
-              height: particle.size
-            }}
-            animate={{
-              y: [0, -20, 0],
-              opacity: [0.3, 0.7, 0.3]
-            }}
-            transition={{
-              duration: particle.duration,
-              repeat: Infinity,
-              delay: particle.delay,
-              ease: "easeInOut"
-            }}
-          />
-        ))}
-      </div>
-      
-      <main className="flex-1 relative z-10">
-        {/* Hero Section */}
-        <section className="py-24 md:py-32 px-4 relative overflow-hidden">
-          <div className="absolute inset-0 bg-mesh-gradient opacity-50"></div>
-          <motion.div 
-            className="container mx-auto flex flex-col lg:flex-row items-center gap-16 relative"
-            initial="hidden"
-            animate="visible"
-            variants={containerVariants}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <motion.div 
-              className="lg:w-1/2 space-y-8"
-              variants={itemVariants}
-            >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                className="inline-block bg-gradient-to-r from-deepPurple/20 to-vyanamana-500/20 dark:from-deepPurple/10 dark:to-vyanamana-500/10 px-4 py-2 rounded-full backdrop-blur-sm border border-vyanamana-200/20 dark:border-vyanamana-700/20"
-              >
-                <span className="text-sm font-medium text-deepPurple dark:text-lavender">Breathe. Reflect. Heal.</span>
-              </motion.div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-tight">
-                Your <span className="text-gradient-premium">Digital Companion</span> for Mental Wellbeing
-              </h1>
-              
-              <p className="text-lg text-muted-foreground max-w-xl">
-                Vyānamana is here to listen, support, and guide you through your mental health journey. 
-                Talk to our AI companion anytime, track your mood patterns, and discover insights that lead to better wellness.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link to="/chat">
-                  <Button size="lg" className="w-full sm:w-auto bg-gradient-premium shadow-premium hover:shadow-lg transition-all duration-300">
-                    Start Chatting
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link to="/login">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto border border-vyanamana-300 dark:border-vyanamana-700 hover:bg-vyanamana-100/30 dark:hover:bg-vyanamana-900/30">
-                    Create Account
-                  </Button>
-                </Link>
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              className="lg:w-1/2 flex justify-center"
-              variants={itemVariants}
-            >
-              <div className="relative">
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-radial from-lavender/30 to-transparent dark:from-deepPurple/20 rounded-full blur-3xl"
-                  animate={{ 
-                    scale: [1, 1.2, 1],
-                    opacity: [0.3, 0.5, 0.3]
-                  }}
-                  transition={{ 
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                ></motion.div>
-                
-                <motion.div 
-                  className="relative frost-panel p-8 rounded-2xl max-w-md"
-                  whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(107, 70, 193, 0.15)" }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="flex items-start gap-4 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center shrink-0 shadow-md">
-                      <span className="text-white font-bold text-sm">V</span>
-                    </div>
-                    <div className="chat-bubble-bot">
-                      <p>Hi there! I'm Vyānamana, your mental wellness companion. How are you feeling today?</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-end mb-8">
-                    <div className="chat-bubble-user">
-                      <p>I've been feeling a bit overwhelmed lately with work...</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center shrink-0 shadow-md">
-                      <span className="text-white font-bold text-sm">V</span>
-                    </div>
-                    <div className="chat-bubble-bot">
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5, delay: 0.8 }}
-                      >
-                        <p>I understand how that feels. Let's talk about some strategies that might help you manage work stress...</p>
-                      </motion.div>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
+            <Button className="bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-8 py-6 text-lg h-auto rounded-xl">
+              Start Your Journey
+              <HeartPulse className="ml-2 h-5 w-5" />
+            </Button>
           </motion.div>
-        </section>
-        
-        {/* 3D Visualization Section */}
-        <section className="py-16 relative overflow-hidden bg-gradient-to-b from-vyanamana-50/50 to-white dark:from-vyanamana-950/30 dark:to-background">
-          <div className="container mx-auto px-4">
-            <motion.div 
-              className="text-center mb-10"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-gradient-premium">Visualize Your Journey</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Watch as your mental landscape transforms through our interactive visualizations
-              </p>
-            </motion.div>
-            
-            <ThreeDSphere className="glass-card mx-auto max-w-4xl shadow-xl" />
-            
-            <div className="text-center mt-8">
-              <Link to="/meditation">
-                <Button variant="outline" className="mt-4 border-vyanamana-300 dark:border-vyanamana-700 hover:bg-vyanamana-100/30 dark:hover:bg-vyanamana-900/30">
-                  <Headphones className="mr-2 h-4 w-4" />
-                  Try Guided Meditation
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-        
-        {/* Features Section */}
-        <section className="py-24 bg-vyanamana-50/50 dark:bg-vyanamana-950/30 relative overflow-hidden">
-          <div className="absolute inset-0 bg-mesh-gradient opacity-30"></div>
-          <motion.div 
-            className="container mx-auto px-4"
-            ref={ref}
-            animate={controls}
-            initial="hidden"
-            variants={containerVariants}
-          >
-            <motion.div 
-              className="text-center mb-16 max-w-3xl mx-auto"
-              variants={itemVariants}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-gradient-premium">Features Designed for Your Mental Wellbeing</h2>
-              <p className="text-muted-foreground text-lg">
-                Vyānamana combines AI-powered conversations with evidence-based mental health tools to support you on your journey.
-              </p>
-            </motion.div>
-            
-            <div className="grid md:grid-cols-4 gap-8">
-              <motion.div 
-                className="glass-card rounded-2xl p-8 shadow-glass hover:shadow-premium transition-all duration-300"
-                variants={itemVariants}
-                whileHover={{ y: -5 }}
-              >
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-vyanamana-100 to-vyanamana-200 dark:from-vyanamana-900 dark:to-vyanamana-800 text-vyanamana-600 dark:text-lavender flex items-center justify-center mb-6 shadow-md">
-                  <MessageCircle className="h-7 w-7" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">AI Companion</h3>
-                <p className="text-muted-foreground">
-                  Chat with our empathetic AI that's designed to listen, provide support, and offer evidence-based coping strategies.
-                </p>
-                <Link to="/chat" className="inline-block mt-4">
-                  <Button variant="link" className="p-0 h-auto text-vyanamana-600 dark:text-vyanamana-400">
-                    Start chatting
-                    <ArrowRight className="ml-1 h-3 w-3" />
-                  </Button>
-                </Link>
-              </motion.div>
-              
-              <motion.div 
-                className="glass-card rounded-2xl p-8 shadow-glass hover:shadow-premium transition-all duration-300"
-                variants={itemVariants}
-                whileHover={{ y: -5 }}
-              >
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-vyanamana-100 to-vyanamana-200 dark:from-vyanamana-900 dark:to-vyanamana-800 text-vyanamana-600 dark:text-lavender flex items-center justify-center mb-6 shadow-md">
-                  <BarChart className="h-7 w-7" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Mood Tracking</h3>
-                <p className="text-muted-foreground">
-                  Log your emotions daily and visualize patterns over time to gain insights into your emotional wellbeing.
-                </p>
-                <Link to="/mood-tracker" className="inline-block mt-4">
-                  <Button variant="link" className="p-0 h-auto text-vyanamana-600 dark:text-vyanamana-400">
-                    Track mood
-                    <ArrowRight className="ml-1 h-3 w-3" />
-                  </Button>
-                </Link>
-              </motion.div>
-              
-              <motion.div 
-                className="glass-card rounded-2xl p-8 shadow-glass hover:shadow-premium transition-all duration-300"
-                variants={itemVariants}
-                whileHover={{ y: -5 }}
-              >
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-vyanamana-100 to-vyanamana-200 dark:from-vyanamana-900 dark:to-vyanamana-800 text-vyanamana-600 dark:text-lavender flex items-center justify-center mb-6 shadow-md">
-                  <Headphones className="h-7 w-7" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Meditation</h3>
-                <p className="text-muted-foreground">
-                  Practice mindfulness with guided meditation sessions designed to calm your mind and reduce anxiety.
-                </p>
-                <Link to="/meditation" className="inline-block mt-4">
-                  <Button variant="link" className="p-0 h-auto text-vyanamana-600 dark:text-vyanamana-400">
-                    Meditate now
-                    <ArrowRight className="ml-1 h-3 w-3" />
-                  </Button>
-                </Link>
-              </motion.div>
-              
-              <motion.div 
-                className="glass-card rounded-2xl p-8 shadow-glass hover:shadow-premium transition-all duration-300"
-                variants={itemVariants}
-                whileHover={{ y: -5 }}
-              >
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-vyanamana-100 to-vyanamana-200 dark:from-vyanamana-900 dark:to-vyanamana-800 text-vyanamana-600 dark:text-lavender flex items-center justify-center mb-6 shadow-md">
-                  <Smartphone className="h-7 w-7" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Digital Detox</h3>
-                <p className="text-muted-foreground">
-                  Reduce digital anxiety with screen time tracking and tips for establishing healthier tech habits.
-                </p>
-                <Link to="/digital-detox" className="inline-block mt-4">
-                  <Button variant="link" className="p-0 h-auto text-vyanamana-600 dark:text-vyanamana-400">
-                    Start detox
-                    <ArrowRight className="ml-1 h-3 w-3" />
-                  </Button>
-                </Link>
-              </motion.div>
-            </div>
-          </motion.div>
-        </section>
-        
-        {/* How It Works */}
-        <section className="py-24 px-4 relative overflow-hidden">
-          <div className="absolute inset-0 bg-mesh-gradient opacity-30"></div>
-          <motion.div 
-            className="container mx-auto"
-            ref={ref}
-            animate={controls}
-            initial="hidden"
-            variants={containerVariants}
-          >
-            <motion.div 
-              className="text-center mb-16 max-w-3xl mx-auto"
-              variants={itemVariants}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-gradient-premium">How Vyānamana Works</h2>
-              <p className="text-muted-foreground text-lg">
-                Our platform combines AI technology with evidence-based mental health approaches to support your wellbeing.
-              </p>
-            </motion.div>
-            
-            <div className="grid md:grid-cols-3 gap-12">
-              <motion.div 
-                className="text-center"
-                variants={itemVariants}
-              >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-vyanamana-100 to-vyanamana-200 dark:from-vyanamana-900 dark:to-vyanamana-800 text-deepPurple dark:text-lavender flex items-center justify-center mx-auto mb-6 shadow-md">
-                  <span className="text-2xl font-bold">1</span>
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Create Your Account</h3>
-                <p className="text-muted-foreground">
-                  Sign up in seconds or try anonymously. Your privacy and security are our top priorities.
-                </p>
-              </motion.div>
-              
-              <motion.div 
-                className="text-center"
-                variants={itemVariants}
-              >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-vyanamana-100 to-vyanamana-200 dark:from-vyanamana-900 dark:to-vyanamana-800 text-deepPurple dark:text-lavender flex items-center justify-center mx-auto mb-6 shadow-md">
-                  <span className="text-2xl font-bold">2</span>
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Chat & Track</h3>
-                <p className="text-muted-foreground">
-                  Talk to your AI companion about your feelings and regularly log your mood to build awareness.
-                </p>
-              </motion.div>
-              
-              <motion.div 
-                className="text-center"
-                variants={itemVariants}
-              >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-vyanamana-100 to-vyanamana-200 dark:from-vyanamana-900 dark:to-vyanamana-800 text-deepPurple dark:text-lavender flex items-center justify-center mx-auto mb-6 shadow-md">
-                  <span className="text-2xl font-bold">3</span>
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Gain Insights</h3>
-                <p className="text-muted-foreground">
-                  Discover patterns and receive personalized suggestions to improve your mental wellbeing.
-                </p>
-              </motion.div>
-            </div>
-          </motion.div>
-        </section>
-        
-        {/* Testimonials */}
-        <section className="py-20 bg-vyanamana-50/70 dark:bg-vyanamana-950/50 relative overflow-hidden">
-          <div className="absolute inset-0 bg-mesh-gradient opacity-30"></div>
-          <div className="container mx-auto px-4">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-gradient-premium">What People Say</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Vyānamana has helped thousands of people on their mental wellbeing journey.
-              </p>
-            </motion.div>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  quote: "Vyānamana helped me identify patterns in my anxiety that I'd never noticed before. The AI companion feels human in its responses.",
-                  author: "Sarah T.",
-                  role: "Teacher"
-                },
-                {
-                  quote: "Being able to talk in Hindi made all the difference for me. It's like having a therapist who truly understands my cultural context.",
-                  author: "Rahul K.",
-                  role: "Software Engineer"
-                },
-                {
-                  quote: "The mood tracker has been a game changer for me. I can now connect my emotions to events and manage my stress more effectively.",
-                  author: "Jamie L.",
-                  role: "Healthcare Worker"
-                }
-              ].map((testimonial, i) => (
-                <motion.div 
-                  key={i}
-                  className="glass-card rounded-2xl p-8"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
-                  viewport={{ once: true }}
-                  whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(107, 70, 193, 0.15)" }}
-                >
-                  <div className="flex flex-col h-full">
-                    <div className="mb-4">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="inline-block h-5 w-5 text-yellow-400 fill-yellow-400" />
+        </motion.div>
+      </section>
+
+      {/* Feature Cards Section */}
+      <section className="py-12">
+        <motion.div 
+          className="max-w-6xl mx-auto px-4"
+          variants={container}
+          initial="hidden"
+          animate="show"
+        >
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-200">
+            Tools for Your Mental Wellbeing
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Mood Tracker Card */}
+            <motion.div variants={item}>
+              <Link to="/mood-tracker">
+                <Card className="h-full backdrop-blur-lg bg-white/70 dark:bg-gray-800/50 border border-purple-100 dark:border-purple-900/50 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center text-violet-700 dark:text-violet-300">
+                      <Calendar className="mr-2 h-5 w-5" />
+                      Mood Tracker
+                    </CardTitle>
+                    <CardDescription>Track and understand your emotional patterns</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex justify-center space-x-3 my-4">
+                      {['😔', '😐', '🙂', '😊', '😄'].map((emoji, index) => (
+                        <motion.div 
+                          key={index}
+                          className="text-2xl cursor-pointer rounded-full p-2 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors duration-300"
+                          whileHover={{ scale: 1.2 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          {emoji}
+                        </motion.div>
                       ))}
                     </div>
-                    <p className="text-foreground italic mb-6 flex-grow">"{testimonial.quote}"</p>
-                    <div>
-                      <p className="font-semibold">{testimonial.author}</p>
-                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    <div className="bg-gradient-to-r from-violet-100 to-blue-100 dark:from-violet-900/30 dark:to-blue-900/30 p-3 rounded-lg">
+                      <div className="grid grid-cols-7 gap-1 text-xs font-medium">
+                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
+                          <div key={index} className="text-center text-gray-500 dark:text-gray-400">{day}</div>
+                        ))}
+                        {Array.from({ length: 28 }).map((_, index) => (
+                          <motion.div 
+                            key={index}
+                            className={`h-6 rounded-full ${
+                              index % 8 === 0 ? 'bg-green-200 dark:bg-green-800/40' : 
+                              index % 7 === 3 ? 'bg-yellow-200 dark:bg-yellow-800/40' : 
+                              index % 5 === 0 ? 'bg-blue-200 dark:bg-blue-800/40' : 
+                              'bg-gray-100 dark:bg-gray-700/40'
+                            }`}
+                            whileHover={{ scale: 1.2 }}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+                  </CardContent>
+                  <CardFooter className="pt-0">
+                    <Button variant="ghost" className="w-full justify-center group-hover:text-violet-600 dark:group-hover:text-violet-300">
+                      Track Your Mood
+                      <Activity className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </Link>
+            </motion.div>
+
+            {/* AI Chat Companion Card */}
+            <motion.div variants={item}>
+              <Link to="/chat">
+                <Card className="h-full backdrop-blur-lg bg-white/70 dark:bg-gray-800/50 border border-indigo-100 dark:border-indigo-900/50 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center text-indigo-700 dark:text-indigo-300">
+                      <MessageCircle className="mr-2 h-5 w-5" />
+                      AI Chat Companion
+                    </CardTitle>
+                    <CardDescription>Talk about your feelings and get support</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 my-4">
+                      <div className="flex items-start">
+                        <div className="bg-indigo-100 dark:bg-indigo-900/40 p-3 rounded-t-xl rounded-br-xl max-w-[80%] text-left">
+                          <p className="text-sm">How are you feeling today?</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-end">
+                        <div className="bg-violet-100 dark:bg-violet-900/40 p-3 rounded-t-xl rounded-bl-xl max-w-[80%] text-left">
+                          <p className="text-sm">I've been feeling a bit anxious lately with work.</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start">
+                        <motion.div 
+                          className="bg-indigo-100 dark:bg-indigo-900/40 p-3 rounded-t-xl rounded-br-xl max-w-[80%] text-left"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.5 }}
+                        >
+                          <p className="text-sm">I understand. Let's talk about what's causing your anxiety and explore some relaxation techniques...</p>
+                        </motion.div>
+                      </div>
+                    </div>
+                    <div className="relative mt-2">
+                      <input 
+                        type="text" 
+                        placeholder="Type a message..." 
+                        className="w-full p-2 pl-3 pr-10 rounded-full bg-gray-100 dark:bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-700"
+                        disabled
+                      />
+                      <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-indigo-500 dark:text-indigo-400 disabled:opacity-50" disabled>
+                        <Send className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="pt-0">
+                    <Button variant="ghost" className="w-full justify-center group-hover:text-indigo-600 dark:group-hover:text-indigo-300">
+                      Start Chatting
+                      <MessageSquare className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </Link>
+            </motion.div>
+
+            {/* Meditation & Breathing Tools Card */}
+            <motion.div variants={item}>
+              <Link to="/meditation">
+                <Card className="h-full backdrop-blur-lg bg-white/70 dark:bg-gray-800/50 border border-blue-100 dark:border-blue-900/50 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center text-blue-700 dark:text-blue-300">
+                      <Activity className="mr-2 h-5 w-5" />
+                      Meditation & Breathing
+                    </CardTitle>
+                    <CardDescription>Relax with guided breathing exercises</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex justify-center my-4">
+                      <BreathingCircle />
+                    </div>
+                    <div className="flex justify-center my-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          toggleMusic();
+                        }}
+                      >
+                        {isMusicPlaying ? (
+                          <>
+                            <VolumeX className="h-4 w-4" />
+                            Pause Music
+                          </>
+                        ) : (
+                          <>
+                            <Volume2 className="h-4 w-4" />
+                            Play Calm Music
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="pt-0">
+                    <Button variant="ghost" className="w-full justify-center group-hover:text-blue-600 dark:group-hover:text-blue-300">
+                      Begin Meditation
+                      <Music className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </Link>
+            </motion.div>
           </div>
-        </section>
-        
-        {/* CTA Section */}
-        <section className="py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-lavender/20 to-transparent dark:from-deepPurple/10 opacity-60"></div>
-          <motion.div 
-            className="container mx-auto px-4 text-center relative z-10"
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <div className="max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold font-heading mb-6 text-gradient-premium">Begin Your Wellbeing Journey Today</h2>
-              <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
-                Take the first step towards better mental health with Vyānamana. 
-                Our AI companion is ready to listen and support you 24/7.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <Link to="/chat">
-                  <Button size="lg" className="w-full sm:w-auto text-lg px-8 py-6 h-auto bg-gradient-premium shadow-premium hover:shadow-lg">
-                    Start Chatting Now
-                    <Heart className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link to="/about">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto text-lg px-8 py-6 h-auto border-2 border-vyanamana-300 dark:border-vyanamana-700 hover:bg-vyanamana-100/30 dark:hover:bg-vyanamana-900/30">
-                    Learn More
-                    <Activity className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        </section>
-      </main>
+        </motion.div>
+      </section>
+
+      {/* Floating Feedback Button */}
+      <motion.div 
+        className="fixed bottom-6 right-6 z-50"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 1.5 }}
+      >
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <Button 
+              className="rounded-full w-14 h-14 bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 shadow-lg hover:shadow-xl"
+              onClick={() => setIsFeedbackOpen(true)}
+            >
+              <MessageCircle className="h-6 w-6" />
+            </Button>
+          </HoverCardTrigger>
+          <HoverCardContent className="w-56 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md p-2">
+            <p className="text-sm">Share your feedback about Vyānamana</p>
+          </HoverCardContent>
+        </HoverCard>
+      </motion.div>
+
+      {/* Feedback Modal */}
+      {isFeedbackOpen && <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />}
     </div>
   );
 };
