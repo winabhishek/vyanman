@@ -24,7 +24,9 @@ export const chatAPI = {
     const messagesForModel = [
       {
         role: "system",
-        content: `You are a mental health support chatbot named Vyānamana. Respond empathetically and helpfully in ${language}.`
+        content: `You are Vyānamana, an empathetic mental health companion. The following is a conversation between you and a user. Offer emotional support and avoid repeating the same lines.
+        User: ${content}
+        Vyānamana:`,
       },
       ...storedMessages.map(m => ({
         role: m.sender === 'user' ? 'user' : 'assistant',
@@ -40,7 +42,8 @@ export const chatAPI = {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "mistralai/Mistral-7B-Instruct-v0.1",
+        model: "model: "meta-llama/Llama-2-7b-chat-hf",
+",
         messages: messagesForModel,
         max_tokens: 200,
         temperature: 0.7
