@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { motion } from 'framer-motion';
 
 const Login: React.FC = () => {
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -14,9 +15,18 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { login, signup, continueAsGuest } = useAuth();
+  const { login, signup, continueAsGuest, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      const from = (location.state as any)?.from?.pathname || '/chat';
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,15 +47,10 @@ const Login: React.FC = () => {
         });
       }
       
-      // Redirect to chat
-      navigate('/chat');
+      // Redirect handled by useEffect
     } catch (error) {
-      toast({
-        title: isLoginMode ? "Login failed" : "Signup failed",
-        description: "Please check your credentials and try again.",
-        variant: "destructive"
-      });
-    } finally {
+      console.error("Auth error:", error);
+      // Toast already shown in AuthContext functions
       setIsSubmitting(false);
     }
   };
@@ -63,19 +68,19 @@ const Login: React.FC = () => {
       // Redirect to chat
       navigate('/chat');
     } catch (error) {
-      toast({
-        title: "Failed to continue as guest",
-        description: "Please try again later.",
-        variant: "destructive"
-      });
-    } finally {
+      // Toast already shown in AuthContext functions
       setIsSubmitting(false);
     }
   };
   
   return (
     <div className="container max-w-md mx-auto py-16 px-4">
-      <div className="text-center mb-8">
+      <motion.div 
+        className="text-center mb-8"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center mx-auto mb-4">
           <span className="text-white font-bold text-2xl">V</span>
         </div>
@@ -87,9 +92,14 @@ const Login: React.FC = () => {
             ? 'Sign in to continue your mental wellbeing journey' 
             : 'Join Vyānamana to start your mental wellbeing journey'}
         </p>
-      </div>
+      </motion.div>
       
-      <div className="bg-card border rounded-lg shadow-sm p-6">
+      <motion.div 
+        className="bg-card border rounded-lg shadow-sm p-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLoginMode && (
             <div className="space-y-2">
@@ -101,6 +111,7 @@ const Login: React.FC = () => {
                 onChange={(e) => setName(e.target.value)}
                 required={!isLoginMode}
                 disabled={isSubmitting}
+                className="transition-all duration-200 focus:shadow-md"
               />
             </div>
           )}
@@ -115,6 +126,7 @@ const Login: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={isSubmitting}
+              className="transition-all duration-200 focus:shadow-md"
             />
           </div>
           
@@ -128,17 +140,21 @@ const Login: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={isSubmitting}
+              className="transition-all duration-200 focus:shadow-md"
             />
           </div>
           
           <Button 
             type="submit" 
-            className="w-full" 
+            className="w-full relative overflow-hidden group"
             disabled={isSubmitting}
           >
-            {isSubmitting 
-              ? (isLoginMode ? 'Signing In...' : 'Creating Account...') 
-              : (isLoginMode ? 'Sign In' : 'Create Account')}
+            <span className="relative z-10">
+              {isSubmitting 
+                ? (isLoginMode ? 'Signing In...' : 'Creating Account...') 
+                : (isLoginMode ? 'Sign In' : 'Create Account')}
+            </span>
+            <span className="absolute inset-0 bg-vyanamana-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-md"></span>
           </Button>
         </form>
         
@@ -154,11 +170,12 @@ const Login: React.FC = () => {
           
           <Button
             variant="outline"
-            className="w-full mt-4"
+            className="w-full mt-4 relative overflow-hidden group"
             onClick={handleGuestAccess}
             disabled={isSubmitting}
           >
-            Continue as Guest
+            <span className="relative z-10">Continue as Guest</span>
+            <span className="absolute inset-0 bg-vyanamana-50 dark:bg-vyanamana-900 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-md"></span>
           </Button>
         </div>
         
@@ -166,43 +183,52 @@ const Login: React.FC = () => {
           {isLoginMode ? (
             <p>
               Don't have an account?{' '}
-              <button
+              <motion.button
                 type="button"
                 onClick={() => setIsLoginMode(false)}
-                className="text-vyanamana-600 hover:text-vyanamana-700 font-medium"
+                className="text-vyanamana-600 hover:text-vyanamana-700 font-medium relative"
                 disabled={isSubmitting}
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
                 Sign up
-              </button>
+              </motion.button>
             </p>
           ) : (
             <p>
               Already have an account?{' '}
-              <button
+              <motion.button
                 type="button"
                 onClick={() => setIsLoginMode(true)}
-                className="text-vyanamana-600 hover:text-vyanamana-700 font-medium"
+                className="text-vyanamana-600 hover:text-vyanamana-700 font-medium relative"
                 disabled={isSubmitting}
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
                 Sign in
-              </button>
+              </motion.button>
             </p>
           )}
         </div>
-      </div>
+      </motion.div>
       
-      <div className="mt-8 text-center text-sm text-muted-foreground">
+      <motion.div 
+        className="mt-8 text-center text-sm text-muted-foreground"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+      >
         <p>
           By using Vyānamana, you agree to our{' '}
-          <Link to="/terms" className="underline">
+          <Link to="/terms" className="underline hover:text-vyanamana-500 transition-colors">
             Terms of Service
           </Link>{' '}
           and{' '}
-          <Link to="/privacy" className="underline">
+          <Link to="/privacy" className="underline hover:text-vyanamana-500 transition-colors">
             Privacy Policy
           </Link>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 };

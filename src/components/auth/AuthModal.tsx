@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuthAPI } from '@/hooks/useAuthAPI';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
@@ -21,13 +20,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const authAPI = useAuthAPI();
-  const { login, signup } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { login, signup, continueAsGuest } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
     try {
       if (isLoginMode) {
@@ -47,11 +47,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       onClose();
       navigate('/chat');
     } catch (error) {
-      toast({
-        title: isLoginMode ? "Login failed" : "Registration failed",
-        description: "Please check your credentials and try again.",
-        variant: "destructive"
-      });
+      // Toast already shown in AuthContext functions
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGuestAccess = async () => {
+    setIsSubmitting(true);
+    
+    try {
+      await continueAsGuest();
+      onClose();
+      navigate('/chat');
+    } catch (error) {
+      // Toast already shown in AuthContext functions
+      setIsSubmitting(false);
     }
   };
   
@@ -61,7 +71,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md rounded-xl shadow-lg overflow-hidden bg-card">
+      <DialogContent className="sm:max-w-md rounded-xl shadow-lg overflow-hidden bg-card backdrop-blur-sm bg-card/90">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-center">
             {isLoginMode ? "Welcome Back" : "Create Account"}
@@ -97,6 +107,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required={!isLoginMode}
+                  disabled={isSubmitting}
                   className="h-10 rounded-md transition-shadow focus:shadow-md"
                 />
               </div>
@@ -111,6 +122,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isSubmitting}
                 className="h-10 rounded-md transition-shadow focus:shadow-md"
               />
             </div>
@@ -124,31 +136,58 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={isSubmitting}
                 className="h-10 rounded-md transition-shadow focus:shadow-md"
               />
             </div>
             
             <Button 
               type="submit" 
-              className="w-full h-10 rounded-md shadow-sm hover:shadow-md transition-shadow"
-              disabled={authAPI.isLoading}
+              className="w-full h-10 rounded-md shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
+              disabled={isSubmitting}
             >
-              {authAPI.isLoading 
-                ? (isLoginMode ? "Signing in..." : "Creating account...") 
-                : (isLoginMode ? "Sign In" : "Create Account")}
+              <span className="relative z-10">
+                {isSubmitting 
+                  ? (isLoginMode ? "Signing in..." : "Creating account...") 
+                  : (isLoginMode ? "Sign In" : "Create Account")}
+              </span>
+              <span className="absolute inset-0 bg-vyanamana-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-md"></span>
             </Button>
           </form>
+          
+          <div className="mt-4">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-card text-muted-foreground">Or</span>
+              </div>
+            </div>
+            
+            <Button
+              variant="outline" 
+              className="w-full mt-4 h-10 rounded-md shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
+              onClick={handleGuestAccess}
+              disabled={isSubmitting}
+            >
+              <span className="relative z-10">Continue as Guest</span>
+              <span className="absolute inset-0 bg-vyanamana-50 dark:bg-vyanamana-900 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-md"></span>
+            </Button>
+          </div>
           
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
               {isLoginMode ? "Don't have an account? " : "Already have an account? "}
-              <button
+              <motion.button
                 type="button"
                 onClick={handleModeToggle}
                 className="font-medium text-primary hover:underline focus:outline-none"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
                 {isLoginMode ? "Sign up" : "Sign in"}
-              </button>
+              </motion.button>
             </p>
           </div>
         </motion.div>
