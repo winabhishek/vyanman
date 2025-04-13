@@ -42,17 +42,30 @@ export const chatAPI = {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "model: "meta-llama/Llama-2-7b-chat-hf",
-",
-        messages: messagesForModel,
-        max_tokens: 200,
-        temperature: 0.7
-      }),
+  model: "meta-llama/Llama-3-8b-chat-hf",
+  messages: [
+    {
+      role: "system",
+      content: "You are Vyānamana, an empathetic mental health companion. Respond supportively and help the user feel heard. Avoid repeating replies."
+    },
+    {
+      role: "user",
+      content: content
+    }
+  ],
+  max_tokens: 200,
+  temperature: 0.7
+}),
+
     });
 
     const data = await response.json();
+    console.log("Together API Response:", data);
 
-    const botReply = data.choices?.[0]?.message?.content?.trim() || "I'm here for you.";
+    const const botReply =
+  data.choices?.[0]?.message?.content?.trim() ||
+  data.choices?.[0]?.text?.trim() ||
+  "I'm here for you.";
 
     const userMessage: Message = {
       id: `user-msg-${Date.now()}`,
