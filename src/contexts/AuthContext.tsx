@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Session, User } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { toast } from "sonner";
@@ -77,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       // Create user in Supabase
-      const { error: signUpError, data } = await supabase.auth.signUp({ 
+      const { error: signUpError } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
@@ -105,21 +105,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const continueAsGuest = async () => {
-    // For guest login, we're not using Supabase auth
-    // This just simulates a guest session using local state
     setIsLoading(true);
     try {
-      const guestUser = {
-        id: `guest-${Math.random().toString(36).substring(7)}`,
-        email: '',
-        user_metadata: {
-          name: 'Guest User',
-        },
-      } as User;
+      // Simulate guest login with anonymous sign-in
+      const { data, error } = await supabase.auth.signInAnonymously();
       
-      // Set local guest state
-      setUser(guestUser);
-      setIsLoading(false);
+      if (error) {
+        throw error;
+      }
 
       toast.info("You're browsing as a guest", {
         description: "Create an account to save your progress"

@@ -1,16 +1,15 @@
-
 export interface Message {
   id: string;
   content: string;
   sender: 'user' | 'bot';
   timestamp: Date;
   sentiment?: SentimentAnalysis;
-  language?: 'en' | 'hi'; // Add language field to Message interface
+  language?: 'en' | 'hi';
 }
 
 export interface SentimentAnalysis {
-  score: number; // Raw score from sentiment analysis (usually between -1 and 1 or 0 to 5)
-  label: string; // The sentiment label (e.g., "positive", "negative", "neutral")
+  score: number;
+  label: string;
 }
 
 export interface MoodEntry {
@@ -34,18 +33,21 @@ export type Mood =
 
 export interface User {
   id: string;
-  name: string;
+  name?: string;
   email: string;
   isAnonymous: boolean;
   createdAt: Date;
   updatedAt: Date;
-  preferredLanguage?: 'en' | 'hi'; // Add preferredLanguage field
+  preferredLanguage?: 'en' | 'hi';
+  user_metadata?: {
+    name?: string;
+  };
 }
 
 export interface ChatSession {
   id: string;
   userId: string;
-  name: string; // Generated name based on the first message
+  name: string;
   messages: Message[];
   createdAt: Date;
   updatedAt: Date;
