@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,6 +8,8 @@ import { Send, RefreshCcw, Mic, Paperclip, Smile, Bot, HelpCircle } from 'lucide
 import { useAuth } from '@/contexts/AuthContext';
 import { vyanamanaPalette } from '@/utils/colorUtils';
 import { useToast } from '@/hooks/use-toast';
+import { formatTime } from '@/lib/utils';
+import ChatTypingIndicator from '@/components/ChatTypingIndicator';
 
 interface Message {
   id: string;
@@ -17,7 +18,6 @@ interface Message {
   timestamp: Date;
 }
 
-// Mock initial messages
 const initialMessages: Message[] = [
   {
     id: '1',
@@ -27,7 +27,6 @@ const initialMessages: Message[] = [
   }
 ];
 
-// Typing animation component
 const TypingIndicator = () => (
   <div className="flex space-x-1.5 p-2.5 px-4 rounded-full bg-muted/50 w-min">
     {[0, 1, 2].map((dot) => (
@@ -48,7 +47,6 @@ const TypingIndicator = () => (
   </div>
 );
 
-// Message bubble component
 const MessageBubble = ({ message }: { message: Message }) => {
   const { user } = useAuth();
   const isUser = message.isUser;
@@ -115,12 +113,10 @@ const Chat: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Autoscroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  // Show a warning toast if no user is logged in
   useEffect(() => {
     if (!user) {
       toast({
@@ -134,7 +130,6 @@ const Chat: React.FC = () => {
   const handleSendMessage = () => {
     if (input.trim() === '') return;
     
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       content: input,
@@ -145,16 +140,13 @@ const Chat: React.FC = () => {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     
-    // Simulate AI thinking
     setIsTyping(true);
     setIsLoading(true);
     
-    // Simulate AI response after a delay
     setTimeout(() => {
       setIsTyping(false);
       setIsLoading(false);
       
-      // Sample responses based on input
       let responseText = "I understand. How does that make you feel?";
       
       if (input.toLowerCase().includes('sad') || input.toLowerCase().includes('depress')) {
@@ -189,7 +181,6 @@ const Chat: React.FC = () => {
     }
   };
 
-  // Reset chat
   const handleResetChat = () => {
     setMessages(initialMessages);
     toast({
@@ -197,11 +188,6 @@ const Chat: React.FC = () => {
       description: "Your conversation has been reset.",
       variant: "default",
     });
-  };
-
-  // Format timestamp
-  const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -236,7 +222,6 @@ const Chat: React.FC = () => {
         </div>
       </div>
       
-      {/* Messages Container */}
       <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4 glass-card mb-4">
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-6">
@@ -268,7 +253,7 @@ const Chat: React.FC = () => {
                       <Bot className="text-vyanamana-600" />
                     </AvatarFallback>
                   </Avatar>
-                  <TypingIndicator />
+                  <ChatTypingIndicator />
                 </div>
               </motion.div>
             )}
@@ -277,7 +262,6 @@ const Chat: React.FC = () => {
         <div ref={messagesEndRef} />
       </div>
       
-      {/* Input Area */}
       <div className="p-4 border-t glass-card">
         <Card className="overflow-hidden shadow-lg">
           <CardContent className="p-0">
