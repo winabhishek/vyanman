@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { User } from '@/types';
+import { UserProfile } from '@/types';
 
 export interface AuthCredentials {
   email: string;
@@ -12,7 +11,7 @@ export const useAuthAPI = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const login = async (credentials: AuthCredentials): Promise<User | null> => {
+  const login = async (credentials: AuthCredentials): Promise<UserProfile | null> => {
     setIsLoading(true);
     setError(null);
     
@@ -32,7 +31,7 @@ export const useAuthAPI = () => {
       await new Promise(resolve => setTimeout(resolve, 800));
       
       // Mock response
-      const user: User = {
+      const user: UserProfile = {
         id: 'user-123',
         name: credentials.email.split('@')[0],
         email: credentials.email,
@@ -54,7 +53,7 @@ export const useAuthAPI = () => {
     }
   };
 
-  const register = async (credentials: AuthCredentials): Promise<User | null> => {
+  const register = async (credentials: AuthCredentials): Promise<UserProfile | null> => {
     setIsLoading(true);
     setError(null);
     
@@ -74,7 +73,7 @@ export const useAuthAPI = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Mock response
-      const user: User = {
+      const user: UserProfile = {
         id: `user-${Date.now()}`,
         name: credentials.name || credentials.email.split('@')[0],
         email: credentials.email,
@@ -123,7 +122,7 @@ export const useAuthAPI = () => {
     }
   };
 
-  const getCurrentUser = async (): Promise<User | null> => {
+  const getCurrentUser = async (): Promise<UserProfile | null> => {
     // Check localStorage for existing user
     const storedUser = localStorage.getItem('vyanamana-user');
     if (storedUser) {

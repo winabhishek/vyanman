@@ -1,5 +1,4 @@
-
-import { User } from '../types';
+import { User, UserProfile } from '../types';
 
 // Mock delay function to simulate API latency
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

@@ -1,14 +1,6 @@
 
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from './types';
+// This file is being replaced by the root src/supabaseClient.ts
+// Redirect all imports to use the root supabaseClient instead
 
-const SUPABASE_URL = "https://ppgflxqfjnfmntboxzpy.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwZ2ZseHFmam5mbW50Ym94enB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0ODU3NTEsImV4cCI6MjA2MDA2MTc1MX0.tQHoZwWX4cJmy1XUc4Q1AJ5iaIvb4eBb75bX3PZkAQ4";
-
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: {
-    storage: localStorage,
-    persistSession: true,
-    autoRefreshToken: true,
-  }
-});
+import { supabase } from '../../supabaseClient';
+export { supabase };
