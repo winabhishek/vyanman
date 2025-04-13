@@ -78,8 +78,8 @@ const MessageBubble = ({ message }: { message: Message }) => {
           transition={{ type: "spring", stiffness: 500, damping: 10 }}
         >
           <Avatar className="mt-1">
-            <AvatarImage src={`https://api.dicebear.com/7.x/micah/svg?seed=${user?.name || 'user'}`} />
-            <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+            <AvatarImage src={`https://api.dicebear.com/7.x/micah/svg?seed=${user?.user_metadata?.name || 'anonymous'}`} />
+            <AvatarFallback>{user?.user_metadata?.name?.charAt(0) || 'U'}</AvatarFallback>
           </Avatar>
         </motion.div>
       )}

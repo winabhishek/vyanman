@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -59,7 +58,6 @@ const Profile: React.FC = () => {
     fetchMoodEntries();
   }, [isAuthenticated, navigate]);
 
-  // Get mood emoji
   const getMoodEmoji = (mood: string): string => {
     const moodEmojis: Record<string, string> = {
       joyful: '😄',
@@ -76,7 +74,6 @@ const Profile: React.FC = () => {
     return moodEmojis[mood] || '🙂';
   };
 
-  // Get most common mood
   const getMostCommonMood = (): { mood: string, count: number } => {
     if (moodEntries.length === 0) {
       return { mood: 'neutral', count: 0 };
@@ -94,7 +91,6 @@ const Profile: React.FC = () => {
     return { mood: mostCommonMood[0], count: mostCommonMood[1] };
   };
 
-  // Get average mood score
   const getAverageMoodScore = (): number => {
     if (moodEntries.length === 0) {
       return 0;
@@ -121,9 +117,7 @@ const Profile: React.FC = () => {
   const mostCommonMood = getMostCommonMood();
   const averageMoodScore = getAverageMoodScore();
   
-  // Format account creation date safely
   const getFormattedJoinDate = () => {
-    // Check if user exists and has a createdAt property that can be converted to a date
     if (user && 'createdAt' in user && user.createdAt) {
       try {
         return format(new Date(user.createdAt as string), 'MMM dd, yyyy');
@@ -133,7 +127,9 @@ const Profile: React.FC = () => {
     }
     return 'Today';
   };
-  
+
+  const isAnonymous = !user?.email;
+
   if (!isAuthenticated) {
     return (
       <div className="container mx-auto max-w-4xl px-4 py-16 text-center">
@@ -143,7 +139,6 @@ const Profile: React.FC = () => {
     );
   }
 
-  // Tabs data
   const tabs = [
     { id: 'mood', label: 'Mood History', icon: <Activity size={18} /> },
     { id: 'stats', label: 'Statistics', icon: <BarChart size={18} /> },
@@ -163,19 +158,18 @@ const Profile: React.FC = () => {
       </motion.div>
       
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Sidebar - User Profile */}
         <motion.div variants={itemVariants} className="lg:col-span-1">
           <Card className="glass-card overflow-hidden">
             <div className="h-24 bg-gradient-to-r from-vyanamana-400 to-vyanamana-600" />
             <div className="-mt-12 flex justify-center">
               <Avatar className="h-24 w-24 border-4 border-background">
-                <AvatarImage src={`https://api.dicebear.com/7.x/micah/svg?seed=${user?.name || 'anonymous'}`} />
-                <AvatarFallback>{user?.name?.charAt(0) || 'A'}</AvatarFallback>
+                <AvatarImage src={`https://api.dicebear.com/7.x/micah/svg?seed=${user?.user_metadata?.name || 'anonymous'}`} />
+                <AvatarFallback>{user?.user_metadata?.name?.charAt(0) || 'A'}</AvatarFallback>
               </Avatar>
             </div>
             
             <CardHeader className="text-center pt-2 pb-2">
-              <CardTitle className="text-xl">{user?.name || 'Anonymous User'}</CardTitle>
+              <CardTitle className="text-xl">{user?.user_metadata?.name || 'Anonymous User'}</CardTitle>
               <p className="text-sm text-muted-foreground">{user?.email || 'Guest User'}</p>
             </CardHeader>
             
@@ -196,7 +190,7 @@ const Profile: React.FC = () => {
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">Account Type</span>
                   <span className="px-2 py-1 rounded text-xs bg-vyanamana-500/10 text-vyanamana-500">
-                    {user?.isAnonymous ? 'Anonymous' : 'Member'}
+                    {isAnonymous ? 'Anonymous' : 'Member'}
                   </span>
                 </div>
                 
@@ -221,9 +215,7 @@ const Profile: React.FC = () => {
           </Card>
         </motion.div>
         
-        {/* Main Content */}
         <motion.div variants={itemVariants} className="lg:col-span-3 space-y-6">
-          {/* Mood Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Card className="glass-card bg-gradient-to-br from-vyanamana-900/20 to-vyanamana-800/20">
               <CardContent className="p-6">
@@ -290,7 +282,6 @@ const Profile: React.FC = () => {
             </Card>
           </div>
           
-          {/* Tabs for different content sections */}
           <Card className="glass-card">
             <CardHeader className="pb-0">
               <div className="flex gap-1 border-b">
@@ -411,7 +402,6 @@ const Profile: React.FC = () => {
                 <div className="py-4">
                   <h3 className="text-lg font-semibold mb-4 text-center">Recent Activity</h3>
                   
-                  {/* This would be filled with actual user activity data */}
                   <div className="space-y-4">
                     <p className="text-center text-muted-foreground py-8">
                       Activity tracking coming soon!
