@@ -1,117 +1,104 @@
-import { User, UserProfile } from '../types';
 
-// Mock delay function to simulate API latency
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+import { supabase } from '../supabaseClient';
+import { User, UserProfile } from '../types';
 
 export const authAPI = {
   // Login with email and password
   login: async (email: string, password: string): Promise<User> => {
-    await delay(1000);
-    
-    // In a real app, this would be a call to your backend
-    if (email && password) {
-      const user: User = {
-        id: 'user-123',
-        name: email.split('@')[0],
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        isAnonymous: false,
-        preferredLanguage: 'en',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
+        password
+      });
       
-      // Store user in localStorage for session persistence
-      localStorage.setItem('vyanamana-user', JSON.stringify(user));
+      if (error) throw error;
       
-      return user;
+      return data.user;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
     }
-    
-    throw new Error('Invalid credentials');
   },
   
   // Register a new user
   register: async (name: string, email: string, password: string, preferredLanguage: 'en' | 'hi' = 'en'): Promise<User> => {
-    await delay(1000);
-    
-    // In a real app, this would be a call to your backend
-    if (name && email && password) {
-      const user: User = {
-        id: `user-${Date.now()}`,
-        name,
+    try {
+      const { data, error } = await supabase.auth.signUp({
         email,
-        isAnonymous: false,
-        preferredLanguage,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
+        password,
+        options: {
+          data: {
+            name,
+            preferred_language: preferredLanguage
+          }
+        }
+      });
       
-      // Store user in localStorage for session persistence
-      localStorage.setItem('vyanamana-user', JSON.stringify(user));
+      if (error) throw error;
       
-      return user;
+      return data.user;
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
     }
-    
-    throw new Error('Invalid registration data');
   },
   
   // Continue as guest
   loginAsGuest: async (preferredLanguage: 'en' | 'hi' = 'en'): Promise<User> => {
-    await delay(500);
-    
-    const guestUser: User = {
-      id: `guest-${Date.now()}`,
-      name: 'Anonymous User',
-      email: '',
-      isAnonymous: true,
-      preferredLanguage,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    
-    // Store user in localStorage for session persistence
-    localStorage.setItem('vyanamana-user', JSON.stringify(guestUser));
-    
-    return guestUser;
+    try {
+      const { data, error } = await supabase.auth.signInAnonymously();
+      
+      if (error) throw error;
+      
+      return data.user;
+    } catch (error) {
+      console.error('Anonymous login error:', error);
+      throw error;
+    }
   },
   
   // Get current user
   getCurrentUser: async (): Promise<User | null> => {
-    await delay(300);
-    
-    const storedUser = localStorage.getItem('vyanamana-user');
-    return storedUser ? JSON.parse(storedUser) : null;
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      
+      if (error) throw error;
+      
+      return data.user;
+    } catch (error) {
+      console.error('Get current user error:', error);
+      return null;
+    }
   },
   
   // Update user profile
-  updateUserProfile: async (userId: string, updates: Partial<User>): Promise<User> => {
-    await delay(800);
-    
-    const storedUser = localStorage.getItem('vyanamana-user');
-    if (!storedUser) {
-      throw new Error('User not found');
+  updateUserProfile: async (userId: string, updates: Partial<UserProfile>): Promise<User> => {
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        data: {
+          name: updates.name,
+          preferred_language: updates.preferredLanguage
+        }
+      });
+      
+      if (error) throw error;
+      
+      return data.user;
+    } catch (error) {
+      console.error('Update user profile error:', error);
+      throw error;
     }
-    
-    const user: User = JSON.parse(storedUser);
-    
-    if (user.id !== userId) {
-      throw new Error('Unauthorized');
-    }
-    
-    const updatedUser = {
-      ...user,
-      ...updates,
-      updatedAt: new Date()
-    };
-    
-    localStorage.setItem('vyanamana-user', JSON.stringify(updatedUser));
-    
-    return updatedUser;
   },
   
   // Logout
   logout: async (): Promise<void> => {
-    await delay(500);
-    localStorage.removeItem('vyanamana-user');
-    // In a real app, this would also invalidate tokens, etc.
+    try {
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) throw error;
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
+    }
   }
 };

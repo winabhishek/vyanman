@@ -1,1 +1,8 @@
+
 project_id = "ppgflxqfjnfmntboxzpy"
+
+[functions.chat]
+verify_jwt = true
+
+[functions.moods]
+verify_jwt = true

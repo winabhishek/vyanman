@@ -49,6 +49,7 @@ export interface UserProfile {
   preferredLanguage?: 'en' | 'hi';
   user_metadata?: {
     name?: string;
+    preferred_language?: 'en' | 'hi';
   };
 }
 
