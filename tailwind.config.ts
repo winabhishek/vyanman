@@ -57,24 +57,47 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				vyanamana: {
-					50: 'hsl(var(--vyanamana-50))',
-					100: 'hsl(var(--vyanamana-100))', 
-					200: 'hsl(var(--vyanamana-200))',
-					300: 'hsl(var(--vyanamana-300))',
-					400: 'hsl(var(--vyanamana-400))',
-					500: 'hsl(var(--vyanamana-500))', // Main brand color
-					600: 'hsl(var(--vyanamana-600))',
-					700: 'hsl(var(--vyanamana-700))',
-					800: 'hsl(var(--vyanamana-800))',
-					900: 'hsl(var(--vyanamana-900))',
-					950: 'hsl(var(--vyanamana-950))',
+				vyanman: {
+					50: 'hsl(var(--vyanman-50))',
+					100: 'hsl(var(--vyanman-100))', 
+					200: 'hsl(var(--vyanman-200))',
+					300: 'hsl(var(--vyanman-300))',
+					400: 'hsl(var(--vyanman-400))',
+					500: 'hsl(var(--vyanman-500))', // Main brand color - Gold
+					600: 'hsl(var(--vyanman-600))',
+					700: 'hsl(var(--vyanman-700))',
+					800: 'hsl(var(--vyanman-800))',
+					900: 'hsl(var(--vyanman-900))',
+					950: 'hsl(var(--vyanman-950))',
 				},
-				lavender: '#B794F4',
-				midnight: '#1A202C',
-				mint: '#A5F3FC',
-				ivory: '#FFFFF0',
-				deepPurple: '#6B46C1',
+				amber: {
+					DEFAULT: '#FFB800',
+					50: '#FFF6E0',
+					100: '#FFEFC7',
+					200: '#FFE195',
+					300: '#FFD363',
+					400: '#FFC531',
+					500: '#FFB800',
+					600: '#CC9300',
+					700: '#996E00',
+					800: '#664A00',
+					900: '#332500',
+					950: '#1A1300',
+				},
+				burgundy: {
+					DEFAULT: '#5D1D29',
+					50: '#EFCAD0',
+					100: '#E8B5BE',
+					200: '#D88A9B',
+					300: '#C86078',
+					400: '#B83654',
+					500: '#971C39',
+					600: '#7D1A32',
+					700: '#62182A',
+					800: '#5D1D29',
+					900: '#471622',
+					950: '#2F0F17',
+				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -127,8 +150,8 @@ export default {
 					'50%': { transform: 'translateY(-10px)' }
 				},
 				'glow': {
-					'0%, 100%': { boxShadow: '0 0 5px rgba(183, 148, 244, 0.5)' },
-					'50%': { boxShadow: '0 0 20px rgba(183, 148, 244, 0.8)' }
+					'0%, 100%': { boxShadow: '0 0 5px rgba(255, 184, 0, 0.5)' },
+					'50%': { boxShadow: '0 0 20px rgba(255, 184, 0, 0.8)' }
 				},
 				'typing': {
 					'0%': { width: '0%' },
@@ -136,7 +159,7 @@ export default {
 				},
 				'blink-caret': {
 					'0%, 100%': { borderColor: 'transparent' },
-					'50%': { borderColor: 'hsl(var(--vyanamana-500))' }
+					'50%': { borderColor: 'hsl(var(--vyanman-500))' }
 				},
 				'shimmer': {
 					'0%': { backgroundPosition: '-1000px 0' },
@@ -173,18 +196,19 @@ export default {
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'gradient-conic': 'conic-gradient(var(--tw-gradient-stops))',
-				'gradient-premium': 'linear-gradient(135deg, #6B46C1 0%, #B794F4 100%)',
-				'gradient-user-bubble': 'linear-gradient(135deg, #9F7AEA 0%, #B794F4 100%)',
+				'gradient-premium': 'linear-gradient(135deg, #FFB800 0%, #FF8A00 100%)',
+				'gradient-user-bubble': 'linear-gradient(135deg, #FFB800 0%, #FFD700 100%)',
 				'gradient-bot-bubble': 'linear-gradient(135deg, #EDF2F7 0%, #E2E8F0 100%)',
 				'gradient-card': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
-				'gradient-primary': 'linear-gradient(135deg, #6B46C1 0%, #9F7AEA 100%)',
-				'gradient-accent': 'linear-gradient(135deg, #A5F3FC 0%, #67E8F9 100%)',
+				'gradient-primary': 'linear-gradient(135deg, #FFB800 0%, #FFC700 100%)',
+				'gradient-accent': 'linear-gradient(135deg, #5D1D29 0%, #7D1A32 100%)',
+				'vyanman-gradient': 'linear-gradient(135deg, #5D1D29 0%, #7D1A32 100%)',
 			},
 			boxShadow: {
-				'premium': '0 4px 20px -2px rgba(107, 70, 193, 0.2)',
+				'premium': '0 4px 20px -2px rgba(255, 184, 0, 0.2)',
 				'glass': '0 8px 32px rgba(31, 38, 135, 0.15)',
 				'inner-light': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.1)',
-				'glow': '0 0 15px rgba(183, 148, 244, 0.5)',
+				'glow': '0 0 15px rgba(255, 184, 0, 0.5)',
 				'neumorphic': '5px 5px 10px rgba(0, 0, 0, 0.1), -5px -5px 10px rgba(255, 255, 255, 0.8)',
 				'neumorphic-dark': '5px 5px 10px rgba(0, 0, 0, 0.3), -5px -5px 10px rgba(255, 255, 255, 0.05)'
 			},

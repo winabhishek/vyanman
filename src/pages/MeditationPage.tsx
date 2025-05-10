@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +15,11 @@ import {
   CarouselNext,
   CarouselPrevious 
 } from '@/components/ui/carousel';
+import { useMeditationAudioAPI, MeditationSound } from '@/services/meditationAPI';
+import MeditationPlayer from '@/components/meditation/MeditationPlayer';
+
+// Meditation categories
+const CATEGORIES = ["All", "Beginner", "Intermediate", "Advanced", "Sleep", "Anxiety", "Focus"];
 
 // Mock meditation data
 const GUIDED_MEDITATIONS = [
@@ -60,15 +65,6 @@ const GUIDED_MEDITATIONS = [
   },
 ];
 
-// Background sound options
-const BACKGROUND_SOUNDS = [
-  { id: 'nature', name: 'Nature Sounds', icon: '🌳' },
-  { id: 'rain', name: 'Rainfall', icon: '🌧️' },
-  { id: 'waves', name: 'Ocean Waves', icon: '🌊' },
-  { id: 'white-noise', name: 'White Noise', icon: '📻' },
-  { id: 'none', name: 'No Sound', icon: '🔇' },
-];
-
 const MeditationPage = () => {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('guided');
@@ -76,8 +72,31 @@ const MeditationPage = () => {
   const [currentMeditation, setCurrentMeditation] = useState<(typeof GUIDED_MEDITATIONS)[0] | null>(null);
   const [volume, setVolume] = useState(70);
   const [isMuted, setIsMuted] = useState(false);
-  const [selectedSound, setSelectedSound] = useState(BACKGROUND_SOUNDS[0].id);
+  const [selectedSound, setSelectedSound] = useState('piano');
   const [breathingCount, setBreathingCount] = useState(4); // 4-second breathing rhythm
+  
+  // Use our new audio API
+  const { 
+    getMeditationSounds, 
+    playSound, 
+    stopSound, 
+    setVolume: setAudioVolume, 
+    currentlyPlaying,
+    isLoading 
+  } = useMeditationAudioAPI();
+  
+  const [sounds, setSounds] = useState<MeditationSound[]>([]);
+  const [selectedMeditationSound, setSelectedMeditationSound] = useState<MeditationSound | null>(null);
+
+  // Load meditation sounds
+  useEffect(() => {
+    const loadSounds = async () => {
+      const fetchedSounds = await getMeditationSounds();
+      setSounds(fetchedSounds);
+    };
+    
+    loadSounds();
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -105,18 +124,30 @@ const MeditationPage = () => {
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
+    setAudioVolume(isMuted ? volume : 0);
   };
 
   const handleVolumeChange = (newVolume: number[]) => {
     setVolume(newVolume[0]);
+    setAudioVolume(newVolume[0]);
     if (isMuted && newVolume[0] > 0) {
       setIsMuted(false);
     }
   };
 
   const handleSoundSelect = (soundId: string) => {
-    setSelectedSound(soundId);
-    // In a real app, you would play/change the sound here
+    const sound = sounds.find(s => s.id === soundId);
+    
+    if (sound) {
+      setSelectedSound(soundId);
+      playSound(soundId);
+      setSelectedMeditationSound(sound);
+    }
+  };
+  
+  const closeMeditationPlayer = () => {
+    stopSound();
+    setSelectedMeditationSound(null);
   };
 
   return (
@@ -126,6 +157,15 @@ const MeditationPage = () => {
       initial="hidden"
       animate="visible"
     >
+      {/* Logo */}
+      <motion.div variants={itemVariants} className="mb-8 flex justify-center">
+        <img 
+          src="public/lovable-uploads/c59470ba-513c-4590-8a16-6896ef9b3ffe.png" 
+          alt="Vyanman Logo" 
+          className="w-16 h-16 md:w-24 md:h-24"
+        />
+      </motion.div>
+      
       <motion.div variants={itemVariants} className="mb-10 text-center">
         <h1 className="text-3xl md:text-4xl font-bold gradient-heading mb-4">
           {t('nav.meditation') || 'Meditation & Mindfulness'}
@@ -140,16 +180,16 @@ const MeditationPage = () => {
         className="mb-16"
       >
         <Tabs defaultValue="guided" onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-2 w-full max-w-md mx-auto mb-8">
-            <TabsTrigger value="guided">Guided Meditations</TabsTrigger>
-            <TabsTrigger value="breathing">Breathing Exercise</TabsTrigger>
+          <TabsList className="grid grid-cols-2 w-full max-w-md mx-auto mb-8 bg-amber-900/20 border border-amber-500/30">
+            <TabsTrigger value="guided" className="data-[state=active]:bg-amber-500 data-[state=active]:text-amber-950">Guided Meditations</TabsTrigger>
+            <TabsTrigger value="breathing" className="data-[state=active]:bg-amber-500 data-[state=active]:text-amber-950">Breathing Exercise</TabsTrigger>
           </TabsList>
 
           <TabsContent value="guided" className="space-y-8">
             {/* Meditation Categories Carousel */}
             <Carousel className="mb-8">
               <CarouselContent>
-                {["All", "Beginner", "Intermediate", "Advanced", "Sleep", "Anxiety", "Focus"].map((category) => (
+                {CATEGORIES.map((category) => (
                   <CarouselItem key={category} className="md:basis-1/3 lg:basis-1/4">
                     <div className="p-1">
                       <Card className="glass-card-premium cursor-pointer hover:shadow-lg transition-all duration-300">
@@ -199,7 +239,7 @@ const MeditationPage = () => {
                       <p className="text-sm text-muted-foreground line-clamp-2">{meditation.description}</p>
                     </CardContent>
                     <CardFooter>
-                      <Button variant="outline" size="sm" className="w-full gap-2">
+                      <Button variant="outline" size="sm" className="w-full gap-2 border-amber-500/50 hover:bg-amber-500/20">
                         <Play className="h-4 w-4" />
                         Start Meditation
                       </Button>
@@ -230,6 +270,7 @@ const MeditationPage = () => {
                     max={8}
                     step={1}
                     onValueChange={(value) => setBreathingCount(value[0])}
+                    className="[&>span]:bg-amber-500"
                   />
                   <div className="flex flex-col space-y-1 mt-4">
                     <span className="text-sm text-muted-foreground">Instructions:</span>
@@ -260,24 +301,29 @@ const MeditationPage = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
-                      {BACKGROUND_SOUNDS.map((sound) => (
+                      {!isLoading && sounds.map((sound) => (
                         <Button
                           key={sound.id}
                           variant={selectedSound === sound.id ? "default" : "outline"}
-                          className={selectedSound === sound.id ? "bg-vyanamana-500" : ""}
+                          className={selectedSound === sound.id ? "bg-amber-500 text-amber-950" : "border-amber-500/30"}
                           onClick={() => handleSoundSelect(sound.id)}
                         >
                           <span className="mr-2">{sound.icon}</span>
                           {sound.name}
                         </Button>
                       ))}
+                      {isLoading && (
+                        <div className="col-span-3 py-8 text-center">
+                          <p>Loading sounds...</p>
+                        </div>
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
                         size="icon"
                         variant="outline"
                         onClick={toggleMute}
-                        className="shrink-0"
+                        className="shrink-0 border-amber-500/30"
                       >
                         {isMuted ? <VolumeX /> : <Volume2 />}
                       </Button>
@@ -287,7 +333,7 @@ const MeditationPage = () => {
                         step={1}
                         onValueChange={handleVolumeChange}
                         disabled={isMuted}
-                        className="flex-1"
+                        className="flex-1 [&>span]:bg-amber-500"
                       />
                     </div>
                   </CardContent>
@@ -298,12 +344,20 @@ const MeditationPage = () => {
         </Tabs>
       </motion.div>
 
-      {/* Meditation Player (shows when a meditation is selected) */}
+      {/* Meditation Player */}
+      {selectedMeditationSound && (
+        <MeditationPlayer 
+          sound={selectedMeditationSound} 
+          onClose={closeMeditationPlayer} 
+        />
+      )}
+
+      {/* Meditation Player (shows when a guided meditation is selected) */}
       {currentMeditation && (
         <motion.div
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md shadow-lg border-t p-4 z-50"
+          className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-amber-800/90 to-orange-700/90 backdrop-blur-md shadow-lg border-t border-amber-500/20 p-4 z-50"
         >
           <div className="container mx-auto max-w-5xl">
             <div className="flex items-center justify-between">
@@ -311,18 +365,18 @@ const MeditationPage = () => {
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-10 w-10 rounded-full bg-vyanamana-500 text-white hover:bg-vyanamana-600"
+                  className="h-10 w-10 rounded-full bg-amber-500 text-white hover:bg-amber-600"
                   onClick={togglePlayPause}
                 >
                   {isPlaying ? <Pause /> : <Play />}
                 </Button>
                 <div>
-                  <h3 className="font-semibold">{currentMeditation.title}</h3>
-                  <p className="text-sm text-muted-foreground">{currentMeditation.duration}</p>
+                  <h3 className="font-semibold text-white">{currentMeditation.title}</h3>
+                  <p className="text-sm text-amber-200">{currentMeditation.duration}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button size="icon" variant="ghost" onClick={toggleMute}>
+                <Button size="icon" variant="ghost" onClick={toggleMute} className="text-amber-100 hover:text-white">
                   {isMuted ? <VolumeX /> : <Volume2 />}
                 </Button>
                 <Slider
@@ -330,12 +384,12 @@ const MeditationPage = () => {
                   max={100}
                   step={1}
                   onValueChange={handleVolumeChange}
-                  className="w-24 md:w-32"
+                  className="w-24 md:w-32 [&>span]:bg-amber-500"
                 />
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="text-muted-foreground"
+                  className="text-amber-100 hover:text-white"
                   onClick={() => setCurrentMeditation(null)}
                 >
                   Close

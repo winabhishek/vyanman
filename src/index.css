@@ -7,83 +7,83 @@
 
 @layer base {
   :root {
-    --background: 234 25% 15%;
-    --foreground: 0 0% 85%;
+    --background: 30 25% 15%;
+    --foreground: 40 60% 95%;
     
     --card: 0 0% 100%;
-    --card-foreground: 234 25% 15%;
+    --card-foreground: 30 25% 15%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 234 25% 15%;
+    --popover-foreground: 30 25% 15%;
     
-    --primary: 245 100% 69%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 40 100% 50%;
+    --primary-foreground: 0 0% 10%;
     
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 234 25% 15%;
+    --secondary: 30 10% 96%;
+    --secondary-foreground: 30 25% 15%;
     
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 56%;
+    --muted: 30 5% 96%;
+    --muted-foreground: 30 4% 56%;
     
-    --accent: 245 100% 69%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 40 100% 50%;
+    --accent-foreground: 0 0% 10%;
     
     --destructive: 0 100% 50%;
     --destructive-foreground: 210 40% 98%;
     
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 245 100% 69%;
+    --border: 30 6% 90%;
+    --input: 30 6% 90%;
+    --ring: 40 100% 50%;
     
     --radius: 0.75rem;
 
-    /* Custom Vyānamana color palette */
-    --vyanamana-bg: 234 25% 15%; /* #1E1F2F */
-    --vyanamana-primary: 245 100% 69%; /* #6C63FF */
-    --vyanamana-text: 0 0% 85%; /* #D9D9D9 */
-    --vyanamana-highlight: 0 0% 95%; /* soft white */
+    /* Custom Vyanman color palette */
+    --vyanman-bg: 30 25% 15%; /* Dark burgundy-brown */
+    --vyanman-primary: 40 100% 50%; /* Gold */
+    --vyanman-text: 40 60% 95%; /* Light gold/cream */
+    --vyanman-highlight: 0 0% 95%; /* soft white */
 
-    --vyanamana-50: 246 100% 97%;
-    --vyanamana-100: 245 100% 94%;
-    --vyanamana-200: 245 100% 89%;
-    --vyanamana-300: 245 100% 84%;
-    --vyanamana-400: 245 100% 76%;
-    --vyanamana-500: 245 100% 69%; /* #6C63FF - Primary */
-    --vyanamana-600: 245 86% 62%;
-    --vyanamana-700: 245 72% 52%;
-    --vyanamana-800: 245 69% 42%;
-    --vyanamana-900: 246 68% 35%;
-    --vyanamana-950: 247 71% 22%;
+    --vyanman-50: 40 100% 97%;
+    --vyanman-100: 40 100% 94%;
+    --vyanman-200: 40 100% 89%;
+    --vyanman-300: 40 100% 84%;
+    --vyanman-400: 40 100% 76%;
+    --vyanman-500: 40 100% 50%; /* Gold - Primary */
+    --vyanman-600: 36 90% 45%;
+    --vyanman-700: 32 80% 40%;
+    --vyanman-800: 28 70% 35%;
+    --vyanman-900: 26 68% 30%;
+    --vyanman-950: 24 70% 20%;
   }
 
   .dark {
-    --background: 234 25% 15%;
-    --foreground: 0 0% 85%;
+    --background: 30 25% 15%;
+    --foreground: 40 60% 95%;
     
-    --card: 234 25% 19%;
-    --card-foreground: 0 0% 85%;
+    --card: 28 25% 19%;
+    --card-foreground: 40 60% 95%;
     
-    --popover: 234 25% 19%;
-    --popover-foreground: 0 0% 85%;
+    --popover: 28 25% 19%;
+    --popover-foreground: 40 60% 95%;
     
-    --primary: 245 100% 69%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 40 100% 50%;
+    --primary-foreground: 0 0% 10%;
     
-    --secondary: 234 25% 22%;
-    --secondary-foreground: 0 0% 85%;
+    --secondary: 28 25% 22%;
+    --secondary-foreground: 40 60% 95%;
     
-    --muted: 234 25% 22%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 28 25% 22%;
+    --muted-foreground: 30 5% 65%;
     
-    --accent: 245 100% 69%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 40 100% 50%;
+    --accent-foreground: 0 0% 10%;
     
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
     
-    --border: 234 25% 25%;
-    --input: 234 25% 25%;
-    --ring: 245 100% 69%;
+    --border: 28 25% 25%;
+    --input: 28 25% 25%;
+    --ring: 40 100% 50%;
   }
 }
 
@@ -106,7 +106,7 @@
   }
   
   .gradient-heading {
-    @apply bg-gradient-to-r from-vyanamana-400 to-vyanamana-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-vyanman-400 to-amber-600 bg-clip-text text-transparent;
   }
   
   .text-balance {
@@ -118,7 +118,7 @@
   }
   
   .hover-slide-bg::after {
-    @apply absolute inset-0 bg-gradient-to-r from-vyanamana-500/20 to-vyanamana-600/20 opacity-0 transition-opacity duration-300 content-[''];
+    @apply absolute inset-0 bg-gradient-to-r from-vyanman-500/20 to-amber-600/20 opacity-0 transition-opacity duration-300 content-[''];
   }
   
   .hover-slide-bg:hover::after {
@@ -193,10 +193,10 @@
 
 @keyframes pulse-border {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(108, 99, 255, 0.4);
+    box-shadow: 0 0 0 0 rgba(255, 184, 0, 0.4);
   }
   50% {
-    box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.4);
+    box-shadow: 0 0 0 4px rgba(255, 184, 0, 0.4);
   }
 }
 

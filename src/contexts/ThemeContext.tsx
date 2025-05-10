@@ -12,8 +12,8 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Initialize with light mode as default
-  const [theme, setTheme] = useState<Theme>('light');
+  // Initialize with dark mode as default to match our amber/burgundy color scheme
+  const [theme, setTheme] = useState<Theme>('dark');
   
   // Initialize theme from localStorage or system preference on client-side only
   useEffect(() => {
@@ -23,7 +23,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
       setTheme(savedTheme as Theme);
     }
-    // Then check media query
+    // Then check media query, but default to dark for our design
     else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       setTheme('dark');
     }
