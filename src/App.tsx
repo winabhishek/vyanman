@@ -19,6 +19,7 @@ import Login from "./pages/Login";
 import About from "./pages/About";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import CBTPage from "./pages/CBTPage";
 
 // Add Google Fonts - these will be loaded via our index.css import
 // The fonts imported are:
@@ -51,6 +52,7 @@ const App = () => (
                   <Route path="/mood-tracker" element={<MoodTrackerPage />} />
                   <Route path="/meditation" element={<MeditationPage />} />
                   <Route path="/digital-detox" element={<DigitalDetoxPage />} />
+                  <Route path="/cbt" element={<CBTPage />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/profile" element={<Profile />} />

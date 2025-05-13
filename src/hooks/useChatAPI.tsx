@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from '@/hooks/use-toast';
 
 // Define types for the API
 interface ChatMessage {
@@ -22,6 +23,8 @@ export const useChatAPI = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [retryCount, setRetryCount] = useState(0);
+  const MAX_RETRIES = 2;
 
   // Load chat history from local storage on initial render
   useEffect(() => {
@@ -31,6 +34,8 @@ export const useChatAPI = () => {
         setChatHistory(JSON.parse(savedHistory));
       } catch (e) {
         console.error('Error parsing chat history from localStorage', e);
+        // Clear corrupted data
+        localStorage.removeItem('chatHistory');
       }
     }
   }, []);
@@ -57,26 +62,35 @@ export const useChatAPI = () => {
     setChatHistory(prev => [...prev, userMessage]);
 
     try {
-      // First try to send via Supabase
+      // First try to send via Supabase edge function
       let response;
       
       if (supabase) {
         try {
+          console.log('Attempting to call Supabase edge function...');
           response = await supabase.functions.invoke('chat', {
-            body: { message, userId: 'anonymous' }
+            body: { 
+              content: message, 
+              language: detectLanguage(message) 
+            }
           });
           
           if (response.error) {
-            throw new Error(response.error.message);
+            console.error('Supabase function error:', response.error);
+            throw new Error(response.error.message || 'Supabase function failed');
           }
+          
+          console.log('Supabase response:', response);
         } catch (err) {
           console.log('Supabase chat function failed, falling back to Together API', err);
+          // Continue to fallback
         }
       }
       
       // If Supabase failed or isn't available, use Together API directly
       if (!response?.data) {
-        response = await fetch(CHAT_API_URL, {
+        console.log('Using Together API fallback...');
+        const togetherResponse = await fetch(CHAT_API_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -94,11 +108,11 @@ export const useChatAPI = () => {
           })
         });
 
-        if (!response.ok) {
-          throw new Error(`Failed to send message: ${response.status} ${response.statusText}`);
+        if (!togetherResponse.ok) {
+          throw new Error(`Failed to send message: ${togetherResponse.status} ${togetherResponse.statusText}`);
         }
 
-        const data = await response.json();
+        const data = await togetherResponse.json();
         
         response = {
           data: {
@@ -116,7 +130,7 @@ export const useChatAPI = () => {
 
       // Add bot message to chat history
       setChatHistory(prev => [...prev, botMessage]);
-
+      setRetryCount(0); // Reset retry count on success
       setIsLoading(false);
       return botMessage;
     } catch (err) {
@@ -124,10 +138,26 @@ export const useChatAPI = () => {
       const error = err instanceof Error ? err : new Error('Unknown error occurred');
       setError(error);
       
-      // Create a fallback error message
+      // Implement retry logic for transient errors
+      if (retryCount < MAX_RETRIES) {
+        setRetryCount(prev => prev + 1);
+        console.log(`Retrying... Attempt ${retryCount + 1} of ${MAX_RETRIES}`);
+        
+        // Wait before retrying (exponential backoff)
+        const delay = Math.pow(2, retryCount) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+        
+        // Try again
+        setIsLoading(false);
+        return sendMessage(message);
+      }
+      
+      // Create a fallback error message after all retries have failed
       const errorBotMessage: ChatMessage = {
         id: uuidv4(),
-        content: "I'm sorry, I'm having trouble connecting right now. Please try again later.",
+        content: detectLanguage(message) === 'hi' 
+          ? "मुझे खेद है, मुझे अभी कनेक्शन में समस्या हो रही है। कृपया बाद में फिर से प्रयास करें।"
+          : "I'm sorry, I'm having trouble connecting right now. Please try again later.",
         role: 'assistant',
         timestamp: new Date().toISOString()
       };
@@ -135,6 +165,16 @@ export const useChatAPI = () => {
       // Add error message to chat history
       setChatHistory(prev => [...prev, errorBotMessage]);
       
+      // Show toast notification
+      toast({
+        title: detectLanguage(message) === 'hi' ? "कनेक्शन त्रुटि" : "Connection Error",
+        description: detectLanguage(message) === 'hi' 
+          ? "AI सेवा से कनेक्ट करने में समस्या। ऑफलाइन मोड में चल रहा है।"
+          : "Problem connecting to AI service. Running in offline mode.",
+        variant: "destructive",
+      });
+      
+      setRetryCount(0); // Reset retry count
       setIsLoading(false);
       return errorBotMessage;
     }
@@ -143,6 +183,12 @@ export const useChatAPI = () => {
   const clearChatHistory = () => {
     setChatHistory([]);
     localStorage.removeItem('chatHistory');
+  };
+
+  // Helper to detect language
+  const detectLanguage = (text: string): 'en' | 'hi' => {
+    const hindiPattern = /[\u0900-\u097F]/;
+    return hindiPattern.test(text) ? 'hi' : 'en';
   };
 
   return {

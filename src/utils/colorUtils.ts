@@ -5,7 +5,7 @@
 
 /**
  * Converts a HEX color to RGBA
- * @param hex - The HEX color to convert (e.g., #1E1F2F)
+ * @param hex - The HEX color to convert (e.g., #FFB800)
  * @param alpha - The alpha value (0-1)
  * @returns RGBA color string
  */
@@ -29,25 +29,25 @@ export const hexToRgba = (hex: string, alpha: number = 1): string => {
  */
 export const vyanamanaPalette = {
   // Main colors
-  background: '#1E1F2F',
-  primary: '#6C63FF',
-  text: '#D9D9D9',
-  highlight: '#F8F8FB',
+  background: '#3D1C12', // Dark amber/brown
+  primary: '#FFB800', // Gold/amber
+  text: '#FFE8B3', // Light amber/cream
+  highlight: '#FFF8E5', // soft amber white
   
   // UI variations
-  cardBg: 'rgba(255, 255, 255, 0.1)',
-  glassBg: 'rgba(255, 255, 255, 0.15)',
-  inputBorder: 'rgba(108, 99, 255, 0.3)',
+  cardBg: 'rgba(255, 255, 255, 0.05)',
+  glassBg: 'rgba(255, 255, 255, 0.1)',
+  inputBorder: 'rgba(255, 184, 0, 0.3)',
   
   // Gradients
-  primaryGradient: 'linear-gradient(135deg, #6C63FF 0%, #8B5CF6 100%)',
-  accentGradient: 'linear-gradient(135deg, #F8F8FB 0%, #D9D9D9 100%)',
+  primaryGradient: 'linear-gradient(135deg, #FFB800 0%, #FF8A00 100%)',
+  accentGradient: 'linear-gradient(135deg, #FFF8E5 0%, #FFE8B3 100%)',
   
   // Semantic colors
-  success: '#4ADE80',
-  warning: '#FBBF24',
-  error: '#F87171',
-  info: '#60A5FA',
+  success: '#7EB356', // Muted green
+  warning: '#FBBF24', // Amber warning
+  error: '#F87171', // Soft red
+  info: '#64B5F6', // Soft blue
   
   // Get a color with alpha
   withAlpha: (color: string, alpha: number): string => {

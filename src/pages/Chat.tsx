@@ -43,11 +43,18 @@ const Chat: React.FC = () => {
         }
       } catch (error) {
         console.error('Error fetching messages:', error);
+        toast({
+          title: language === 'en' ? "Error Loading Messages" : "संदेश लोड करने में त्रुटि",
+          description: language === 'en' 
+            ? "Could not load your previous conversations." 
+            : "आपकी पिछली बातचीत लोड नहीं हो सकी।",
+          variant: "destructive",
+        });
       }
     };
     
     fetchMessages();
-  }, [user]);
+  }, [user, toast, language]);
   
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -81,7 +88,10 @@ const Chat: React.FC = () => {
     
     try {
       const detected = detectLanguage(input);
+      console.log(`Detected language: ${detected}`);
+      
       const botMessage = await chatAPI.sendMessage(input, detected);
+      console.log('Bot response:', botMessage);
       
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
@@ -136,28 +146,28 @@ const Chat: React.FC = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="py-4 px-4 flex justify-between items-center border-b mb-4 glass-card">
+      <div className="py-4 px-4 flex justify-between items-center border-b mb-4 glass-card bg-amber-900/20 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <motion.div whileHover={{ scale: 1.1, rotate: 10 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
             <Avatar>
-              <AvatarImage src="/favicon.ico" />
+              <AvatarImage src="/favicon.ico" alt="Vyanman" />
               <AvatarFallback>
-                <Bot className="text-vyanamana-600" />
+                <Bot className="text-amber-500" />
               </AvatarFallback>
             </Avatar>
           </motion.div>
           <div>
-            <h2 className="font-semibold">Vyanman</h2>
-            <p className="text-xs text-muted-foreground">
+            <h2 className="font-semibold text-amber-50">Vyanman</h2>
+            <p className="text-xs text-amber-200/80">
               {language === 'en' ? 'Your mental wellness companion' : 'आपका मानसिक कल्याण साथी'}
             </p>
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost" size="icon" onClick={handleResetChat} title="Reset conversation">
+          <Button variant="ghost" size="icon" onClick={handleResetChat} title="Reset conversation" className="text-amber-200 hover:text-amber-100 hover:bg-amber-900/30">
             <RefreshCcw className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" title="Help">
+          <Button variant="ghost" size="icon" title="Help" className="text-amber-200 hover:text-amber-100 hover:bg-amber-900/30">
             <HelpCircle className="h-4 w-4" />
           </Button>
         </div>
@@ -169,7 +179,7 @@ const Chat: React.FC = () => {
         messagesEndRef={messagesEndRef} 
       />
       
-      <div className="p-4 border-t glass-card">
+      <div className="p-4 border-t glass-card bg-amber-900/20 backdrop-blur-md">
         <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
       </div>
     </motion.div>

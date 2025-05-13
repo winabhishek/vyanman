@@ -29,13 +29,7 @@ Deno.serve(async (req) => {
 
     // Get the current user
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    if (userError || !user) {
-      return new Response(JSON.stringify({ error: 'User not authenticated' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
+    
     // Parse the request body
     const { content, language = 'en' } = await req.json() as ChatRequest;
 
@@ -50,93 +44,109 @@ Deno.serve(async (req) => {
 
     // Call the Together API
     const systemPrompt = language === 'en' 
-      ? "You are Vyanman, an empathetic mental health companion. Respond in English. Offer emotional support and avoid repeating the same lines."
-      : "आप व्यानमन हैं, एक सहानुभूतिपूर्ण मानसिक स्वास्थ्य साथी। हिंदी में जवाब दें। भावनात्मक समर्थन प्रदान करें और एक ही लाइनों को दोहराने से बचें।";
+      ? "You are Vyanman, an empathetic mental health companion. Respond in English. Offer emotional support and cognitive behavioral therapy techniques. Provide brief, helpful responses focused on improving mental wellbeing."
+      : "आप व्यानमन हैं, एक सहानुभूतिपूर्ण मानसिक स्वास्थ्य साथी। हिंदी में जवाब दें। भावनात्मक समर्थन और संज्ञानात्मक व्यवहार थेरेपी तकनीकें प्रदान करें। मानसिक कल्याण में सुधार पर केंद्रित संक्षिप्त, सहायक प्रतिक्रियाएँ प्रदान करें।";
 
-    const togetherResponse = await fetch(TOGETHER_API_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${TOGETHER_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "mistralai/Mistral-7B-Instruct-v0.1",
-        messages: [
-          {
-            role: "system",
-            content: systemPrompt
-          },
-          {
-            role: "user",
-            content: content
-          }
-        ],
-        max_tokens: 300,
-        temperature: 0.7
-      }),
-    });
+    try {
+      const togetherResponse = await fetch(TOGETHER_API_URL, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${TOGETHER_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "mistralai/Mistral-7B-Instruct-v0.1",
+          messages: [
+            {
+              role: "system",
+              content: systemPrompt
+            },
+            {
+              role: "user",
+              content: content
+            }
+          ],
+          max_tokens: 300,
+          temperature: 0.7
+        }),
+      });
 
-    console.log(`API response status: ${togetherResponse.status}`);
+      console.log(`API response status: ${togetherResponse.status}`);
 
-    if (!togetherResponse.ok) {
-      const errorData = await togetherResponse.json();
-      console.error('API error:', errorData);
-      throw new Error(errorData.message || 'Failed to get response from Together API');
-    }
-
-    const data = await togetherResponse.json();
-    console.log('API response data:', data);
-    
-    const botReply = data.choices?.[0]?.message?.content?.trim() || 
-      (language === 'en' ? "I'm here for you." : "मैं आपके लिए यहां हूँ।");
-
-    // Save user message in database
-    const { data: userMessageData, error: userMessageError } = await supabaseClient
-      .from('messages')
-      .insert({
-        user_id: user.id,
-        content,
-        is_bot: false,
-      })
-      .select('*')
-      .single();
-
-    if (userMessageError) {
-      console.error('Error saving user message:', userMessageError);
-    }
-
-    // Save bot message in database
-    const { data: botMessageData, error: botMessageError } = await supabaseClient
-      .from('messages')
-      .insert({
-        user_id: user.id,
-        content: botReply,
-        is_bot: true,
-      })
-      .select('*')
-      .single();
-
-    if (botMessageError) {
-      console.error('Error saving bot message:', botMessageError);
-    }
-
-    return new Response(
-      JSON.stringify({
-        message: {
-          id: botMessageData?.id || `bot-msg-${Date.now()}`,
-          content: botReply,
-          sender: 'bot',
-          timestamp: botMessageData?.created_at || new Date(),
-        }
-      }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      if (!togetherResponse.ok) {
+        const errorData = await togetherResponse.json();
+        console.error('API error:', errorData);
+        throw new Error(errorData.message || 'Failed to get response from Together API');
       }
-    );
+
+      const data = await togetherResponse.json();
+      console.log('API response data:', data);
+      
+      const botReply = data.choices?.[0]?.message?.content?.trim() || 
+        (language === 'en' ? "I'm here for you." : "मैं आपके लिए यहां हूँ।");
+
+      // Save messages in database if user is authenticated
+      if (user && !userError) {
+        // Save user message in database
+        const { data: userMessageData, error: userMessageError } = await supabaseClient
+          .from('messages')
+          .insert({
+            user_id: user.id,
+            content,
+            is_bot: false,
+          })
+          .select('*')
+          .single();
+
+        if (userMessageError) {
+          console.error('Error saving user message:', userMessageError);
+        }
+
+        // Save bot message in database
+        const { data: botMessageData, error: botMessageError } = await supabaseClient
+          .from('messages')
+          .insert({
+            user_id: user.id,
+            content: botReply,
+            is_bot: true,
+          })
+          .select('*')
+          .single();
+
+        if (botMessageError) {
+          console.error('Error saving bot message:', botMessageError);
+        }
+      }
+
+      return new Response(
+        JSON.stringify({
+          message: {
+            id: `bot-msg-${Date.now()}`,
+            content: botReply,
+            role: 'assistant',
+            timestamp: new Date().toISOString(),
+          }
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    } catch (apiError) {
+      console.error('API call error:', apiError);
+      throw apiError;
+    }
   } catch (error) {
     console.error('Error in chat function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      message: {
+        id: `error-${Date.now()}`,
+        content: "I'm sorry, I'm having trouble processing your request right now. Please try again later.",
+        role: 'assistant',
+        timestamp: new Date().toISOString(),
+      }
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

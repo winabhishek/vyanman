@@ -2,7 +2,8 @@
 project_id = "ppgflxqfjnfmntboxzpy"
 
 [functions.chat]
-verify_jwt = true
+verify_jwt = false
 
 [functions.moods]
 verify_jwt = true
+
