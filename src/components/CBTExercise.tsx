@@ -1,238 +1,232 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useToast } from '@/hooks/use-toast';
-import { motion } from 'framer-motion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from 'sonner';
 
-interface ThoughtRecord {
-  id: string;
-  situation: string;
-  thought: string;
-  emotion: string;
-  evidence: string;
-  alternativeThought: string;
-  createdAt: Date;
+interface Thought {
+  automaticThought: string;
+  distortion: string;
+  rationalResponse: string;
 }
+
+const distortionTypes = {
+  en: [
+    { value: 'all-or-nothing', label: 'All-or-Nothing Thinking' },
+    { value: 'overgeneralization', label: 'Overgeneralization' },
+    { value: 'mental-filter', label: 'Mental Filter' },
+    { value: 'discounting-positive', label: 'Discounting the Positive' },
+    { value: 'jumping-conclusions', label: 'Jumping to Conclusions' },
+    { value: 'magnification', label: 'Magnification or Minimization' },
+    { value: 'emotional-reasoning', label: 'Emotional Reasoning' },
+    { value: 'should-statements', label: 'Should Statements' },
+    { value: 'labeling', label: 'Labeling' },
+    { value: 'personalization', label: 'Personalization & Blame' }
+  ],
+  hi: [
+    { value: 'all-or-nothing', label: 'सब या कुछ नहीं सोच' },
+    { value: 'overgeneralization', label: 'अति-सामान्यीकरण' },
+    { value: 'mental-filter', label: 'मानसिक फ़िल्टर' },
+    { value: 'discounting-positive', label: 'सकारात्मक को नज़रअंदाज़ करना' },
+    { value: 'jumping-conclusions', label: 'निष्कर्ष पर कूदना' },
+    { value: 'magnification', label: 'आवर्धन या न्यूनीकरण' },
+    { value: 'emotional-reasoning', label: 'भावनात्मक तर्क' },
+    { value: 'should-statements', label: 'चाहिए कथन' },
+    { value: 'labeling', label: 'लेबलिंग' },
+    { value: 'personalization', label: 'व्यक्तिगतकरण और दोष' }
+  ]
+};
 
 const CBTExercise: React.FC = () => {
   const { language } = useLanguage();
-  const { toast } = useToast();
-  const [step, setStep] = useState<number>(1);
-  const [thoughtRecord, setThoughtRecord] = useState<Partial<ThoughtRecord>>({
-    situation: '',
-    thought: '',
-    emotion: '',
-    evidence: '',
-    alternativeThought: ''
+  const [thoughts, setThoughts] = useState<Thought[]>([]);
+  const [currentThought, setCurrentThought] = useState<Thought>({
+    automaticThought: '',
+    distortion: '',
+    rationalResponse: ''
   });
+  const [activeTab, setActiveTab] = useState('add');
   
-  const handleInputChange = (field: keyof ThoughtRecord, value: string) => {
-    setThoughtRecord(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleInputChange = (field: keyof Thought, value: string) => {
+    setCurrentThought(prev => ({ ...prev, [field]: value }));
   };
   
-  const nextStep = () => {
-    if (step < 5) {
-      setStep(step + 1);
-    } else {
-      // Save the completed thought record
-      const newRecord: ThoughtRecord = {
-        ...thoughtRecord as ThoughtRecord,
-        id: Date.now().toString(),
-        createdAt: new Date()
-      };
-      
-      // Save to localStorage for now
-      const savedRecords = localStorage.getItem('cbt-records');
-      const records = savedRecords ? JSON.parse(savedRecords) : [];
-      records.push(newRecord);
-      localStorage.setItem('cbt-records', JSON.stringify(records));
-      
-      toast({
-        title: language === 'en' ? 'Exercise Completed' : 'अभ्यास पूरा हुआ',
-        description: language === 'en' 
-          ? 'Your thought record has been saved.' 
-          : 'आपका विचार रिकॉर्ड सहेज लिया गया है।',
-      });
-      
-      // Reset form
-      setThoughtRecord({
-        situation: '',
-        thought: '',
-        emotion: '',
-        evidence: '',
-        alternativeThought: ''
-      });
-      setStep(1);
+  const handleAddThought = () => {
+    if (!currentThought.automaticThought) {
+      toast.error(language === 'en' ? 'Please enter a thought' : 'कृपया एक विचार दर्ज करें');
+      return;
     }
+    
+    setThoughts(prev => [...prev, { ...currentThought }]);
+    setCurrentThought({
+      automaticThought: '',
+      distortion: '',
+      rationalResponse: ''
+    });
+    toast.success(
+      language === 'en' 
+        ? 'Thought recorded successfully' 
+        : 'विचार सफलतापूर्वक दर्ज किया गया'
+    );
+    setActiveTab('history');
   };
   
-  const prevStep = () => {
-    if (step > 1) {
-      setStep(step - 1);
-    }
+  const handleClearThought = () => {
+    setCurrentThought({
+      automaticThought: '',
+      distortion: '',
+      rationalResponse: ''
+    });
   };
   
-  const renderStepContent = () => {
-    switch (step) {
-      case 1:
-        return (
-          <div className="space-y-4">
-            <CardTitle>{language === 'en' ? 'Identify the Situation' : 'परिस्थिति की पहचान करें'}</CardTitle>
-            <CardDescription>
-              {language === 'en' 
-                ? 'Describe a situation that triggered negative emotions or thoughts.' 
-                : 'उस स्थिति का वर्णन करें जिसने नकारात्मक भावनाओं या विचारों को ट्रिगर किया।'}
-            </CardDescription>
-            <Textarea 
-              placeholder={language === 'en' ? 'Describe what happened...' : 'वर्णन करें कि क्या हुआ...'}
-              value={thoughtRecord.situation}
-              onChange={(e) => handleInputChange('situation', e.target.value)}
-              className="min-h-[100px]"
-            />
-          </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-4">
-            <CardTitle>{language === 'en' ? 'Identify Automatic Thoughts' : 'स्वचालित विचारों की पहचान करें'}</CardTitle>
-            <CardDescription>
-              {language === 'en' 
-                ? 'What thoughts went through your mind in this situation?' 
-                : 'इस स्थिति में आपके मन में क्या विचार आए?'}
-            </CardDescription>
-            <Textarea 
-              placeholder={language === 'en' ? 'Write your thoughts...' : 'अपने विचार लिखें...'}
-              value={thoughtRecord.thought}
-              onChange={(e) => handleInputChange('thought', e.target.value)}
-              className="min-h-[100px]"
-            />
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-4">
-            <CardTitle>{language === 'en' ? 'Identify Emotions' : 'भावनाओं की पहचान करें'}</CardTitle>
-            <CardDescription>
-              {language === 'en' 
-                ? 'What emotions did you feel? Rate their intensity (0-100%)' 
-                : 'आपने कौन सी भावनाएँ महसूस कीं? उनकी तीव्रता को रेट करें (0-100%)'}
-            </CardDescription>
-            <Textarea 
-              placeholder={language === 'en' ? 'Describe your emotions...' : 'अपनी भावनाओं का वर्णन करें...'}
-              value={thoughtRecord.emotion}
-              onChange={(e) => handleInputChange('emotion', e.target.value)}
-              className="min-h-[100px]"
-            />
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-4">
-            <CardTitle>{language === 'en' ? 'Challenge Your Thoughts' : 'अपने विचारों को चुनौती दें'}</CardTitle>
-            <CardDescription>
-              {language === 'en' 
-                ? 'What evidence supports or contradicts your thoughts?' 
-                : 'कौन से प्रमाण आपके विचारों का समर्थन या खंडन करते हैं?'}
-            </CardDescription>
-            <Textarea 
-              placeholder={language === 'en' ? 'List evidence for and against...' : 'पक्ष और विपक्ष में सबूतों की सूची बनाएं...'}
-              value={thoughtRecord.evidence}
-              onChange={(e) => handleInputChange('evidence', e.target.value)}
-              className="min-h-[100px]"
-            />
-          </div>
-        );
-      case 5:
-        return (
-          <div className="space-y-4">
-            <CardTitle>{language === 'en' ? 'Develop Alternative Thoughts' : 'वैकल्पिक विचार विकसित करें'}</CardTitle>
-            <CardDescription>
-              {language === 'en' 
-                ? 'What's a more balanced or helpful way to think about the situation?' 
-                : 'स्थिति के बारे में सोचने का एक अधिक संतुलित या सहायक तरीका क्या है?'}
-            </CardDescription>
-            <Textarea 
-              placeholder={language === 'en' ? 'Write alternative thoughts...' : 'वैकल्पिक विचार लिखें...'}
-              value={thoughtRecord.alternativeThought}
-              onChange={(e) => handleInputChange('alternativeThought', e.target.value)}
-              className="min-h-[100px]"
-            />
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
+  const renderAddTab = () => (
+    <div className="space-y-4">
+      <div>
+        <h3 className="text-md font-medium mb-2">
+          {language === 'en' ? 'Automatic Thought' : 'स्वचालित विचार'}
+        </h3>
+        <Textarea
+          placeholder={
+            language === 'en'
+              ? 'What thought is causing you distress?'
+              : 'कौन सा विचार आपको परेशान कर रहा है?'
+          }
+          value={currentThought.automaticThought}
+          onChange={(e) => handleInputChange('automaticThought', e.target.value)}
+          rows={3}
+        />
+      </div>
+      
+      <div>
+        <h3 className="text-md font-medium mb-2">
+          {language === 'en' ? 'Cognitive Distortion' : 'संज्ञानात्मक विकृति'}
+        </h3>
+        <select
+          className="w-full p-2 border rounded-md bg-background"
+          value={currentThought.distortion}
+          onChange={(e) => handleInputChange('distortion', e.target.value)}
+        >
+          <option value="">
+            {language === 'en' ? '-- Select a distortion --' : '-- एक विकृति चुनें --'}
+          </option>
+          {distortionTypes[language === 'en' ? 'en' : 'hi'].map((type) => (
+            <option key={type.value} value={type.value}>
+              {type.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      
+      <div>
+        <h3 className="text-md font-medium mb-2">
+          {language === 'en' ? 'Rational Response' : 'तार्किक प्रतिक्रिया'}
+        </h3>
+        <Textarea
+          placeholder={
+            language === 'en'
+              ? 'What is a more balanced thought?'
+              : 'एक अधिक संतुलित विचार क्या है?'
+          }
+          value={currentThought.rationalResponse}
+          onChange={(e) => handleInputChange('rationalResponse', e.target.value)}
+          rows={3}
+        />
+      </div>
+      
+      <div className="flex gap-2 pt-2">
+        <Button onClick={handleAddThought} className="flex-1">
+          {language === 'en' ? 'Record Thought' : 'विचार दर्ज करें'}
+        </Button>
+        <Button variant="outline" onClick={handleClearThought}>
+          {language === 'en' ? 'Clear' : 'साफ करें'}
+        </Button>
+      </div>
+    </div>
+  );
+  
+  const renderHistoryTab = () => (
+    <div className="space-y-4">
+      {thoughts.length === 0 ? (
+        <p className="text-center py-8 text-muted-foreground">
+          {language === 'en'
+            ? 'No thoughts recorded yet. Start by adding a thought.'
+            : 'अभी तक कोई विचार दर्ज नहीं किया गया है। एक विचार जोड़कर शुरू करें।'}
+        </p>
+      ) : (
+        thoughts.map((thought, index) => (
+          <Card key={index} className="mb-4">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-md">
+                {language === 'en' ? 'Thought' : 'विचार'} {index + 1}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div>
+                <p className="font-medium text-sm">
+                  {language === 'en' ? 'Automatic Thought:' : 'स्वचालित विचार:'}
+                </p>
+                <p className="text-muted-foreground">{thought.automaticThought}</p>
+              </div>
+              
+              {thought.distortion && (
+                <div>
+                  <p className="font-medium text-sm">
+                    {language === 'en' ? 'Distortion:' : 'विकृति:'}
+                  </p>
+                  <p className="text-muted-foreground">
+                    {distortionTypes[language === 'en' ? 'en' : 'hi'].find(
+                      d => d.value === thought.distortion
+                    )?.label || thought.distortion}
+                  </p>
+                </div>
+              )}
+              
+              {thought.rationalResponse && (
+                <div>
+                  <p className="font-medium text-sm">
+                    {language === 'en' ? 'Rational Response:' : 'तार्किक प्रतिक्रिया:'}
+                  </p>
+                  <p className="text-muted-foreground">{thought.rationalResponse}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))
+      )}
+    </div>
+  );
   
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full max-w-3xl mx-auto"
-    >
-      <Card className="glass-card bg-card/30 backdrop-blur-sm border-vyanman-300/20">
-        <CardHeader>
-          <CardTitle className="text-xl font-heading gradient-heading">
-            {language === 'en' ? 'Cognitive Behavioral Therapy Exercise' : 'संज्ञानात्मक व्यवहार थेरेपी अभ्यास'}
-          </CardTitle>
-          <CardDescription>
-            {language === 'en' 
-              ? 'This exercise helps you identify and challenge negative thoughts.' 
-              : 'यह अभ्यास आपको नकारात्मक विचारों की पहचान करने और उन्हें चुनौती देने में मदद करता है।'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-6">
-            <div className="flex justify-between mb-2">
-              {[1, 2, 3, 4, 5].map((stepNumber) => (
-                <div 
-                  key={stepNumber}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm 
-                    ${step >= stepNumber 
-                      ? 'bg-vyanman-500 text-black' 
-                      : 'bg-muted/50 text-muted-foreground'}`}
-                >
-                  {stepNumber}
-                </div>
-              ))}
-            </div>
-            <div className="h-2 bg-muted/30 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-vyanman-500 transition-all" 
-                style={{ width: `${(step / 5) * 100}%` }}
-              />
-            </div>
-          </div>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>
+          {language === 'en' ? 'Cognitive Behavioral Exercise' : 'संज्ञानात्मक व्यवहार व्यायाम'}
+        </CardTitle>
+        <CardDescription>
+          {language === 'en'
+            ? 'Identify negative thought patterns and challenge them with rational responses'
+            : 'नकारात्मक विचार पैटर्न की पहचान करें और उन्हें तार्किक प्रतिक्रियाओं से चुनौती दें'}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsTrigger value="add">
+              {language === 'en' ? 'Add Thought' : 'विचार जोड़ें'}
+            </TabsTrigger>
+            <TabsTrigger value="history">
+              {language === 'en' ? 'Thought History' : 'विचार इतिहास'}
+            </TabsTrigger>
+          </TabsList>
           
-          {renderStepContent()}
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button 
-            variant="outline" 
-            onClick={prevStep}
-            disabled={step === 1}
-          >
-            {language === 'en' ? 'Previous' : 'पिछला'}
-          </Button>
-          <Button 
-            onClick={nextStep}
-            className="bg-vyanman-500 hover:bg-vyanman-600"
-          >
-            {step === 5 
-              ? (language === 'en' ? 'Complete' : 'पूर्ण करें') 
-              : (language === 'en' ? 'Next' : 'अगला')}
-          </Button>
-        </CardFooter>
-      </Card>
-    </motion.div>
+          <TabsContent value="add">{renderAddTab()}</TabsContent>
+          <TabsContent value="history">{renderHistoryTab()}</TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
   );
 };
 
