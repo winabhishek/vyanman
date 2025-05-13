@@ -8,7 +8,6 @@ const TOGETHER_API_URL = "https://api.together.xyz/v1/chat/completions";
 interface ChatRequest {
   content: string;
   language: string;
-  userId: string;
 }
 
 Deno.serve(async (req) => {
@@ -47,7 +46,13 @@ Deno.serve(async (req) => {
       });
     }
 
+    console.log(`Processing chat request: ${content} in language: ${language}`);
+
     // Call the Together API
+    const systemPrompt = language === 'en' 
+      ? "You are Vyanman, an empathetic mental health companion. Respond in English. Offer emotional support and avoid repeating the same lines."
+      : "आप व्यानमन हैं, एक सहानुभूतिपूर्ण मानसिक स्वास्थ्य साथी। हिंदी में जवाब दें। भावनात्मक समर्थन प्रदान करें और एक ही लाइनों को दोहराने से बचें।";
+
     const togetherResponse = await fetch(TOGETHER_API_URL, {
       method: "POST",
       headers: {
@@ -59,25 +64,31 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are Vyanman, an empathetic mental health companion. Respond in ${language}. Offer emotional support and avoid repeating the same lines.`
+            content: systemPrompt
           },
           {
             role: "user",
             content: content
           }
         ],
-        max_tokens: 200,
+        max_tokens: 300,
         temperature: 0.7
       }),
     });
 
+    console.log(`API response status: ${togetherResponse.status}`);
+
     if (!togetherResponse.ok) {
       const errorData = await togetherResponse.json();
+      console.error('API error:', errorData);
       throw new Error(errorData.message || 'Failed to get response from Together API');
     }
 
     const data = await togetherResponse.json();
-    const botReply = data.choices?.[0]?.message?.content?.trim() || "I'm here for you.";
+    console.log('API response data:', data);
+    
+    const botReply = data.choices?.[0]?.message?.content?.trim() || 
+      (language === 'en' ? "I'm here for you." : "मैं आपके लिए यहां हूँ।");
 
     // Save user message in database
     const { data: userMessageData, error: userMessageError } = await supabaseClient
@@ -124,6 +135,7 @@ Deno.serve(async (req) => {
       }
     );
   } catch (error) {
+    console.error('Error in chat function:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

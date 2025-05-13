@@ -57,17 +57,15 @@ export const chatAPI = {
       });
 
       if (error) {
+        console.error('Error calling edge function:', error);
         throw error;
       }
-
-      // Get messages to ensure they're up to date
-      await chatAPI.getMessages();
 
       return data.message;
     } catch (error) {
       console.error('Error in sendMessage:', error);
       
-      // Fallback to localStorage
+      // Fallback to offline mode with predefined responses
       const userMessage: Message = {
         id: `user-msg-${Date.now()}`,
         content,
@@ -76,19 +74,51 @@ export const chatAPI = {
         sentiment: { score: 3, label: 'neutral' }
       };
 
+      // Store the user message in localStorage
+      const storedMessages = localStorage.getItem('vyanman-messages');
+      const messages = storedMessages ? JSON.parse(storedMessages) : [];
+      messages.push(userMessage);
+      
+      // Generate AI response based on user input
+      let botResponse = "मैं आपकी मदद के लिए यहां हूँ। (ऑफलाइन मोड)";
+      
+      if (language === 'en') {
+        botResponse = "I'm here for you. (Offline mode)";
+        
+        // Simple pattern matching for common inputs in English
+        if (content.toLowerCase().includes('hello') || content.toLowerCase().includes('hi')) {
+          botResponse = "Hello! How are you feeling today?";
+        } else if (content.toLowerCase().includes('sad') || content.toLowerCase().includes('depress')) {
+          botResponse = "I'm sorry to hear you're feeling down. Would you like to try a mindfulness exercise to help?";
+        } else if (content.toLowerCase().includes('anxious') || content.toLowerCase().includes('stress')) {
+          botResponse = "Anxiety can be challenging. Let's take a deep breath together. Inhale slowly for 4 counts, hold for 4, and exhale for 6.";
+        } else if (content.toLowerCase().includes('happy') || content.toLowerCase().includes('good')) {
+          botResponse = "I'm glad to hear you're feeling well! What positive things happened today?";
+        }
+      } else {
+        // Simple pattern matching for common inputs in Hindi
+        if (content.includes('नमस्ते') || content.includes('हैलो')) {
+          botResponse = "नमस्ते! आप आज कैसा महसूस कर रहे हैं?";
+        } else if (content.includes('दुखी') || content.includes('उदास')) {
+          botResponse = "मुझे सुनकर दुख हुआ कि आप उदास महसूस कर रहे हैं। क्या आप मदद के लिए एक माइंडफुलनेस अभ्यास करना चाहेंगे?";
+        } else if (content.includes('चिंता') || content.includes('तनाव')) {
+          botResponse = "चिंता चुनौतीपूर्ण हो सकती है। आइए साथ में गहरी सांस लेते हैं। 4 गिनती के लिए धीरे से सांस लें, 4 के लिए रोकें, और 6 के लिए सांस छोड़ें।";
+        } else if (content.includes('खुश') || content.includes('अच्छा')) {
+          botResponse = "मुझे खुशी है कि आप अच्छा महसूस कर रहे हैं! आज कौन सी सकारात्मक चीजें हुईं?";
+        }
+      }
+      
       const botMessage: Message = {
         id: `bot-msg-${Date.now() + 1}`,
-        content: "I'm here for you. (Offline mode)",
+        content: botResponse,
         sender: 'bot',
         timestamp: new Date(Date.now() + 1000)
       };
-
-      const storedMessages = localStorage.getItem('vyanman-messages');
-      const messages = storedMessages ? JSON.parse(storedMessages) : [];
-      messages.push(userMessage, botMessage);
+      
+      messages.push(botMessage);
       localStorage.setItem('vyanman-messages', JSON.stringify(messages));
 
-      throw error;
+      return botMessage;
     }
   }
 };

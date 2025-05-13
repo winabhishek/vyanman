@@ -1,117 +1,53 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Textarea } from '@/components/ui/textarea';
-import { Send, RefreshCcw, Mic, Paperclip, Smile, Bot, HelpCircle } from 'lucide-react';
+import { Send, RefreshCcw, Bot, HelpCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { vyanamanaPalette } from '@/utils/colorUtils';
 import { useToast } from '@/hooks/use-toast';
 import { formatTime } from '@/lib/utils';
 import ChatTypingIndicator from '@/components/ChatTypingIndicator';
-
-interface Message {
-  id: string;
-  content: string;
-  isUser: boolean;
-  timestamp: Date;
-}
+import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
+import ChatInput from '@/components/ChatInput';
+import ChatContainer from '@/components/chat/ChatContainer';
+import ChatHeader from '@/components/chat/ChatHeader';
+import { chatAPI } from '@/services/chatAPI';
+import { Message } from '@/types';
 
 const initialMessages: Message[] = [
   {
     id: '1',
-    content: "Hello! I'm Vyānamana, your mental wellness companion. How are you feeling today?",
-    isUser: false,
+    content: "Hello! I'm Vyanman, your mental wellness companion. How are you feeling today?",
+    sender: 'bot',
     timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
   }
 ];
 
-const TypingIndicator = () => (
-  <div className="flex space-x-1.5 p-2.5 px-4 rounded-full bg-muted/50 w-min">
-    {[0, 1, 2].map((dot) => (
-      <motion.div
-        key={dot}
-        className="w-2 h-2 rounded-full bg-vyanamana-400"
-        animate={{
-          y: ["0%", "-50%", "0%"]
-        }}
-        transition={{
-          duration: 0.8,
-          repeat: Infinity,
-          repeatType: "loop",
-          delay: dot * 0.2
-        }}
-      />
-    ))}
-  </div>
-);
-
-const MessageBubble = ({ message }: { message: Message }) => {
-  const { user } = useAuth();
-  const isUser = message.isUser;
-  
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.3 }}
-      className={`flex gap-3 max-w-[80%] ${isUser ? 'flex-row-reverse' : ''}`}
-    >
-      {!isUser && (
-        <motion.div 
-          whileHover={{ scale: 1.1, rotate: 5 }}
-          transition={{ type: "spring", stiffness: 500, damping: 10 }}
-        >
-          <Avatar className="mt-1">
-            <AvatarImage src="/favicon.ico" />
-            <AvatarFallback>
-              <Bot className="text-vyanamana-600" />
-            </AvatarFallback>
-          </Avatar>
-        </motion.div>
-      )}
-      
-      {isUser && (
-        <motion.div 
-          whileHover={{ scale: 1.1, rotate: -5 }}
-          transition={{ type: "spring", stiffness: 500, damping: 10 }}
-        >
-          <Avatar className="mt-1">
-            <AvatarImage src={`https://api.dicebear.com/7.x/micah/svg?seed=${user?.user_metadata?.name || 'anonymous'}`} />
-            <AvatarFallback>{user?.user_metadata?.name?.charAt(0) || 'U'}</AvatarFallback>
-          </Avatar>
-        </motion.div>
-      )}
-      
-      <div>
-        <motion.div 
-          className={`px-4 py-3 rounded-2xl ${
-            isUser 
-              ? 'bg-vyanamana-500 text-white shadow-md'
-              : 'bg-secondary shadow-sm'
-          }`}
-          whileHover={{ scale: 1.01 }}
-          transition={{ type: "spring", stiffness: 500, damping: 20 }}
-        >
-          <p className="text-sm">{message.content}</p>
-        </motion.div>
-        <p className={`text-xs mt-1 text-muted-foreground ${isUser ? 'text-right' : ''}`}>
-          {formatTime(message.timestamp)}
-        </p>
-      </div>
-    </motion.div>
-  );
-};
-
 const Chat: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { language } = useLanguage();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Fetch messages on component mount
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const fetchedMessages = await chatAPI.getMessages();
+        if (fetchedMessages && fetchedMessages.length > 0) {
+          setMessages(fetchedMessages);
+        }
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+    };
+    
+    fetchMessages();
+  }, [user]);
   
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -120,74 +56,77 @@ const Chat: React.FC = () => {
   useEffect(() => {
     if (!user) {
       toast({
-        title: "You're in demo mode",
-        description: "Log in to save your conversations and get personalized responses.",
+        title: language === 'en' ? "You're in demo mode" : "आप डेमो मोड में हैं",
+        description: language === 'en' 
+          ? "Log in to save your conversations and get personalized responses." 
+          : "अपनी बातचीत को सहेजने और व्यक्तिगत प्रतिक्रियाएँ प्राप्त करने के लिए लॉग इन करें।",
         variant: "default",
       });
     }
-  }, [user, toast]);
+  }, [user, toast, language]);
   
-  const handleSendMessage = () => {
-    if (input.trim() === '') return;
+  const handleSendMessage = async (input: string) => {
+    if (input.trim() === '' || isLoading) return;
     
     const userMessage: Message = {
       id: Date.now().toString(),
       content: input,
-      isUser: true,
+      sender: 'user',
       timestamp: new Date()
     };
     
     setMessages(prev => [...prev, userMessage]);
-    setInput('');
-    
     setIsTyping(true);
     setIsLoading(true);
     
-    setTimeout(() => {
-      setIsTyping(false);
-      setIsLoading(false);
+    try {
+      const detected = detectLanguage(input);
+      const botMessage = await chatAPI.sendMessage(input, detected);
       
-      let responseText = "I understand. How does that make you feel?";
+      setMessages(prev => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error);
       
-      if (input.toLowerCase().includes('sad') || input.toLowerCase().includes('depress')) {
-        responseText = "I'm sorry to hear you're feeling down. Would you like to try a quick mindfulness exercise to help with those feelings?";
-      } else if (input.toLowerCase().includes('anxious') || input.toLowerCase().includes('stress')) {
-        responseText = "Anxiety can be challenging. Let's take a moment to focus on your breathing. Try taking a few deep breaths with me.";
-      } else if (input.toLowerCase().includes('happy') || input.toLowerCase().includes('good')) {
-        responseText = "I'm glad to hear you're doing well! What's contributing to your positive mood today?";
-      } else if (input.toLowerCase().includes('tired') || input.toLowerCase().includes('exhausted')) {
-        responseText = "Feeling tired is common. Have you been able to maintain a regular sleep schedule lately?";
-      } else if (input.toLowerCase().includes('help')) {
-        responseText = "I'm here to support your mental wellness journey. Would you like to talk about your feelings, try some breathing exercises, or learn about mindfulness techniques?";
-      } else if (input.trim() === '') {
-        responseText = "I notice you sent an empty message. Is there something you'd like to talk about today?";
-      }
-      
-      const aiMessage: Message = {
-        id: Date.now().toString(),
-        content: responseText,
-        isUser: false,
+      // Fallback message in case of error
+      const errorMessage: Message = {
+        id: `error-${Date.now()}`,
+        content: language === 'en' 
+          ? "Sorry, I'm having trouble connecting. Please try again later." 
+          : "क्षमा करें, मुझे कनेक्ट करने में समस्या हो रही है। कृपया बाद में पुनः प्रयास करें।",
+        sender: 'bot',
         timestamp: new Date()
       };
       
-      setMessages(prev => [...prev, aiMessage]);
-    }, 1500);
-  };
-  
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
+      setMessages(prev => [...prev, errorMessage]);
+      
+      toast({
+        title: language === 'en' ? "Connection error" : "कनेक्शन त्रुटि",
+        description: language === 'en' 
+          ? "Could not connect to the chat service." 
+          : "चैट सेवा से कनेक्ट नहीं हो सका।",
+        variant: "destructive",
+      });
+    } finally {
+      setIsTyping(false);
+      setIsLoading(false);
     }
   };
 
   const handleResetChat = () => {
     setMessages(initialMessages);
     toast({
-      title: "Chat reset",
-      description: "Your conversation has been reset.",
+      title: language === 'en' ? "Chat reset" : "चैट रीसेट",
+      description: language === 'en' 
+        ? "Your conversation has been reset." 
+        : "आपकी बातचीत रीसेट कर दी गई है।",
       variant: "default",
     });
+  };
+  
+  // Helper to detect language (basic)
+  const detectLanguage = (text: string): 'en' | 'hi' => {
+    const hindiPattern = /[\u0900-\u097F]/;
+    return hindiPattern.test(text) ? 'hi' : 'en';
   };
 
   return (
@@ -208,8 +147,10 @@ const Chat: React.FC = () => {
             </Avatar>
           </motion.div>
           <div>
-            <h2 className="font-semibold">Vyānamana</h2>
-            <p className="text-xs text-muted-foreground">Your mental wellness companion</p>
+            <h2 className="font-semibold">Vyanman</h2>
+            <p className="text-xs text-muted-foreground">
+              {language === 'en' ? 'Your mental wellness companion' : 'आपका मानसिक कल्याण साथी'}
+            </p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -222,101 +163,14 @@ const Chat: React.FC = () => {
         </div>
       </div>
       
-      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4 glass-card mb-4">
-        {messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-6">
-            <p className="text-muted-foreground mb-2">No messages yet</p>
-            <p className="text-sm text-muted-foreground">
-              Start a conversation with Vyānamana, your mental wellness companion.
-            </p>
-          </div>
-        ) : (
-          <AnimatePresence initial={false}>
-            {messages.map((message) => (
-              <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
-                <MessageBubble message={message} />
-              </div>
-            ))}
-            
-            {isTyping && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="flex justify-start"
-              >
-                <div className="flex gap-3">
-                  <Avatar className="mt-1">
-                    <AvatarImage src="/favicon.ico" />
-                    <AvatarFallback>
-                      <Bot className="text-vyanamana-600" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <ChatTypingIndicator />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        )}
-        <div ref={messagesEndRef} />
-      </div>
+      <ChatContainer 
+        messages={messages} 
+        isLoading={isTyping} 
+        messagesEndRef={messagesEndRef} 
+      />
       
       <div className="p-4 border-t glass-card">
-        <Card className="overflow-hidden shadow-lg">
-          <CardContent className="p-0">
-            <div className="flex">
-              <Textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={isLoading ? "Waiting for response..." : "Type your message..."}
-                className="min-h-[60px] max-h-[120px] border-0 focus-visible:ring-0 resize-none"
-                disabled={isLoading}
-              />
-            </div>
-            <div className="flex justify-between items-center px-3 py-2 bg-muted/30">
-              <div className="flex gap-2">
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                    <Paperclip className="h-4 w-4" />
-                  </Button>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                    <Smile className="h-4 w-4" />
-                  </Button>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                    <Mic className="h-4 w-4" />
-                  </Button>
-                </motion.div>
-              </div>
-              
-              <motion.div 
-                whileHover={{ scale: 1.05 }} 
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button 
-                  onClick={handleSendMessage} 
-                  size="sm"
-                  className="gap-1 bg-vyanamana-500 hover:bg-vyanamana-600 relative overflow-hidden group"
-                  disabled={input.trim() === '' || isLoading}
-                >
-                  <Send className="h-4 w-4" />
-                  <span>Send</span>
-                  <motion.div 
-                    className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10"
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: "100%" }}
-                    transition={{ duration: 0.5 }}
-                  />
-                </Button>
-              </motion.div>
-            </div>
-          </CardContent>
-        </Card>
+        <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
       </div>
     </motion.div>
   );
