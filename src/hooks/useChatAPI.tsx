@@ -1,8 +1,9 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Define types for the API
 interface ChatMessage {
@@ -25,19 +26,24 @@ export const useChatAPI = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [retryCount, setRetryCount] = useState(0);
   const MAX_RETRIES = 2;
+  const { language } = useLanguage();
 
   // Load chat history from local storage on initial render
   useEffect(() => {
-    const savedHistory = localStorage.getItem('chatHistory');
-    if (savedHistory) {
-      try {
-        setChatHistory(JSON.parse(savedHistory));
-      } catch (e) {
-        console.error('Error parsing chat history from localStorage', e);
-        // Clear corrupted data
-        localStorage.removeItem('chatHistory');
+    const loadChatHistory = () => {
+      const savedHistory = localStorage.getItem('chatHistory');
+      if (savedHistory) {
+        try {
+          setChatHistory(JSON.parse(savedHistory));
+        } catch (e) {
+          console.error('Error parsing chat history from localStorage', e);
+          // Clear corrupted data
+          localStorage.removeItem('chatHistory');
+        }
       }
-    }
+    };
+
+    loadChatHistory();
   }, []);
 
   // Save chat history to local storage whenever it changes
@@ -47,7 +53,41 @@ export const useChatAPI = () => {
     }
   }, [chatHistory]);
 
-  const sendMessage = async (message: string): Promise<ChatMessage | null> => {
+  // Helper to detect language
+  const detectLanguage = (text: string): 'en' | 'hi' => {
+    const hindiPattern = /[\u0900-\u097F]/;
+    return hindiPattern.test(text) ? 'hi' : 'en';
+  };
+
+  // Function to handle API errors
+  const handleApiError = useCallback((err: any, message: string): ChatMessage => {
+    console.error('Error sending message:', err);
+    const error = err instanceof Error ? err : new Error('Unknown error occurred');
+    setError(error);
+    
+    // Create a fallback error message
+    const errorBotMessage: ChatMessage = {
+      id: uuidv4(),
+      content: detectLanguage(message) === 'hi' 
+        ? "मुझे खेद है, मुझे अभी कनेक्शन में समस्या हो रही है। कृपया बाद में फिर से प्रयास करें।"
+        : "I'm sorry, I'm having trouble connecting right now. Please try again later.",
+      role: 'assistant',
+      timestamp: new Date().toISOString()
+    };
+    
+    // Show toast notification
+    toast({
+      title: detectLanguage(message) === 'hi' ? "कनेक्शन त्रुटि" : "Connection Error",
+      description: detectLanguage(message) === 'hi' 
+        ? "AI सेवा से कनेक्ट करने में समस्या। ऑफलाइन मोड में चल रहा है।"
+        : "Problem connecting to AI service. Running in offline mode.",
+      variant: "destructive",
+    });
+    
+    return errorBotMessage;
+  }, []);
+
+  const sendMessage = useCallback(async (message: string): Promise<ChatMessage | null> => {
     setIsLoading(true);
     setError(null);
 
@@ -64,6 +104,7 @@ export const useChatAPI = () => {
     try {
       // First try to send via Supabase edge function
       let response;
+      const detectedLanguage = detectLanguage(message);
       
       if (supabase) {
         try {
@@ -71,7 +112,7 @@ export const useChatAPI = () => {
           response = await supabase.functions.invoke('chat', {
             body: { 
               content: message, 
-              language: detectLanguage(message) 
+              language: detectedLanguage
             }
           });
           
@@ -90,40 +131,49 @@ export const useChatAPI = () => {
       // If Supabase failed or isn't available, use Together API directly
       if (!response?.data) {
         console.log('Using Together API fallback...');
-        const togetherResponse = await fetch(CHAT_API_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${CHAT_API_KEY}`
-          },
-          body: JSON.stringify({
-            model: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
-            prompt: `<|im_start|>user\nI'm feeling stressed and anxious. ${message}<|im_end|>\n<|im_start|>assistant\n`,
-            max_tokens: 800,
-            temperature: 0.7,
-            top_p: 0.95,
-            frequency_penalty: 0,
-            presence_penalty: 0,
-            stop: ['<|im_end|>']
-          })
-        });
-
-        if (!togetherResponse.ok) {
-          throw new Error(`Failed to send message: ${togetherResponse.status} ${togetherResponse.statusText}`);
-        }
-
-        const data = await togetherResponse.json();
         
-        response = {
-          data: {
-            message: {
-              id: uuidv4(),
-              content: data.choices[0].text.trim(),
-              role: 'assistant',
-              timestamp: new Date().toISOString()
-            }
+        try {
+          const systemPrompt = detectedLanguage === 'hi' 
+            ? "आप व्यानमन हैं, एक सहायक AI जो मानसिक स्वास्थ्य से संबंधित प्रश्नों का उत्तर देता है। आप हिंदी में बातचीत करते हैं और उपयोगकर्ता को सहायता प्रदान करते हैं।"
+            : "You are Vyanman, an AI assistant that helps with mental health. You are warm, empathetic, and provide supportive responses.";
+          
+          const togetherResponse = await fetch(CHAT_API_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${CHAT_API_KEY}`
+            },
+            body: JSON.stringify({
+              model: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+              prompt: `<|im_start|>system\n${systemPrompt}<|im_end|>\n<|im_start|>user\n${message}<|im_end|>\n<|im_start|>assistant\n`,
+              max_tokens: 800,
+              temperature: 0.7,
+              top_p: 0.95,
+              frequency_penalty: 0,
+              presence_penalty: 0,
+              stop: ['<|im_end|>']
+            })
+          });
+
+          if (!togetherResponse.ok) {
+            throw new Error(`Failed to send message: ${togetherResponse.status} ${togetherResponse.statusText}`);
           }
-        };
+
+          const data = await togetherResponse.json();
+          
+          response = {
+            data: {
+              message: {
+                id: uuidv4(),
+                content: data.choices[0].text.trim(),
+                role: 'assistant',
+                timestamp: new Date().toISOString()
+              }
+            }
+          };
+        } catch (err) {
+          throw err; // Re-throw to be caught by the outer catch block
+        }
       }
 
       const botMessage = response.data.message;
@@ -134,10 +184,6 @@ export const useChatAPI = () => {
       setIsLoading(false);
       return botMessage;
     } catch (err) {
-      console.error('Error sending message:', err);
-      const error = err instanceof Error ? err : new Error('Unknown error occurred');
-      setError(error);
-      
       // Implement retry logic for transient errors
       if (retryCount < MAX_RETRIES) {
         setRetryCount(prev => prev + 1);
@@ -152,44 +198,22 @@ export const useChatAPI = () => {
         return sendMessage(message);
       }
       
-      // Create a fallback error message after all retries have failed
-      const errorBotMessage: ChatMessage = {
-        id: uuidv4(),
-        content: detectLanguage(message) === 'hi' 
-          ? "मुझे खेद है, मुझे अभी कनेक्शन में समस्या हो रही है। कृपया बाद में फिर से प्रयास करें।"
-          : "I'm sorry, I'm having trouble connecting right now. Please try again later.",
-        role: 'assistant',
-        timestamp: new Date().toISOString()
-      };
+      // All retries failed, use fallback
+      const errorBotMessage = handleApiError(err, message);
       
       // Add error message to chat history
       setChatHistory(prev => [...prev, errorBotMessage]);
-      
-      // Show toast notification
-      toast({
-        title: detectLanguage(message) === 'hi' ? "कनेक्शन त्रुटि" : "Connection Error",
-        description: detectLanguage(message) === 'hi' 
-          ? "AI सेवा से कनेक्ट करने में समस्या। ऑफलाइन मोड में चल रहा है।"
-          : "Problem connecting to AI service. Running in offline mode.",
-        variant: "destructive",
-      });
       
       setRetryCount(0); // Reset retry count
       setIsLoading(false);
       return errorBotMessage;
     }
-  };
+  }, [retryCount, handleApiError]);
 
-  const clearChatHistory = () => {
+  const clearChatHistory = useCallback(() => {
     setChatHistory([]);
     localStorage.removeItem('chatHistory');
-  };
-
-  // Helper to detect language
-  const detectLanguage = (text: string): 'en' | 'hi' => {
-    const hindiPattern = /[\u0900-\u097F]/;
-    return hindiPattern.test(text) ? 'hi' : 'en';
-  };
+  }, []);
 
   return {
     sendMessage,

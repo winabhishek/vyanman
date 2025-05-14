@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { HelmetProvider } from 'react-helmet-async';
 import MainLayout from "./components/MainLayout";
 
 // Import all page components
@@ -38,33 +38,35 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <LanguageProvider>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <MainLayout>
-                <Routes>
-                  <Route path="/" element={<LandingPage />} />
-                  <Route path="/chat" element={<Chat />} />
-                  <Route path="/mood-tracker" element={<MoodTrackerPage />} />
-                  <Route path="/meditation" element={<MeditationPage />} />
-                  <Route path="/digital-detox" element={<DigitalDetoxPage />} />
-                  <Route path="/cbt" element={<CBTPage />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/profile" element={<Profile />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </MainLayout>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
-      </LanguageProvider>
-    </ThemeProvider>
+    <HelmetProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <MainLayout>
+                  <Routes>
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/chat" element={<Chat />} />
+                    <Route path="/mood-tracker" element={<MoodTrackerPage />} />
+                    <Route path="/meditation" element={<MeditationPage />} />
+                    <Route path="/digital-detox" element={<DigitalDetoxPage />} />
+                    <Route path="/cbt" element={<CBTPage />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/profile" element={<Profile />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </MainLayout>
+              </BrowserRouter>
+            </TooltipProvider>
+          </AuthProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </HelmetProvider>
   </QueryClientProvider>
 );
 

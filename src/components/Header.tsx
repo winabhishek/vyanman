@@ -8,11 +8,24 @@ import LanguageToggle from './LanguageToggle';
 import AuthButton from './auth/AuthButton';
 import { Button } from '@/components/ui/button';
 import { 
-  Menu, X, MessageCircle, BarChart, Headphones, Smartphone 
+  Menu, X, MessageCircle, BarChart, Headphones, Smartphone, 
+  Brain, Home, Info
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Header: React.FC = () => {
+// Define the type for nav items
+export interface NavItem {
+  href: string;
+  label: string;
+  icon?: React.ReactNode;
+}
+
+// Define props interface for Header component
+interface HeaderProps {
+  navItems?: NavItem[];
+}
+
+const Header: React.FC<HeaderProps> = ({ navItems: customNavItems }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { t } = useLanguage();
@@ -25,12 +38,19 @@ const Header: React.FC = () => {
     setIsMenuOpen(false);
   };
 
-  const navLinks = [
-    { path: '/chat', label: t('nav.chat'), icon: <MessageCircle className="h-4 w-4" /> },
-    { path: '/mood-tracker', label: t('nav.mood'), icon: <BarChart className="h-4 w-4" /> },
-    { path: '/meditation', label: t('nav.meditation'), icon: <Headphones className="h-4 w-4" /> },
-    { path: '/digital-detox', label: t('nav.detox'), icon: <Smartphone className="h-4 w-4" /> },
+  // Default nav links if no custom navItems are provided
+  const defaultNavLinks = [
+    { href: '/', label: t('nav.home'), icon: <Home className="h-4 w-4" /> },
+    { href: '/chat', label: t('nav.chat'), icon: <MessageCircle className="h-4 w-4" /> },
+    { href: '/mood-tracker', label: t('nav.mood'), icon: <BarChart className="h-4 w-4" /> },
+    { href: '/meditation', label: t('nav.meditation'), icon: <Headphones className="h-4 w-4" /> },
+    { href: '/digital-detox', label: t('nav.detox'), icon: <Smartphone className="h-4 w-4" /> },
+    { href: '/cbt', label: t('nav.cbt'), icon: <Brain className="h-4 w-4" /> },
+    { href: '/about', label: t('nav.about'), icon: <Info className="h-4 w-4" /> },
   ];
+
+  // Use provided nav items or fall back to default ones
+  const navLinks = customNavItems || defaultNavLinks;
 
   const menuVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -42,20 +62,29 @@ const Header: React.FC = () => {
     <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-background/80 border-b border-border/40 shadow-sm">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2" onClick={closeMenu}>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center shadow-sm hover:shadow-md transition-all">
+          <motion.div 
+            className="w-8 h-8 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center shadow-sm hover:shadow-md transition-all"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <span className="text-white font-bold text-sm">V</span>
-          </div>
-          <span className="font-heading font-bold text-xl gradient-heading">
+          </motion.div>
+          <motion.span 
+            className="font-heading font-bold text-xl gradient-heading"
+            initial={{ opacity: 0, x: -5 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             {t('app.name')}
-          </span>
+          </motion.span>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
-            <Link key={link.path} to={link.path}>
+            <Link key={link.href} to={link.href}>
               <Button
-                variant={location.pathname === link.path ? "default" : "ghost"}
+                variant={location.pathname === link.href ? "default" : "ghost"}
                 size="sm"
                 className="flex items-center gap-1 relative overflow-hidden group hover:shadow-sm transition-shadow rounded-lg"
               >
@@ -64,7 +93,7 @@ const Header: React.FC = () => {
                   <span>{link.label}</span>
                 </span>
                 
-                {location.pathname === link.path && (
+                {location.pathname === link.href && (
                   <motion.div 
                     className="absolute bottom-0 left-0 h-0.5 w-full bg-vyanamana-500"
                     layoutId="navbar-indicator"
@@ -95,7 +124,13 @@ const Header: React.FC = () => {
             onClick={toggleMenu}
             className="rounded-full hover:shadow-sm transition-shadow"
           >
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <motion.div
+              initial={false}
+              animate={{ rotate: isMenuOpen ? 90 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </motion.div>
           </Button>
         </div>
       </div>
@@ -112,15 +147,15 @@ const Header: React.FC = () => {
           >
             <nav className="flex flex-col gap-2 p-4 bg-background border-b border-border/40 shadow-md">
               {navLinks.map((link) => (
-                <Link key={link.path} to={link.path} onClick={closeMenu}>
+                <Link key={link.href} to={link.href} onClick={closeMenu}>
                   <Button
-                    variant={location.pathname === link.path ? "default" : "ghost"}
+                    variant={location.pathname === link.href ? "default" : "ghost"}
                     className="w-full justify-start gap-2 relative overflow-hidden hover:shadow-sm transition-shadow rounded-lg"
                   >
                     {link.icon}
                     {link.label}
                     
-                    {location.pathname === link.path && (
+                    {location.pathname === link.href && (
                       <motion.div 
                         className="absolute bottom-0 left-0 h-0.5 w-full bg-vyanamana-500"
                         layoutId="navbar-indicator-mobile"

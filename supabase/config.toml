@@ -1,9 +1,17 @@
 
 project_id = "ppgflxqfjnfmntboxzpy"
 
+[api]
+# Port to use for the API URL
+port = 54321
+schemes = ["http", "https"]
+
 [functions.chat]
 verify_jwt = false
 
 [functions.moods]
 verify_jwt = true
 
+[db]
+# Port to use for the local database URL
+port = 54322

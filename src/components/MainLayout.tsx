@@ -3,8 +3,9 @@ import React, { useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import { useLocation } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { motion } from 'framer-motion';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -49,54 +50,33 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     }
   };
 
-  // Create navigation items for header
-  const navItems = [
-    { 
-      href: "/", 
-      label: language === 'en' ? "Home" : "होम"
-    },
-    { 
-      href: "/chat", 
-      label: language === 'en' ? "Chat" : "चैट" 
-    },
-    { 
-      href: "/mood-tracker", 
-      label: language === 'en' ? "Mood Tracker" : "मूड ट्रैकर" 
-    },
-    { 
-      href: "/meditation", 
-      label: language === 'en' ? "Meditation" : "ध्यान" 
-    },
-    { 
-      href: "/digital-detox", 
-      label: language === 'en' ? "Digital Detox" : "डिजिटल डिटॉक्स" 
-    },
-    { 
-      href: "/cbt", 
-      label: language === 'en' ? "CBT" : "CBT" 
-    },
-    { 
-      href: "/about", 
-      label: language === 'en' ? "About" : "परिचय" 
-    }
-  ];
-
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-background to-background/95">
+    <motion.div 
+      className="flex flex-col min-h-screen bg-gradient-to-b from-background to-background/95"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       <Helmet>
         <title>{getPageTitle()}</title>
         <meta name="description" content="Vyanman - AI Mental Health Companion" />
         <link rel="icon" href="/favicon.ico" />
       </Helmet>
       
-      <Header navItems={navItems} />
+      <Header />
       
-      <main className="flex-grow pt-20 pb-16">
+      <motion.main 
+        className="flex-grow pt-20 pb-16"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
         {children}
-      </main>
+      </motion.main>
       
       <Footer />
-    </div>
+    </motion.div>
   );
 };
 
