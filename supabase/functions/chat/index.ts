@@ -42,12 +42,13 @@ Deno.serve(async (req) => {
 
     console.log(`Processing chat request: ${content} in language: ${language}`);
 
-    // Call the Together API
+    // Enhanced system prompts for more natural and engaging conversation
     const systemPrompt = language === 'en' 
-      ? "You are Vyanman, an empathetic mental health companion. Respond in English. Offer emotional support and cognitive behavioral therapy techniques. Provide brief, helpful responses focused on improving mental wellbeing."
-      : "आप व्यानमन हैं, एक सहानुभूतिपूर्ण मानसिक स्वास्थ्य साथी। हिंदी में जवाब दें। भावनात्मक समर्थन और संज्ञानात्मक व्यवहार थेरेपी तकनीकें प्रदान करें। मानसिक कल्याण में सुधार पर केंद्रित संक्षिप्त, सहायक प्रतिक्रियाएँ प्रदान करें।";
+      ? "You are Vyanman, a compassionate mental health companion. Respond in English with empathy and warmth. Use conversational language that feels natural and engaging. Offer emotional support and practical mental wellbeing techniques. Ask thoughtful follow-up questions to build rapport. Personalize your responses based on the user's emotions and needs. Keep responses concise (2-4 sentences)."
+      : "आप व्यानमन हैं, एक सहानुभूतिपूर्ण मानसिक स्वास्थ्य साथी। हिंदी में स्वाभाविक और सहज भाषा में उत्तर दें। भावनात्मक समर्थन और व्यावहारिक मानसिक कल्याण तकनीक प्रदान करें। संबंध बनाने के लिए सार्थक अनुवर्ती प्रश्न पूछें। उपयोगकर्ता की भावनाओं और जरूरतों के अनुसार अपनी प्रतिक्रियाओं को व्यक्तिगत बनाएं। उत्तर संक्षिप्त रखें (2-4 वाक्य)।";
 
     try {
+      // First try to call Together API with chat completions endpoint for better conversation
       const togetherResponse = await fetch(TOGETHER_API_URL, {
         method: "POST",
         headers: {
@@ -55,7 +56,7 @@ Deno.serve(async (req) => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "mistralai/Mistral-7B-Instruct-v0.1",
+          model: "mistralai/Mistral-7B-Instruct-v0.2", // Using a more capable model
           messages: [
             {
               role: "system",
@@ -67,7 +68,8 @@ Deno.serve(async (req) => {
             }
           ],
           max_tokens: 300,
-          temperature: 0.7
+          temperature: 0.8, // Slightly higher temperature for more creative responses
+          top_p: 0.9
         }),
       });
 
@@ -83,7 +85,7 @@ Deno.serve(async (req) => {
       console.log('API response data:', data);
       
       const botReply = data.choices?.[0]?.message?.content?.trim() || 
-        (language === 'en' ? "I'm here for you." : "मैं आपके लिए यहां हूँ।");
+        (language === 'en' ? "I'm here for you. How can I help today?" : "मैं आपके लिए यहां हूँ। मैं आज कैसे मदद कर सकता हूं?");
 
       // Save messages in database if user is authenticated
       if (user && !userError) {
