@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -54,6 +53,18 @@
     --vyanman-800: 28 70% 35%;
     --vyanman-900: 26 68% 30%;
     --vyanman-950: 24 70% 20%;
+    
+    --vyanamana-50: 40 100% 97%;
+    --vyanamana-100: 40 100% 94%;
+    --vyanamana-200: 40 100% 89%;
+    --vyanamana-300: 40 100% 84%;
+    --vyanamana-400: 40 100% 76%;
+    --vyanamana-500: 40 100% 50%; /* Gold - Primary */
+    --vyanamana-600: 36 90% 45%;
+    --vyanamana-700: 32 80% 40%;
+    --vyanamana-800: 28 70% 35%;
+    --vyanamana-900: 26 68% 30%;
+    --vyanamana-950: 24 70% 20%;
   }
 
   .dark {
@@ -106,7 +117,7 @@
   }
   
   .gradient-heading {
-    @apply bg-gradient-to-r from-vyanman-400 to-amber-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-vyanamana-400 to-amber-600 bg-clip-text text-transparent;
   }
   
   .text-balance {
@@ -118,7 +129,7 @@
   }
   
   .hover-slide-bg::after {
-    @apply absolute inset-0 bg-gradient-to-r from-vyanman-500/20 to-amber-600/20 opacity-0 transition-opacity duration-300 content-[''];
+    @apply absolute inset-0 bg-gradient-to-r from-vyanamana-500/20 to-amber-600/20 opacity-0 transition-opacity duration-300 content-[''];
   }
   
   .hover-slide-bg:hover::after {
@@ -147,6 +158,14 @@
   
   .glassmorphism {
     @apply backdrop-blur-md bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10;
+  }
+  
+  .chat-bubble-user {
+    @apply bg-gradient-to-r from-vyanamana-500/90 to-vyanamana-600/90 text-white px-4 py-2 rounded-2xl;
+  }
+  
+  .chat-bubble-bot {
+    @apply bg-card/80 dark:bg-card/60 px-4 py-2 rounded-2xl;
   }
 }
 

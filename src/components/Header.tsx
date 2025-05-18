@@ -8,7 +8,7 @@ import LanguageToggle from './LanguageToggle';
 import AuthButton from './auth/AuthButton';
 import { Button } from '@/components/ui/button';
 import { 
-  Menu, X, MessageCircle, BarChart, Headphones, Smartphone, 
+  Menu, X, BarChart, Headphones, Smartphone, 
   Brain, Home, Info
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -41,7 +41,6 @@ const Header: React.FC<HeaderProps> = ({ navItems: customNavItems }) => {
   // Default nav links if no custom navItems are provided
   const defaultNavLinks = [
     { href: '/', label: t('nav.home'), icon: <Home className="h-4 w-4" /> },
-    { href: '/chat', label: t('nav.chat'), icon: <MessageCircle className="h-4 w-4" /> },
     { href: '/mood-tracker', label: t('nav.mood'), icon: <BarChart className="h-4 w-4" /> },
     { href: '/meditation', label: t('nav.meditation'), icon: <Headphones className="h-4 w-4" /> },
     { href: '/digital-detox', label: t('nav.detox'), icon: <Smartphone className="h-4 w-4" /> },

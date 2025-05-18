@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -46,21 +47,19 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
-                <MainLayout>
-                  <Routes>
-                    <Route path="/" element={<LandingPage />} />
-                    <Route path="/chat" element={<Chat />} />
-                    <Route path="/mood-tracker" element={<MoodTrackerPage />} />
-                    <Route path="/meditation" element={<MeditationPage />} />
-                    <Route path="/digital-detox" element={<DigitalDetoxPage />} />
-                    <Route path="/cbt" element={<CBTPage />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/profile" element={<Profile />} />
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </MainLayout>
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/chat" element={<Chat />} />
+                  <Route path="/mood-tracker" element={<MoodTrackerPage />} />
+                  <Route path="/meditation" element={<MeditationPage />} />
+                  <Route path="/digital-detox" element={<DigitalDetoxPage />} />
+                  <Route path="/cbt" element={<CBTPage />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/profile" element={<Profile />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
               </BrowserRouter>
             </TooltipProvider>
           </AuthProvider>

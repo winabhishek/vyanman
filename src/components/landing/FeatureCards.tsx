@@ -28,30 +28,30 @@ const FeatureCards: React.FC<FeatureCardsProps> = ({ isMusicPlaying, toggleMusic
   };
 
   return (
-    <section className="py-12">
+    <section className="py-16 bg-background/50 backdrop-blur-sm">
       <motion.div 
         className="max-w-6xl mx-auto px-4"
         variants={container}
         initial="hidden"
         animate="show"
       >
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-200">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 gradient-heading">
           Tools for Your Mental Wellbeing
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Mood Tracker Card */}
-          <motion.div variants={item}>
+          <motion.div variants={item} whileHover={{ y: -5 }} transition={{ duration: 0.3 }}>
             <MoodTrackerCard />
           </motion.div>
 
           {/* AI Chat Companion Card */}
-          <motion.div variants={item}>
+          <motion.div variants={item} whileHover={{ y: -5 }} transition={{ duration: 0.3 }}>
             <ChatCompanionCard />
           </motion.div>
 
           {/* Meditation & Breathing Tools Card */}
-          <motion.div variants={item}>
+          <motion.div variants={item} whileHover={{ y: -5 }} transition={{ duration: 0.3 }}>
             <MeditationCard 
               isMusicPlaying={isMusicPlaying} 
               toggleMusic={toggleMusic} 

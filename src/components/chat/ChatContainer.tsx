@@ -52,13 +52,13 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, mess
                 damping: 20,
                 duration: 0.6 
               }}
-              className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center mb-6 shadow-lg"
+              className="w-16 h-16 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center mb-6 shadow-lg"
             >
               <Bot className="h-8 w-8 text-white" />
             </motion.div>
             
             <motion.p 
-              className="text-lg font-medium mb-4 text-amber-800 dark:text-amber-300"
+              className="text-lg font-medium mb-4 text-vyanamana-500 dark:text-vyanamana-400"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.4 }}
@@ -87,10 +87,10 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, mess
             
             {isLoading && (
               <div className="flex justify-start mb-4">
-                <div className="chat-bubble-bot shadow-sm">
+                <div className="bg-card/80 dark:bg-card/60 px-4 py-3 rounded-2xl shadow-sm">
                   <div className="flex space-x-2">
                     <motion.div 
-                      className="w-2 h-2 rounded-full bg-current"
+                      className="w-2 h-2 rounded-full bg-vyanamana-500"
                       animate={{ 
                         scale: [1, 1.3, 1],
                         opacity: [0.5, 1, 0.5] 
@@ -98,7 +98,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, mess
                       transition={{ duration: 1.2, repeat: Infinity }}
                     />
                     <motion.div 
-                      className="w-2 h-2 rounded-full bg-current"
+                      className="w-2 h-2 rounded-full bg-vyanamana-500"
                       animate={{ 
                         scale: [1, 1.3, 1],
                         opacity: [0.5, 1, 0.5] 
@@ -106,7 +106,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, mess
                       transition={{ duration: 1.2, repeat: Infinity, delay: 0.2 }}
                     />
                     <motion.div 
-                      className="w-2 h-2 rounded-full bg-current"
+                      className="w-2 h-2 rounded-full bg-vyanamana-500"
                       animate={{ 
                         scale: [1, 1.3, 1],
                         opacity: [0.5, 1, 0.5] 

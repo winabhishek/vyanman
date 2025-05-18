@@ -5,6 +5,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ThumbsUp, ThumbsDown, Meh } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { vyanamanaPalette } from '@/utils/colorUtils';
 
 interface ChatMessageProps {
   message: Message;
@@ -57,13 +58,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       transition={{ duration: 0.3 }}
     >
       {!isUser && (
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shrink-0 mr-2 shadow-sm">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center shrink-0 mr-2 shadow-sm">
           <span className="text-white font-bold text-sm">V</span>
         </div>
       )}
       <div className="flex flex-col max-w-[80%]">
         <motion.div 
-          className={`${isUser ? 'chat-bubble-user' : 'chat-bubble-bot'} shadow-sm`}
+          className={`${isUser ? 'bg-gradient-to-r from-vyanamana-500/90 to-vyanamana-600/90 text-white' : 'bg-card/80 dark:bg-card/60'} px-4 py-2 rounded-2xl shadow-sm`}
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.2 }}

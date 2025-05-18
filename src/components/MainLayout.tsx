@@ -3,9 +3,11 @@ import React, { useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import { useLocation } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
+import { MessageCircle, BarChart, Headphones, Smartphone, Brain, Home, Info } from 'lucide-react';
+import { NavItem } from './Header';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -22,7 +24,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   // Determine title based on route
   const getPageTitle = (): string => {
-    const baseTitle = 'Vyanman';
+    const baseTitle = 'Vyānamana';
     const route = location.pathname;
     
     if (language === 'en') {
@@ -50,6 +52,40 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     }
   };
 
+  // Create navigation items for header
+  const navItems: NavItem[] = [
+    { 
+      href: "/", 
+      label: language === 'en' ? "Home" : "होम",
+      icon: <Home className="h-4 w-4" />
+    },
+    { 
+      href: "/mood-tracker", 
+      label: language === 'en' ? "Mood Tracker" : "मूड ट्रैकर",
+      icon: <BarChart className="h-4 w-4" />
+    },
+    { 
+      href: "/meditation", 
+      label: language === 'en' ? "Meditation" : "ध्यान",
+      icon: <Headphones className="h-4 w-4" />
+    },
+    { 
+      href: "/digital-detox", 
+      label: language === 'en' ? "Digital Detox" : "डिजिटल डिटॉक्स",
+      icon: <Smartphone className="h-4 w-4" />
+    },
+    { 
+      href: "/cbt", 
+      label: language === 'en' ? "CBT" : "CBT",
+      icon: <Brain className="h-4 w-4" />
+    },
+    { 
+      href: "/about", 
+      label: language === 'en' ? "About" : "परिचय",
+      icon: <Info className="h-4 w-4" />
+    }
+  ];
+
   return (
     <motion.div 
       className="flex flex-col min-h-screen bg-gradient-to-b from-background to-background/95"
@@ -60,11 +96,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     >
       <Helmet>
         <title>{getPageTitle()}</title>
-        <meta name="description" content="Vyanman - AI Mental Health Companion" />
+        <meta name="description" content="Vyānamana - AI Mental Health Companion" />
         <link rel="icon" href="/favicon.ico" />
       </Helmet>
       
-      <Header />
+      <Header navItems={navItems} />
       
       <motion.main 
         className="flex-grow pt-20 pb-16"
