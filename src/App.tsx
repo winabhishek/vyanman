@@ -48,17 +48,17 @@ const App = () => (
               <Sonner />
               <BrowserRouter>
                 <Routes>
-                  <Route path="/" element={<LandingPage />} />
-                  <Route path="/chat" element={<Chat />} />
-                  <Route path="/mood-tracker" element={<MoodTrackerPage />} />
-                  <Route path="/meditation" element={<MeditationPage />} />
-                  <Route path="/digital-detox" element={<DigitalDetoxPage />} />
-                  <Route path="/cbt" element={<CBTPage />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/" element={<MainLayout><LandingPage /></MainLayout>} />
+                  <Route path="/chat" element={<MainLayout><Chat /></MainLayout>} />
+                  <Route path="/mood-tracker" element={<MainLayout><MoodTrackerPage /></MainLayout>} />
+                  <Route path="/meditation" element={<MainLayout><MeditationPage /></MainLayout>} />
+                  <Route path="/digital-detox" element={<MainLayout><DigitalDetoxPage /></MainLayout>} />
+                  <Route path="/cbt" element={<MainLayout><CBTPage /></MainLayout>} />
+                  <Route path="/login" element={<MainLayout><Login /></MainLayout>} />
+                  <Route path="/about" element={<MainLayout><About /></MainLayout>} />
+                  <Route path="/profile" element={<MainLayout><Profile /></MainLayout>} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
+                  <Route path="*" element={<MainLayout><NotFound /></MainLayout>} />
                 </Routes>
               </BrowserRouter>
             </TooltipProvider>
