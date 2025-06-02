@@ -20,7 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <span className="text-2xl font-bold bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">Vyānamana</span>
+              <span className="text-2xl font-bold bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent"><span className="vyanman-brand">Vyanman</span></span>
             </motion.div>
           </Link>
           <div className="flex items-center space-x-4">
@@ -35,7 +35,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       
       <footer className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md py-6 mt-auto border-t border-lavender-200/20 dark:border-lavender-700/20">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-600 dark:text-gray-300">© {new Date().getFullYear()} Vyānamana. All rights reserved.</p>
+          <p className="text-gray-600 dark:text-gray-300">© {new Date().getFullYear()} <span className="vyanman-brand">Vyanman</span>. All rights reserved.</p>
         </div>
       </footer>
     </div>

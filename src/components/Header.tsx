@@ -74,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({ navItems: customNavItems }) => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {t('app.name')}
+            <span className="vyanman-brand">Vyanman</span>
           </motion.span>
         </Link>
 

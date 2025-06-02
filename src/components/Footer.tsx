@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-vyanamana-500 to-vyanamana-700 flex items-center justify-center">
                 <span className="text-white font-bold">V</span>
               </div>
-              <span className="font-heading font-bold text-xl gradient-heading">Vyānamana</span>
+              <span className="font-heading font-bold text-xl gradient-heading"><span className="vyanman-brand">Vyanman</span></span>
             </div>
             <p className="text-muted-foreground text-sm">
               Your companion on the journey to mental well-being.
@@ -94,7 +94,7 @@ const Footer: React.FC = () => {
         </div>
         
         <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Vyānamana. This app does not provide medical advice.</p>
+          <p>© {new Date().getFullYear()} <span className="vyanman-brand">Vyanman</span>. This app does not provide medical advice.</p>
           <p className="mt-2">
             If you are experiencing a mental health emergency, please call 988 or go to your nearest emergency room.
           </p>

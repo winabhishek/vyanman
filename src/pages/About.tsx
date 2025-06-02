@@ -7,24 +7,24 @@ import { ArrowRight } from 'lucide-react';
 const About: React.FC = () => {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
-      <h1 className="text-3xl md:text-4xl font-bold font-heading mb-6">About Vyānamana</h1>
+      <h1 className="text-3xl md:text-4xl font-bold font-heading mb-6">About <span className="vyanman-brand">Vyanman</span></h1>
       
       <div className="prose prose-lg dark:prose-invert max-w-none">
         <p className="lead text-xl text-muted-foreground mb-8">
-          Vyānamana—derived from Sanskrit—means "to breathe intentionally" or "conscious awareness." 
+          <span className="vyanman-brand">Vyanman</span>—derived from Sanskrit—means "to breathe intentionally" or "conscious awareness." 
           Our platform embodies this principle by offering a space for mindful reflection on your mental wellbeing.
         </p>
         
         <h2 className="text-2xl font-semibold mt-12 mb-4">Our Mission</h2>
         <p>
-          At Vyānamana, we believe mental health support should be accessible to everyone, whenever they need it. 
+          At <span className="vyanman-brand">Vyanman</span>, we believe mental health support should be accessible to everyone, whenever they need it. 
           Our AI companion is designed to provide a judgment-free space for expression, 
           reflection, and growth on your mental wellness journey.
         </p>
         
         <h2 className="text-2xl font-semibold mt-12 mb-4">How We Can Help</h2>
         <p>
-          Vyānamana combines artificial intelligence with evidence-based mental health approaches to offer:
+          <span className="vyanman-brand">Vyanman</span> combines artificial intelligence with evidence-based mental health approaches to offer:
         </p>
         <ul>
           <li>A 24/7 AI companion that listens and responds with empathy</li>
@@ -36,7 +36,7 @@ const About: React.FC = () => {
         <div className="bg-vyanamana-50 dark:bg-vyanamana-900/20 p-6 rounded-lg my-8 border border-vyanamana-100 dark:border-vyanamana-800">
           <h3 className="text-xl font-medium mb-2">Important Disclaimer</h3>
           <p className="text-muted-foreground">
-            Vyānamana is not a substitute for professional mental health care. If you're experiencing
+            <span className="vyanman-brand">Vyanman</span> is not a substitute for professional mental health care. If you're experiencing
             a mental health crisis or need immediate support, please contact a mental health professional,
             visit your nearest emergency room, or call the 988 Suicide & Crisis Lifeline.
           </p>
@@ -55,7 +55,7 @@ const About: React.FC = () => {
         
         <h2 className="text-2xl font-semibold mt-12 mb-4">Get Started Today</h2>
         <p>
-          Begin your journey with Vyānamana in just a few clicks. Create an account to track your
+          Begin your journey with <span className="vyanman-brand">Vyanman</span> in just a few clicks. Create an account to track your
           progress over time, or use our anonymous mode for immediate support without registration.
         </p>
         

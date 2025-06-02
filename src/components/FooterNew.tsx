@@ -32,7 +32,7 @@ const FooterNew: React.FC = () => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                Vyānamana
+                <span className="vyanman-brand">Vyanman</span>
               </motion.span>
             </div>
             <p className="text-muted-foreground text-sm">
@@ -97,7 +97,7 @@ const FooterNew: React.FC = () => {
         </div>
         
         <div className="mt-8 pt-6 border-t border-border/40 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
-          <p>© {currentYear} Vyānamana. All rights reserved.</p>
+          <p>© {currentYear} <span className="vyanman-brand">Vyanman</span>. All rights reserved.</p>
           <p className="mt-2 md:mt-0 flex items-center">
             Made with <Heart className="h-3 w-3 mx-1 text-red-500" /> for better mental health
           </p>

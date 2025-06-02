@@ -24,7 +24,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   // Determine title based on route
   const getPageTitle = (): string => {
-    const baseTitle = 'Vyānamana';
+    const baseTitle = 'Vyanman';
     const route = location.pathname;
     
     if (language === 'en') {
@@ -96,7 +96,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     >
       <Helmet>
         <title>{getPageTitle()}</title>
-        <meta name="description" content="Vyānamana - AI Mental Health Companion" />
+        <meta name="description" content="Vyanman - AI Mental Health Companion" />
         <link rel="icon" href="/favicon.ico" />
       </Helmet>
       
