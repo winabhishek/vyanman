@@ -21,7 +21,7 @@ const LandingPage: React.FC = () => {
 
   const testimonials = [
     {
-      text: "Vyānamana has transformed my daily mental health routine. The guided meditations are incredibly calming.",
+      text: "Vyanman has transformed my daily mental health routine. The guided meditations are incredibly calming.",
       author: "Sarah K."
     },
     {
@@ -79,7 +79,7 @@ const LandingPage: React.FC = () => {
             variants={fadeInUpVariants}
           >
             <h2 className="text-3xl font-bold gradient-heading mb-4">
-              How Vyānamana Helps You
+              How <span className="vyanman-brand">Vyanman</span> Helps You
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Our AI-powered tools work together to support your mental wellbeing journey

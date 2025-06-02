@@ -125,3 +125,28 @@
   background-clip: text;
   color: transparent;
 }
+
+/* Vyanman Brand Styling */
+.vyanman-brand {
+  font-weight: 700;
+  color: #1E90FF;
+  font-family: 'Poppins', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: color 0.25s ease;
+  display: inline-block;
+}
+
+.vyanman-brand:hover {
+  color: #FF6347;
+  cursor: pointer;
+}
+
+/* Dark mode support for Vyanman brand */
+.dark .vyanman-brand {
+  color: #87CEEB;
+}
+
+.dark .vyanman-brand:hover {
+  color: #FFB347;
+}

@@ -23,7 +23,11 @@ const ChatHeader: React.FC = () => {
       }}
     >
       <h1 className="text-2xl font-bold font-heading gradient-heading">
-        {language === 'en' ? 'Chat with Vyānamana' : 'व्यानमन से चैट करें'}
+        {language === 'en' ? (
+          <>Chat with <span className="vyanman-brand">Vyanman</span></>
+        ) : (
+          <><span className="vyanman-brand">Vyanman</span> से चैट करें</>
+        )}
       </h1>
       <Button 
         variant="ghost" 

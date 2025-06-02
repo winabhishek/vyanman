@@ -57,7 +57,7 @@ const HeroSection: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Vyānamana combines AI chat therapy, mood tracking, and guided meditations 
+              <span className="vyanman-brand">Vyanman</span> combines AI chat therapy, mood tracking, and guided meditations 
               to support your mental health journey. Breathe, reflect, and grow with us.
             </motion.p>
             

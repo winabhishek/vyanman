@@ -27,7 +27,7 @@ const FeedbackButton: React.FC<FeedbackButtonProps> = ({ onClick }) => {
           </Button>
         </HoverCardTrigger>
         <HoverCardContent className="w-56 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md p-2">
-          <p className="text-sm">Share your feedback about Vyānamana</p>
+          <p className="text-sm">Share your feedback about <span className="vyanman-brand">Vyanman</span></p>
         </HoverCardContent>
       </HoverCard>
     </motion.div>
