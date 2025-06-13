@@ -67,7 +67,7 @@ const HeroSection: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              <Link to="/chat">
+              <Link to="/onboarding">
                 <RippleButton 
                   size="lg"
                   className="bg-gradient-to-r from-vyanamana-500 to-vyanamana-600 hover:from-vyanamana-600 hover:to-vyanamana-700 shadow-md hover:shadow-lg transition-all"

@@ -183,11 +183,18 @@ const LandingPage: React.FC = () => {
             <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
               Take the first step toward better mental health and emotional balance with our AI-powered companion.
             </p>
-            <Link to="/chat">
-              <Button size="lg" className="bg-gradient-to-r from-vyanamana-500 to-vyanamana-600 hover:from-vyanamana-600 hover:to-vyanamana-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                Start Now
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/onboarding">
+                <Button size="lg" className="bg-gradient-to-r from-vyanamana-500 to-vyanamana-600 hover:from-vyanamana-600 hover:to-vyanamana-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                  Get Started
+                </Button>
+              </Link>
+              <Link to="/chat">
+                <Button size="lg" variant="outline" className="border-vyanamana-400/50 hover:bg-vyanamana-500/10">
+                  Try Demo
+                </Button>
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
