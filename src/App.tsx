@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,6 +20,7 @@ import About from "./pages/About";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import CBTPage from "./pages/CBTPage";
+import OnboardingPage from "./pages/OnboardingPage";
 
 // Add Google Fonts - these will be loaded via our index.css import
 // The fonts imported are:
@@ -48,7 +48,8 @@ const App = () => (
               <Sonner />
               <BrowserRouter>
                 <Routes>
-                  <Route path="/" element={<MainLayout><LandingPage /></MainLayout>} />
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/onboarding" element={<OnboardingPage />} />
                   <Route path="/chat" element={<MainLayout><Chat /></MainLayout>} />
                   <Route path="/mood-tracker" element={<MainLayout><MoodTrackerPage /></MainLayout>} />
                   <Route path="/meditation" element={<MainLayout><MeditationPage /></MainLayout>} />
