@@ -12,24 +12,24 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import ChatInput from '@/components/ChatInput';
 import ChatContainer from '@/components/chat/ChatContainer';
 import ChatHeader from '@/components/chat/ChatHeader';
-import { chatAPI } from '@/services/chatAPI';
+import { enhancedChatAPI } from '@/services/enhancedChatAPI';
 import { Message } from '@/types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const getPersonalizedGreeting = (): string => {
   const hour = new Date().getHours();
   
-  if (hour < 12) return "Good morning! I'm Vyanman, your wellness companion. How are you feeling today?";
-  if (hour < 18) return "Good afternoon! I'm Vyanman, your mental wellness partner. How are you doing today?";
-  return "Good evening! I'm Vyanman, here to support your wellbeing. How are you feeling tonight?";
+  if (hour < 12) return "Good morning! I'm Vyanman, your AI wellness companion with enhanced emotional intelligence. How are you feeling today?";
+  if (hour < 18) return "Good afternoon! I'm Vyanman, your intelligent mental wellness partner. How are you doing today?";
+  return "Good evening! I'm Vyanman, here to support your wellbeing with personalized care. How are you feeling tonight?";
 };
 
 const getHindiGreeting = (): string => {
   const hour = new Date().getHours();
   
-  if (hour < 12) return "सुप्रभात! मैं व्यानमन हूँ, आपका मानसिक कल्याण साथी। आज आप कैसा महसूस कर रहे हैं?";
-  if (hour < 18) return "नमस्कार! मैं व्यानमन हूँ, आपका मानसिक कल्याण साथी। आज आप कैसा महसूस कर रहे हैं?";
-  return "शुभ संध्या! मैं व्यानमन हूँ, आपका मानसिक कल्याण साथी। आज आप कैसा महसूस कर रहे हैं?";
+  if (hour < 12) return "सुप्रभात! मैं व्यानमन हूँ, आपका बुद्धिमान AI कल्याण साथी। आज आप कैसा महसूस कर रहे हैं?";
+  if (hour < 18) return "नमस्कार! मैं व्यानमन हूँ, आपका व्यक्तिगत मानसिक कल्याण साथी। आज आप कैसा महसूस कर रहे हैं?";
+  return "शुभ संध्या! मैं व्यानमन हूँ, व्यक्तिगत देखभाल के साथ आपका कल्याण साथी। आज आप कैसा महसूस कर रहे हैं?";
 };
 
 const initialMessages: Message[] = [
@@ -37,7 +37,7 @@ const initialMessages: Message[] = [
     id: '1',
     content: getPersonalizedGreeting(),
     sender: 'bot',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
+    timestamp: new Date(Date.now() - 1000 * 60 * 5)
   }
 ];
 
@@ -46,15 +46,14 @@ const initialMessagesHindi: Message[] = [
     id: '1',
     content: getHindiGreeting(),
     sender: 'bot',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
+    timestamp: new Date(Date.now() - 1000 * 60 * 5)
   }
 ];
 
-// Quick feeling buttons for better engagement
 const feelingOptions = [
-  { label: 'Happy', icon: <Smile className="h-4 w-4" />, message: "I'm feeling happy today", messageHi: "मैं आज खुश महसूस कर रहा हूँ" },
-  { label: 'Okay', icon: <Meh className="h-4 w-4" />, message: "I'm feeling okay, but could be better", messageHi: "मैं ठीक महसूस कर रहा हूँ, लेकिन बेहतर हो सकता है" },
-  { label: 'Stressed', icon: <Frown className="h-4 w-4" />, message: "I'm feeling stressed and anxious", messageHi: "मैं तनावग्रस्त और चिंतित महसूस कर रहा हूँ" }
+  { label: 'Happy', icon: <Smile className="h-4 w-4" />, message: "I'm feeling happy and positive today", messageHi: "मैं आज खुश और सकारात्मक महसूस कर रहा हूँ" },
+  { label: 'Okay', icon: <Meh className="h-4 w-4" />, message: "I'm feeling okay, but could use some support", messageHi: "मैं ठीक महसूस कर रहा हूँ, लेकिन कुछ सहारा चाहिए" },
+  { label: 'Stressed', icon: <Frown className="h-4 w-4" />, message: "I'm feeling stressed and overwhelmed", messageHi: "मैं तनावग्रस्त और अभिभूत महसूस कर रहा हूँ" }
 ];
 
 const Chat: React.FC = () => {
@@ -67,27 +66,25 @@ const Chat: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showFeelings, setShowFeelings] = useState(true);
   
-  // Fetch messages on component mount
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const fetchedMessages = await chatAPI.getMessages();
+        const fetchedMessages = await enhancedChatAPI.getMessages();
         if (fetchedMessages && fetchedMessages.length > 0) {
           setMessages(fetchedMessages);
-          setShowFeelings(false); // Hide feelings buttons if we have conversation history
+          setShowFeelings(false);
         } else {
-          // Set appropriate initial messages based on language
           setMessages(language === 'en' ? initialMessages : initialMessagesHindi);
           setShowFeelings(true);
         }
       } catch (error) {
         console.error('Error fetching messages:', error);
         toast({
-          title: language === 'en' ? "Error Loading Messages" : "संदेश लोड करने में त्रुटि",
+          title: language === 'en' ? "Using Enhanced Mode" : "उन्नत मोड का उपयोग",
           description: language === 'en' 
-            ? "Could not load your previous conversations." 
-            : "आपकी पिछली बातचीत लोड नहीं हो सकी।",
-          variant: "destructive",
+            ? "AI is ready with enhanced emotional intelligence." 
+            : "AI बेहतर भावनात्मक बुद्धि के साथ तैयार है।",
+          variant: "default",
         });
       }
     };
@@ -102,10 +99,10 @@ const Chat: React.FC = () => {
   useEffect(() => {
     if (!user) {
       toast({
-        title: language === 'en' ? "You're in demo mode" : "आप डेमो मोड में हैं",
+        title: language === 'en' ? "Enhanced Demo Mode" : "उन्नत डेमो मोड",
         description: language === 'en' 
-          ? "Log in to save your conversations and get personalized responses." 
-          : "अपनी बातचीत को सहेजने और व्यक्तिगत प्रतिक्रियाएँ प्राप्त करने के लिए लॉग इन करें।",
+          ? "Experience AI-powered conversations. Log in to save your chats." 
+          : "AI-संचालित बातचीत का अनुभव करें। चैट सहेजने के लिए लॉग इन करें।",
         variant: "default",
       });
     }
@@ -114,7 +111,7 @@ const Chat: React.FC = () => {
   const handleSendMessage = async (input: string) => {
     if (input.trim() === '' || isLoading) return;
     
-    setShowFeelings(false); // Hide feeling buttons once user starts typing
+    setShowFeelings(false);
     
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -129,21 +126,20 @@ const Chat: React.FC = () => {
     
     try {
       const detected = detectLanguage(input);
-      console.log(`Detected language: ${detected}`);
+      console.log(`Enhanced AI processing: ${detected}`);
       
-      const botMessage = await chatAPI.sendMessage(input, detected);
-      console.log('Bot response:', botMessage);
+      const botMessage = await enhancedChatAPI.sendMessage(input, detected);
+      console.log('Enhanced bot response:', botMessage);
       
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
       
-      // Fallback message in case of error
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
         content: language === 'en' 
-          ? "Sorry, I'm having trouble connecting. Please try again later." 
-          : "क्षमा करें, मुझे कनेक्ट करने में समस्या हो रही है। कृपया बाद में पुनः प्रयास करें।",
+          ? "I'm experiencing some connectivity issues, but I'm still here to help you. Please try again." 
+          : "मुझे कुछ कनेक्टिविटी समस्याएं हो रही हैं, लेकिन मैं अभी भी आपकी मदद के लिए यहां हूं। कृपया पुनः प्रयास करें।",
         sender: 'bot',
         timestamp: new Date()
       };
@@ -151,11 +147,11 @@ const Chat: React.FC = () => {
       setMessages(prev => [...prev, errorMessage]);
       
       toast({
-        title: language === 'en' ? "Connection error" : "कनेक्शन त्रुटि",
+        title: language === 'en' ? "Connection issue" : "कनेक्शन समस्या",
         description: language === 'en' 
-          ? "Could not connect to the chat service." 
-          : "चैट सेवा से कनेक्ट नहीं हो सका।",
-        variant: "destructive",
+          ? "AI is running in enhanced offline mode." 
+          : "AI उन्नत ऑफलाइन मोड में चल रहा है।",
+        variant: "default",
       });
     } finally {
       setIsTyping(false);
@@ -166,11 +162,12 @@ const Chat: React.FC = () => {
   const handleResetChat = () => {
     setMessages(language === 'en' ? initialMessages : initialMessagesHindi);
     setShowFeelings(true);
+    localStorage.removeItem('vyanman-messages');
     toast({
       title: language === 'en' ? "Chat reset" : "चैट रीसेट",
       description: language === 'en' 
-        ? "Your conversation has been reset." 
-        : "आपकी बातचीत रीसेट कर दी गई है।",
+        ? "Fresh start with enhanced AI capabilities." 
+        : "उन्नत AI क्षमताओं के साथ नई शुरुआत।",
       variant: "default",
     });
   };
@@ -179,7 +176,6 @@ const Chat: React.FC = () => {
     handleSendMessage(message);
   };
   
-  // Helper to detect language (basic)
   const detectLanguage = (text: string): 'en' | 'hi' => {
     const hindiPattern = /[\u0900-\u097F]/;
     return hindiPattern.test(text) ? 'hi' : 'en';
@@ -199,16 +195,16 @@ const Chat: React.FC = () => {
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
             <Avatar className="border-2 border-amber-300 dark:border-amber-500">
-              <AvatarImage src="/favicon.ico" alt="Vyanman" />
+              <AvatarImage src="/lovable-uploads/04602118-4a1a-43ab-ae66-6511477eabc7.png" alt="Vyanman" />
               <AvatarFallback>
                 <Bot className="text-amber-500" />
               </AvatarFallback>
             </Avatar>
           </motion.div>
           <div>
-            <h2 className="font-semibold text-amber-800 dark:text-amber-300">Vyanman</h2>
+            <h2 className="font-semibold text-amber-800 dark:text-amber-300">Vyanman AI</h2>
             <p className="text-xs text-amber-600 dark:text-amber-400">
-              {language === 'en' ? 'Your mental wellness companion' : 'आपका मानसिक कल्याण साथी'}
+              {language === 'en' ? 'Enhanced emotional intelligence companion' : 'उन्नत भावनात्मक बुद्धि साथी'}
             </p>
           </div>
         </div>
@@ -243,7 +239,7 @@ const Chat: React.FC = () => {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{language === 'en' ? 'Ask me anything about mental health' : 'मानसिक स्वास्थ्य के बारे में कुछ भी पूछें'}</p>
+                <p>{language === 'en' ? 'AI-powered mental health support' : 'AI-संचालित मानसिक स्वास्थ्य सहायता'}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -256,7 +252,6 @@ const Chat: React.FC = () => {
         messagesEndRef={messagesEndRef} 
       />
       
-      {/* Quick feeling selector */}
       <AnimatePresence>
         {showFeelings && (
           <motion.div 

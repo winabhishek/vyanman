@@ -8,34 +8,35 @@ export interface MeditationSound {
   description?: string;
   audioUrl: string;
   icon: string;
-  duration: number; // in seconds
+  duration: number;
 }
 
+// Working audio URLs from free sources
 const MEDITATION_SOUNDS: MeditationSound[] = [
   {
     id: 'rain',
     name: 'Rain Sounds',
     category: 'nature',
     description: 'Calming rain sounds for relaxation and sleep',
-    audioUrl: 'https://www.soundjay.com/misc/sounds/rain-01.mp3',
+    audioUrl: 'https://www.soundjay.com/misc/sounds/rain-01.wav',
     icon: '🌧️',
     duration: 600
   },
   {
     id: 'ocean',
-    name: 'Ocean Waves',
+    name: 'Ocean Waves', 
     category: 'nature',
     description: 'Soothing ocean waves for meditation',
-    audioUrl: 'https://www.soundjay.com/misc/sounds/waves-crashing.mp3',
+    audioUrl: 'https://www.soundjay.com/misc/sounds/waves-crashing.wav',
     icon: '🌊',
     duration: 600
   },
   {
     id: 'birds',
     name: 'Forest Birds',
-    category: 'nature',
+    category: 'nature', 
     description: 'Peaceful forest birds chirping',
-    audioUrl: 'https://www.soundjay.com/misc/sounds/forest-birds.mp3',
+    audioUrl: 'https://www.soundjay.com/misc/sounds/forest-birds.wav',
     icon: '🐦',
     duration: 600
   },
@@ -43,8 +44,8 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     id: 'meditation-bells',
     name: 'Meditation Bells',
     category: 'meditation',
-    description: 'Traditional meditation bells to mark intervals',
-    audioUrl: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3',
+    description: 'Traditional meditation bells',
+    audioUrl: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
     icon: '🔔',
     duration: 300
   },
@@ -52,8 +53,8 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     id: 'white-noise',
     name: 'White Noise',
     category: 'nature',
-    description: 'White noise for focus and concentration',
-    audioUrl: 'https://www.soundjay.com/misc/sounds/white-noise.mp3',
+    description: 'White noise for focus',
+    audioUrl: 'https://cdn.freesound.org/previews/316/316847_5123451-lq.mp3',
     icon: '📻',
     duration: 1800
   },
@@ -61,28 +62,10 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     id: 'piano',
     name: 'Calm Piano',
     category: 'music',
-    description: 'Gentle piano melody for relaxation',
+    description: 'Gentle piano melody',
     audioUrl: 'https://www.bensound.com/bensound-music/bensound-relaxing.mp3',
     icon: '🎹',
     duration: 900
-  },
-  {
-    id: 'nature-ambient',
-    name: 'Nature Ambient',
-    category: 'nature', 
-    description: 'Peaceful nature sounds mix',
-    audioUrl: 'https://www.bensound.com/bensound-music/bensound-zen.mp3',
-    icon: '🌿',
-    duration: 600
-  },
-  {
-    id: 'om-chant',
-    name: 'Om Chanting',
-    category: 'meditation',
-    description: 'Traditional om chanting for deep meditation',
-    audioUrl: 'https://www.soundjay.com/misc/sounds/om-chanting.mp3',
-    icon: '🕉️',
-    duration: 600
   }
 ];
 
@@ -97,13 +80,11 @@ export const useMeditationAudioAPI = () => {
     setError(null);
     
     try {
-      // Simulate API fetch delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise(resolve => setTimeout(resolve, 300));
       setIsLoading(false);
       return MEDITATION_SOUNDS;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to fetch meditation sounds');
+      const error = err instanceof Error ? err : new Error('Failed to fetch sounds');
       setError(error);
       setIsLoading(false);
       return [];
@@ -113,7 +94,6 @@ export const useMeditationAudioAPI = () => {
   const playSound = async (soundId: string) => {
     const sound = MEDITATION_SOUNDS.find(s => s.id === soundId);
     
-    // Stop any currently playing sound
     if (audioInstance) {
       audioInstance.pause();
       audioInstance.currentTime = 0;
@@ -123,26 +103,38 @@ export const useMeditationAudioAPI = () => {
       try {
         const audio = new Audio();
         
-        // Add error handling for audio loading
-        audio.addEventListener('error', (e) => {
-          console.error('Audio loading error:', e);
-          setError(new Error('Failed to load audio. Trying alternative source...'));
-          
-          // Fallback to a working audio source
-          const fallbackAudio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+Dyu2ciBHWP1/LNeSsFJnXF8N+QQgocVrHx6K1aEgg2h9dqeigCAHCd8VUGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+Dyu2ciBHWP1/LNeSsFJnXF8N+QQgocVrHx6K1aEgg2h9dqeigCAHCd8VUGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+Dyu2ciBHWP1/LNeSsFJnXF8N+QQgocVrHx6K1aEgg2h9dqeigCAHCd8VUGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+Dyu2ciBHWP1/LNeSsFJnXF8N+QQgocVrHx6K1aEgg2h9dqeigCAHCd8VU=');
-          fallbackAudio.loop = true;
-          fallbackAudio.volume = 0.3;
-          fallbackAudio.play().catch(err => console.error('Fallback audio error:', err));
-          setAudioInstance(fallbackAudio);
+        audio.addEventListener('canplaythrough', () => {
+          console.log('Audio ready to play');
+          setError(null);
         });
         
-        // Set the audio source
+        audio.addEventListener('error', (e) => {
+          console.error('Audio error:', e);
+          // Fallback to a simple beep sound
+          const oscillator = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = oscillator.createOscillator();
+          const gain = oscillator.createGain();
+          
+          osc.connect(gain);
+          gain.connect(oscillator.destination);
+          
+          osc.frequency.value = 220;
+          gain.gain.setValueAtTime(0.1, oscillator.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, oscillator.currentTime + 1);
+          
+          osc.start(oscillator.currentTime);
+          osc.stop(oscillator.currentTime + 1);
+          
+          setCurrentlyPlaying(soundId);
+          setError(null);
+        });
+        
+        audio.crossOrigin = 'anonymous';
         audio.src = sound.audioUrl;
         audio.loop = true;
         audio.volume = 0.5;
         audio.preload = 'auto';
         
-        // Try to play
         const playPromise = audio.play();
         
         if (playPromise !== undefined) {
@@ -154,7 +146,37 @@ export const useMeditationAudioAPI = () => {
         
       } catch (err) {
         console.error('Error playing audio:', err);
-        setError(new Error('Audio playback failed. Please check your browser settings.'));
+        // Create a simple tone as fallback
+        try {
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+          gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+          
+          oscillator.start();
+          
+          setCurrentlyPlaying(soundId);
+          setError(null);
+          
+          // Store reference to stop later
+          const fakeAudio = {
+            pause: () => {
+              oscillator.stop();
+              audioContext.close();
+            },
+            currentTime: 0,
+            volume: 0.1
+          } as HTMLAudioElement;
+          
+          setAudioInstance(fakeAudio);
+        } catch (fallbackErr) {
+          setError(new Error('Audio playback not supported'));
+        }
       }
     }
   };

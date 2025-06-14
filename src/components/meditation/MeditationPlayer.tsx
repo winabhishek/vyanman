@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, X, AlertCircle } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, X, AlertCircle, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { MeditationSound } from '@/services/meditationAPI';
+import { useToast } from '@/hooks/use-toast';
 
 interface MeditationPlayerProps {
   sound: MeditationSound | null;
@@ -19,93 +20,151 @@ const MeditationPlayer: React.FC<MeditationPlayerProps> = ({ sound, onClose }) =
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [audioError, setAudioError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [fallbackMode, setFallbackMode] = useState(false);
+  const [oscillator, setOscillator] = useState<OscillatorNode | null>(null);
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
-    if (sound) {
+    if (sound && !fallbackMode) {
       setIsLoading(true);
       setAudioError(null);
       
       const audioElement = new Audio();
       
-      // Handle audio loading events
-      audioElement.addEventListener('loadstart', () => {
-        console.log('Audio loading started...');
-        setIsLoading(true);
-      });
-      
-      audioElement.addEventListener('canplay', () => {
-        console.log('Audio can start playing');
+      const handleCanPlay = () => {
+        console.log('Audio ready to play');
         setIsLoading(false);
         setAudioError(null);
-      });
+      };
       
-      audioElement.addEventListener('error', (e) => {
+      const handleError = (e: any) => {
         console.error('Audio loading error:', e);
         setIsLoading(false);
-        setAudioError('Unable to load audio. Please try a different sound.');
-      });
+        setAudioError('Unable to load audio. Switching to relaxation tone.');
+        setFallbackMode(true);
+        
+        toast({
+          title: "Audio Mode",
+          description: "Using relaxation tone instead of external audio.",
+          variant: "default",
+        });
+      };
       
-      audioElement.addEventListener('timeupdate', () => {
+      const handleTimeUpdate = () => {
         if (sound.duration > 0) {
           const percentage = (audioElement.currentTime / sound.duration) * 100;
           setProgress(percentage);
         }
-      });
+      };
       
-      audioElement.addEventListener('ended', () => {
+      const handleEnded = () => {
         setIsPlaying(false);
         setProgress(0);
-      });
+      };
       
-      // Set audio properties
+      audioElement.addEventListener('canplay', handleCanPlay);
+      audioElement.addEventListener('canplaythrough', handleCanPlay);
+      audioElement.addEventListener('error', handleError);
+      audioElement.addEventListener('timeupdate', handleTimeUpdate);
+      audioElement.addEventListener('ended', handleEnded);
+      
+      audioElement.crossOrigin = 'anonymous';
       audioElement.src = sound.audioUrl;
       audioElement.loop = true;
       audioElement.preload = 'auto';
       audioElement.volume = volume / 100;
       
+      // Set timeout for loading
+      const loadTimeout = setTimeout(() => {
+        if (audioElement.readyState < 2) {
+          handleError('Loading timeout');
+        }
+      }, 5000);
+      
       setAudio(audioElement);
       
       return () => {
+        clearTimeout(loadTimeout);
         audioElement.pause();
         audioElement.currentTime = 0;
-        audioElement.removeEventListener('loadstart', () => {});
-        audioElement.removeEventListener('canplay', () => {});
-        audioElement.removeEventListener('error', () => {});
-        audioElement.removeEventListener('timeupdate', () => {});
-        audioElement.removeEventListener('ended', () => {});
+        audioElement.removeEventListener('canplay', handleCanPlay);
+        audioElement.removeEventListener('canplaythrough', handleCanPlay);
+        audioElement.removeEventListener('error', handleError);
+        audioElement.removeEventListener('timeupdate', handleTimeUpdate);
+        audioElement.removeEventListener('ended', handleEnded);
       };
     }
-  }, [sound]);
+  }, [sound, volume, fallbackMode]);
+
+  const createRelaxationTone = () => {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      
+      osc.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      
+      // Create a soothing 220Hz tone (A3 note)
+      osc.frequency.setValueAtTime(220, ctx.currentTime);
+      osc.type = 'sine';
+      
+      // Set volume
+      gainNode.gain.setValueAtTime(isMuted ? 0 : (volume / 100) * 0.1, ctx.currentTime);
+      
+      osc.start();
+      
+      setOscillator(osc);
+      setAudioContext(ctx);
+      
+      return { osc, ctx };
+    } catch (err) {
+      console.error('Error creating audio context:', err);
+      setAudioError('Audio not supported in this browser');
+      return null;
+    }
+  };
 
   useEffect(() => {
-    if (audio) {
+    if (fallbackMode) {
+      if (isPlaying && !oscillator) {
+        createRelaxationTone();
+      } else if (!isPlaying && oscillator) {
+        oscillator.stop();
+        audioContext?.close();
+        setOscillator(null);
+        setAudioContext(null);
+      }
+    } else if (audio) {
       if (isPlaying) {
         audio.play().catch(err => {
           console.error("Error playing audio:", err);
-          setAudioError('Playback failed. Please try again or select a different sound.');
+          setAudioError('Playback failed. Switching to relaxation tone.');
+          setFallbackMode(true);
           setIsPlaying(false);
         });
       } else {
         audio.pause();
       }
     }
-  }, [isPlaying, audio]);
+  }, [isPlaying, audio, fallbackMode]);
   
   useEffect(() => {
-    if (audio) {
+    if (fallbackMode && oscillator && audioContext) {
+      const gainNode = audioContext.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      gainNode.gain.setValueAtTime(isMuted ? 0 : (volume / 100) * 0.1, audioContext.currentTime);
+    } else if (audio) {
       audio.volume = isMuted ? 0 : volume / 100;
     }
-  }, [volume, isMuted, audio]);
+  }, [volume, isMuted, audio, fallbackMode, oscillator, audioContext]);
   
   const togglePlayPause = () => {
-    if (audioError) {
+    if (audioError && !fallbackMode) {
       setAudioError(null);
-      // Try to reload the audio
-      if (audio && sound) {
-        audio.src = sound.audioUrl;
-        audio.load();
-      }
-      return;
+      setFallbackMode(true);
     }
     setIsPlaying(!isPlaying);
   };
@@ -118,6 +177,18 @@ const MeditationPlayer: React.FC<MeditationPlayerProps> = ({ sound, onClose }) =
     setVolume(newVolume[0]);
     if (isMuted && newVolume[0] > 0) {
       setIsMuted(false);
+    }
+  };
+
+  const handleRetry = () => {
+    setFallbackMode(false);
+    setAudioError(null);
+    setIsPlaying(false);
+    if (oscillator) {
+      oscillator.stop();
+      audioContext?.close();
+      setOscillator(null);
+      setAudioContext(null);
     }
   };
   
@@ -147,10 +218,16 @@ const MeditationPlayer: React.FC<MeditationPlayerProps> = ({ sound, onClose }) =
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-amber-800/90 to-orange-700/90 backdrop-blur-md shadow-lg border-t border-amber-500/20 p-4 z-50">
       <div className="container mx-auto max-w-5xl">
         {audioError && (
-          <Alert className="mb-4 bg-red-100/90 border-red-300">
+          <Alert className="mb-4 bg-orange-100/90 border-orange-300">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="text-red-800">
-              {audioError}
+            <AlertDescription className="text-orange-800 flex items-center justify-between">
+              <span>{audioError}</span>
+              {!fallbackMode && (
+                <Button size="sm" variant="outline" onClick={handleRetry} className="ml-2">
+                  <RotateCcw className="h-3 w-3 mr-1" />
+                  Retry
+                </Button>
+              )}
             </AlertDescription>
           </Alert>
         )}
@@ -162,14 +239,12 @@ const MeditationPlayer: React.FC<MeditationPlayerProps> = ({ sound, onClose }) =
               variant="ghost"
               className={`h-10 w-10 rounded-full text-white hover:bg-amber-600 ${
                 isLoading ? 'opacity-50 cursor-not-allowed' : ''
-              } ${audioError ? 'bg-red-500 hover:bg-red-600' : 'bg-amber-500'}`}
+              } ${fallbackMode ? 'bg-orange-500 hover:bg-orange-600' : 'bg-amber-500'}`}
               onClick={togglePlayPause}
               disabled={isLoading}
             >
               {isLoading ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : audioError ? (
-                <AlertCircle />
               ) : isPlaying ? (
                 <Pause />
               ) : (
@@ -177,9 +252,12 @@ const MeditationPlayer: React.FC<MeditationPlayerProps> = ({ sound, onClose }) =
               )}
             </Button>
             <div>
-              <h3 className="font-semibold text-white">{sound.name}</h3>
+              <h3 className="font-semibold text-white flex items-center gap-2">
+                {sound.name}
+                {fallbackMode && <span className="text-xs bg-orange-500 px-2 py-1 rounded">Tone Mode</span>}
+              </h3>
               <p className="text-sm text-amber-200">
-                {calculateCurrentTime()} / {calculateTotalTime()}
+                {fallbackMode ? 'Relaxation Tone' : `${calculateCurrentTime()} / ${calculateTotalTime()}`}
                 {isLoading && <span className="ml-2">Loading...</span>}
               </p>
             </div>
