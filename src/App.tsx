@@ -7,14 +7,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
-import Index from "./pages/Index";
-import Onboarding from "./pages/Onboarding";
+import LandingPage from "./pages/LandingPage";
+import OnboardingPage from "./pages/OnboardingPage";
 import Chat from "./pages/Chat";
-import Meditation from "./pages/Meditation";
+import MeditationPage from "./pages/MeditationPage";
 import CBTPage from "./pages/CBTPage";
 import EnhancedCBTPage from "./pages/EnhancedCBTPage";
 import Profile from "./pages/Profile";
-import Auth from "./pages/Auth";
+import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
 
@@ -29,14 +29,14 @@ function App() {
               <Sonner />
               <BrowserRouter>
                 <Routes>
-                  <Route path="/onboarding" element={<Onboarding />} />
-                  <Route path="/" element={<Index />} />
+                  <Route path="/onboarding" element={<OnboardingPage />} />
+                  <Route path="/" element={<LandingPage />} />
                   <Route path="/chat" element={<Chat />} />
-                  <Route path="/meditation" element={<Meditation />} />
+                  <Route path="/meditation" element={<MeditationPage />} />
                   <Route path="/cbt" element={<CBTPage />} />
                   <Route path="/enhanced-cbt" element={<EnhancedCBTPage />} />
                   <Route path="/profile" element={<Profile />} />
-                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/auth" element={<Login />} />
                 </Routes>
               </BrowserRouter>
             </TooltipProvider>

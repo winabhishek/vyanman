@@ -11,13 +11,13 @@ export interface MeditationSound {
   duration: number;
 }
 
-// Working audio URLs from free sources
+// Working audio URLs - using reliable free sources
 const MEDITATION_SOUNDS: MeditationSound[] = [
   {
     id: 'rain',
     name: 'Rain Sounds',
     category: 'nature',
-    description: 'Calming rain sounds for relaxation and sleep',
+    description: 'Calming rain sounds for relaxation',
     audioUrl: 'https://www.soundjay.com/misc/sounds/rain-01.wav',
     icon: '🌧️',
     duration: 600
@@ -26,7 +26,7 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     id: 'ocean',
     name: 'Ocean Waves', 
     category: 'nature',
-    description: 'Soothing ocean waves for meditation',
+    description: 'Soothing ocean waves',
     audioUrl: 'https://www.soundjay.com/misc/sounds/waves-crashing.wav',
     icon: '🌊',
     duration: 600
@@ -35,7 +35,7 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     id: 'birds',
     name: 'Forest Birds',
     category: 'nature', 
-    description: 'Peaceful forest birds chirping',
+    description: 'Peaceful forest birds',
     audioUrl: 'https://www.soundjay.com/misc/sounds/forest-birds.wav',
     icon: '🐦',
     duration: 600
@@ -54,12 +54,12 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     name: 'White Noise',
     category: 'nature',
     description: 'White noise for focus',
-    audioUrl: 'https://cdn.freesound.org/previews/316/316847_5123451-lq.mp3',
+    audioUrl: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvGQdBjiR2e/MeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvGQdBjiR2e/MeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvGQdBjiR2e/MeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvGQdBjiR2e/MeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvGQdBjiR2e/MeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvGQdBjiR2e/MeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvGQdBjiR2e/MeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvGQdBjiR2e/MeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvGQdBjiR2e/MeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvGQdBjiR2e/MeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvGQdBg==',
     icon: '📻',
     duration: 1800
   },
   {
-    id: 'piano',
+    id: 'calm-piano',
     name: 'Calm Piano',
     category: 'music',
     description: 'Gentle piano melody',
@@ -91,6 +91,17 @@ export const useMeditationAudioAPI = () => {
     }
   };
 
+  const createAudioContext = () => {
+    try {
+      // Handle different browser implementations
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      return new AudioContextClass();
+    } catch (err) {
+      console.error('AudioContext not supported:', err);
+      return null;
+    }
+  };
+
   const playSound = async (soundId: string) => {
     const sound = MEDITATION_SOUNDS.find(s => s.id === soundId);
     
@@ -110,23 +121,25 @@ export const useMeditationAudioAPI = () => {
         
         audio.addEventListener('error', (e) => {
           console.error('Audio error:', e);
-          // Fallback to a simple beep sound
-          const oscillator = new (window.AudioContext || window.webkitAudioContext)();
-          const osc = oscillator.createOscillator();
-          const gain = oscillator.createGain();
-          
-          osc.connect(gain);
-          gain.connect(oscillator.destination);
-          
-          osc.frequency.value = 220;
-          gain.gain.setValueAtTime(0.1, oscillator.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, oscillator.currentTime + 1);
-          
-          osc.start(oscillator.currentTime);
-          osc.stop(oscillator.currentTime + 1);
-          
-          setCurrentlyPlaying(soundId);
-          setError(null);
+          // Fallback to a simple beep sound using AudioContext
+          const audioContext = createAudioContext();
+          if (audioContext) {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 220;
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 1);
+            
+            setCurrentlyPlaying(soundId);
+            setError(null);
+          }
         });
         
         audio.crossOrigin = 'anonymous';
@@ -148,32 +161,36 @@ export const useMeditationAudioAPI = () => {
         console.error('Error playing audio:', err);
         // Create a simple tone as fallback
         try {
-          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          const oscillator = audioContext.createOscillator();
-          const gainNode = audioContext.createGain();
-          
-          oscillator.connect(gainNode);
-          gainNode.connect(audioContext.destination);
-          
-          oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
-          gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-          
-          oscillator.start();
-          
-          setCurrentlyPlaying(soundId);
-          setError(null);
-          
-          // Store reference to stop later
-          const fakeAudio = {
-            pause: () => {
-              oscillator.stop();
-              audioContext.close();
-            },
-            currentTime: 0,
-            volume: 0.1
-          } as HTMLAudioElement;
-          
-          setAudioInstance(fakeAudio);
+          const audioContext = createAudioContext();
+          if (audioContext) {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            
+            oscillator.start();
+            
+            setCurrentlyPlaying(soundId);
+            setError(null);
+            
+            // Store reference to stop later
+            const fakeAudio = {
+              pause: () => {
+                oscillator.stop();
+                audioContext.close();
+              },
+              currentTime: 0,
+              volume: 0.1
+            } as HTMLAudioElement;
+            
+            setAudioInstance(fakeAudio);
+          } else {
+            setError(new Error('Audio playback not supported'));
+          }
         } catch (fallbackErr) {
           setError(new Error('Audio playback not supported'));
         }
