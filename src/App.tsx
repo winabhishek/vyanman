@@ -10,12 +10,17 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import LandingPage from "./pages/LandingPage";
 import OnboardingPage from "./pages/OnboardingPage";
+import CinematicOnboardingPage from "./pages/CinematicOnboardingPage";
 import Chat from "./pages/Chat";
 import MeditationPage from "./pages/MeditationPage";
 import CBTPage from "./pages/CBTPage";
 import EnhancedCBTPage from "./pages/EnhancedCBTPage";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
+import MoodTrackerPage from "./pages/MoodTrackerPage";
+import DigitalDetoxPage from "./pages/DigitalDetoxPage";
+import About from "./pages/About";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -31,14 +36,19 @@ function App() {
                 <Sonner />
                 <BrowserRouter>
                   <Routes>
-                    <Route path="/onboarding" element={<OnboardingPage />} />
                     <Route path="/" element={<LandingPage />} />
+                    <Route path="/onboarding" element={<OnboardingPage />} />
+                    <Route path="/cinematic-onboarding" element={<CinematicOnboardingPage />} />
                     <Route path="/chat" element={<Chat />} />
                     <Route path="/meditation" element={<MeditationPage />} />
+                    <Route path="/mood-tracker" element={<MoodTrackerPage />} />
+                    <Route path="/digital-detox" element={<DigitalDetoxPage />} />
                     <Route path="/cbt" element={<CBTPage />} />
                     <Route path="/enhanced-cbt" element={<EnhancedCBTPage />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/auth" element={<Login />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="*" element={<NotFound />} />
                   </Routes>
                 </BrowserRouter>
               </TooltipProvider>

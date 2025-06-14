@@ -33,7 +33,7 @@ const CTASection: React.FC = () => {
             Take the first step toward better mental health and emotional balance with our AI-powered companion.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/onboarding">
+            <Link to="/cinematic-onboarding">
               <Button size="lg" className="bg-gradient-to-r from-vyanamana-500 to-vyanamana-600 hover:from-vyanamana-600 hover:to-vyanamana-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                 Get Started
               </Button>
