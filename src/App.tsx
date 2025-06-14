@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
+import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import LandingPage from "./pages/LandingPage";
@@ -21,28 +22,30 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <LanguageProvider>
-          <AuthProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/onboarding" element={<OnboardingPage />} />
-                  <Route path="/" element={<LandingPage />} />
-                  <Route path="/chat" element={<Chat />} />
-                  <Route path="/meditation" element={<MeditationPage />} />
-                  <Route path="/cbt" element={<CBTPage />} />
-                  <Route path="/enhanced-cbt" element={<EnhancedCBTPage />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/auth" element={<Login />} />
-                </Routes>
-              </BrowserRouter>
-            </TooltipProvider>
-          </AuthProvider>
-        </LanguageProvider>
-      </ThemeProvider>
+      <HelmetProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <LanguageProvider>
+            <AuthProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/onboarding" element={<OnboardingPage />} />
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/chat" element={<Chat />} />
+                    <Route path="/meditation" element={<MeditationPage />} />
+                    <Route path="/cbt" element={<CBTPage />} />
+                    <Route path="/enhanced-cbt" element={<EnhancedCBTPage />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/auth" element={<Login />} />
+                  </Routes>
+                </BrowserRouter>
+              </TooltipProvider>
+            </AuthProvider>
+          </LanguageProvider>
+        </ThemeProvider>
+      </HelmetProvider>
     </QueryClientProvider>
   );
 }
