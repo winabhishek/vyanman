@@ -293,8 +293,12 @@ const CinematicOnboarding: React.FC = () => {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 1, duration: 0.8 }}
                   >
-                    <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center shadow-2xl mb-4">
-                      <span className="text-3xl font-bold text-white">V</span>
+                    <div className="w-24 h-24 mx-auto mb-4">
+                      <img 
+                        src="/lovable-uploads/04602118-4a1a-43ab-ae66-6511477eabc7.png" 
+                        alt="Vyanman Logo" 
+                        className="w-full h-full object-contain drop-shadow-2xl"
+                      />
                     </div>
                   </motion.div>
 

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -9,8 +8,12 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-vyanamana-500 to-vyanamana-700 flex items-center justify-center">
-                <span className="text-white font-bold">V</span>
+              <div className="w-10 h-10 flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/04602118-4a1a-43ab-ae66-6511477eabc7.png" 
+                  alt="Vyanman Logo" 
+                  className="w-full h-full object-contain"
+                />
               </div>
               <span className="font-heading font-bold text-xl gradient-heading"><span className="vyanman-brand">Vyanman</span></span>
             </div>

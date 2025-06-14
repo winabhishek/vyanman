@@ -44,8 +44,12 @@ const HeroSection: React.FC = () => {
           animate={{ scale: 1, rotate: 0 }}
           transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
         >
-          <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-vyanamana-500 to-vyanamana-700 flex items-center justify-center shadow-2xl">
-            <span className="text-3xl font-bold text-white">V</span>
+          <div className="w-24 h-24 mx-auto">
+            <img 
+              src="/lovable-uploads/04602118-4a1a-43ab-ae66-6511477eabc7.png" 
+              alt="Vyanman Logo" 
+              className="w-full h-full object-contain drop-shadow-2xl"
+            />
           </div>
         </motion.div>
 

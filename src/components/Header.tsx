@@ -62,11 +62,15 @@ const Header: React.FC<HeaderProps> = ({ navItems: customNavItems }) => {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2" onClick={closeMenu}>
           <motion.div 
-            className="w-8 h-8 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center shadow-sm hover:shadow-md transition-all"
+            className="w-10 h-10 flex items-center justify-center"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <span className="text-white font-bold text-sm">V</span>
+            <img 
+              src="/lovable-uploads/04602118-4a1a-43ab-ae66-6511477eabc7.png" 
+              alt="Vyanman Logo" 
+              className="w-full h-full object-contain drop-shadow-sm hover:drop-shadow-md transition-all"
+            />
           </motion.div>
           <motion.span 
             className="font-heading font-bold text-xl gradient-heading"
