@@ -1,123 +1,139 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { RippleButton } from '@/components/ui/ripple-button';
 import { Link } from 'react-router-dom';
-import FloatingShape from '@/components/FloatingShape';
+import { ArrowRight, Play } from 'lucide-react';
 
 const HeroSection: React.FC = () => {
   return (
-    <section className="relative pt-20 pb-24 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-vyanamana-900/20 to-transparent dark:from-vyanamana-950/40 -z-10" />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background/95 to-vyanamana-950/20">
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-vyanamana-500/5 via-transparent to-vyanamana-800/10" />
       
-      {/* Animated particles */}
-      {[...Array(20)].map((_, i) => (
+      {/* Animated Particles */}
+      {[...Array(12)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute rounded-full bg-vyanamana-500/20 dark:bg-vyanamana-400/10"
+          className="absolute rounded-full bg-vyanamana-400/20 dark:bg-vyanamana-300/10"
           style={{
-            width: Math.random() * 8 + 4,
-            height: Math.random() * 8 + 4,
+            width: Math.random() * 6 + 2,
+            height: Math.random() * 6 + 2,
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
           }}
           animate={{
-            y: [0, Math.random() * -50 - 20, 0],
+            y: [0, Math.random() * -100 - 50, 0],
             opacity: [0.2, 0.8, 0.2],
+            scale: [1, 1.2, 1],
           }}
           transition={{
-            duration: Math.random() * 5 + 5,
+            duration: Math.random() * 8 + 6,
             repeat: Infinity,
             ease: "easeInOut",
           }}
         />
       ))}
-      
-      <div className="container mx-auto px-4 relative">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-          <motion.div
-            className="md:max-w-[60%] text-center md:text-left"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <motion.h1 
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 gradient-heading leading-tight"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              Your AI-Powered <br /> Mental Wellness Companion
-            </motion.h1>
-            
-            <motion.p
-              className="text-lg text-muted-foreground mb-8 max-w-xl"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              <span className="vyanman-brand">Vyanman</span> combines AI chat therapy, mood tracking, and guided meditations 
-              to support your mental health journey. Breathe, reflect, and grow with us.
-            </motion.p>
-            
-            <motion.div
-              className="flex flex-wrap justify-center md:justify-start gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-            >
-              <Link to="/onboarding">
-                <RippleButton 
-                  size="lg"
-                  className="bg-gradient-to-r from-vyanamana-500 to-vyanamana-600 hover:from-vyanamana-600 hover:to-vyanamana-700 shadow-md hover:shadow-lg transition-all"
-                >
-                  Get Started
-                </RippleButton>
-              </Link>
-              
-              <Link to="/about">
-                <Button variant="outline" size="lg" className="border-vyanamana-400/30 hover:bg-vyanamana-500/10">
-                  Learn More
-                </Button>
-              </Link>
-            </motion.div>
-          </motion.div>
-          
-          <motion.div
-            className="hidden md:block"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            <FloatingShape size={280} className="ml-auto" />
-          </motion.div>
-        </div>
-        
-        <motion.div 
-          className="absolute bottom-0 left-1/2 transform -translate-x-1/2"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ 
-            duration: 1,
-            delay: 1.2,
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
+
+      <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
+        {/* Logo */}
+        <motion.div
+          className="mb-8"
+          initial={{ scale: 0, rotate: -10 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
         >
-          <div className="flex flex-col items-center mt-12">
-            <p className="text-sm text-muted-foreground mb-2">Scroll to explore</p>
-            <div className="w-6 h-10 border-2 border-vyanamana-400/50 rounded-full flex justify-center">
-              <motion.div 
-                className="w-1.5 h-1.5 bg-vyanamana-400 rounded-full mt-2"
-                animate={{ y: [0, 15, 0] }}
-                transition={{ 
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: "loop"
-                }}
-              />
-            </div>
+          <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-vyanamana-500 to-vyanamana-700 flex items-center justify-center shadow-2xl">
+            <span className="text-3xl font-bold text-white">V</span>
           </div>
+        </motion.div>
+
+        {/* Main Headline */}
+        <motion.h1
+          className="text-4xl md:text-6xl lg:text-7xl font-bold gradient-heading mb-6"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.8 }}
+        >
+          Meet <span className="vyanman-brand">Vyanman</span>
+        </motion.h1>
+
+        {/* Subheading */}
+        <motion.p
+          className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+        >
+          Your AI-powered mental health companion.
+          <span className="block mt-2 text-vyanamana-500 font-medium">
+            Personalized support, anytime, anywhere.
+          </span>
+        </motion.p>
+
+        {/* Tagline */}
+        <motion.p
+          className="text-lg text-muted-foreground/80 mb-12 italic"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.8 }}
+        >
+          "Your Mind, Our Mission"
+        </motion.p>
+
+        {/* CTA Buttons */}
+        <motion.div
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.8 }}
+        >
+          <Link to="/cinematic-onboarding">
+            <RippleButton
+              size="lg"
+              className="bg-gradient-to-r from-vyanamana-500 to-vyanamana-600 hover:from-vyanamana-600 hover:to-vyanamana-700 text-white px-8 py-4 text-lg shadow-2xl hover:shadow-vyanamana-500/25 transition-all duration-300 group"
+            >
+              <Play className="mr-2 w-5 h-5" />
+              Experience Vyanman
+            </RippleButton>
+          </Link>
+
+          <Link to="/onboarding">
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-vyanamana-400/50 hover:bg-vyanamana-500/10 px-8 py-4 text-lg group"
+            >
+              Quick Tour
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
+        </motion.div>
+
+        {/* Features Preview */}
+        <motion.div
+          className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
+        >
+          {[
+            { icon: "🤖", title: "AI Companion", desc: "24/7 empathetic support" },
+            { icon: "📊", title: "Mood Tracking", desc: "Understand your patterns" },
+            { icon: "🧘", title: "Meditation", desc: "Guided mindfulness" }
+          ].map((feature, index) => (
+            <motion.div
+              key={index}
+              className="text-center p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10"
+              whileHover={{ y: -5, scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="text-3xl mb-2">{feature.icon}</div>
+              <h3 className="font-semibold mb-1">{feature.title}</h3>
+              <p className="text-sm text-muted-foreground">{feature.desc}</p>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>
