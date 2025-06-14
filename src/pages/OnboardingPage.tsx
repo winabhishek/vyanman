@@ -6,7 +6,7 @@ import OnboardingHero from '@/components/onboarding/OnboardingHero';
 import OnboardingFeatures from '@/components/onboarding/OnboardingFeatures';
 import OnboardingAIAgent from '@/components/onboarding/OnboardingAIAgent';
 import OnboardingCTA from '@/components/onboarding/OnboardingCTA';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 
 const OnboardingPage: React.FC = () => {
   const { theme } = useTheme();
