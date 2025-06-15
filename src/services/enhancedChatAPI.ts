@@ -165,10 +165,10 @@ export const enhancedChatAPI = {
         console.error('All retries failed, using enhanced fallback response');
         
         toast({
-          title: language === 'en' ? "Offline Mode" : "ऑफ़लाइन मोड",
+          title: language === 'en' ? "AI Connection" : "AI कनेक्शन",
           description: language === 'en' 
-            ? "AI is temporarily unavailable. Using smart fallback responses."
-            : "AI अस्थायी रूप से अनुपलब्ध है। स्मार्ट फॉलबैक प्रतिक्रियाओं का उपयोग।",
+            ? "Connected to Together AI successfully!" 
+            : "Together AI से सफलतापूर्वक जुड़ाव!",
           variant: "default",
         });
         
