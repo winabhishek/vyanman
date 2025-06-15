@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import FeedbackModal from '@/components/FeedbackModal';
 import HeroSection from '@/components/landing/HeroSection';

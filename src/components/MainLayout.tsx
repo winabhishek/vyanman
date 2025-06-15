@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
@@ -7,7 +6,6 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
 import { MessageCircle, BarChart, Headphones, Smartphone, Brain, Home, Info } from 'lucide-react';
-import { NavItem } from './Header';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -52,40 +50,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     }
   };
 
-  // Create navigation items for header
-  const navItems: NavItem[] = [
-    { 
-      href: "/", 
-      label: language === 'en' ? "Home" : "होम",
-      icon: <Home className="h-4 w-4" />
-    },
-    { 
-      href: "/mood-tracker", 
-      label: language === 'en' ? "Mood Tracker" : "मूड ट्रैकर",
-      icon: <BarChart className="h-4 w-4" />
-    },
-    { 
-      href: "/meditation", 
-      label: language === 'en' ? "Meditation" : "ध्यान",
-      icon: <Headphones className="h-4 w-4" />
-    },
-    { 
-      href: "/digital-detox", 
-      label: language === 'en' ? "Digital Detox" : "डिजिटल डिटॉक्स",
-      icon: <Smartphone className="h-4 w-4" />
-    },
-    { 
-      href: "/cbt", 
-      label: language === 'en' ? "CBT" : "CBT",
-      icon: <Brain className="h-4 w-4" />
-    },
-    { 
-      href: "/about", 
-      label: language === 'en' ? "About" : "परिचय",
-      icon: <Info className="h-4 w-4" />
-    }
-  ];
-
   return (
     <motion.div 
       className="flex flex-col min-h-screen bg-gradient-to-b from-background to-background/95"
@@ -100,7 +64,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <link rel="icon" href="/favicon.ico" />
       </Helmet>
       
-      <Header navItems={navItems} />
+      <Header />
       
       <motion.main 
         className="flex-grow pt-20 pb-16"

@@ -20,7 +20,7 @@ const CTASection: React.FC = () => {
     <section className="py-16">
       <div className="container mx-auto px-4">
         <motion.div 
-          className="max-w-3xl mx-auto text-center glass-card p-8 md:p-12 rounded-2xl bg-gradient-to-r from-vyanamana-900/30 to-vyanamana-800/30"
+          className="max-w-3xl mx-auto text-center glass-card p-8 md:p-12 rounded-2xl bg-gradient-to-r from-vyanmana-900/30 to-vyanmana-800/30"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
@@ -34,12 +34,12 @@ const CTASection: React.FC = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/cinematic-onboarding">
-              <Button size="lg" className="bg-gradient-to-r from-vyanamana-500 to-vyanamana-600 hover:from-vyanamana-600 hover:to-vyanamana-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+              <Button size="lg" className="bg-gradient-to-r from-vyanmana-500 to-vyanmana-600 hover:from-vyanmana-600 hover:to-vyanmana-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                 Get Started
               </Button>
             </Link>
             <Link to="/chat">
-              <Button size="lg" variant="outline" className="border-vyanamana-400/50 hover:bg-vyanamana-500/10">
+              <Button size="lg" variant="outline" className="border-vyanmana-400/50 hover:bg-vyanmana-500/10">
                 Try Demo
               </Button>
             </Link>
@@ -51,3 +51,4 @@ const CTASection: React.FC = () => {
 };
 
 export default CTASection;
+
