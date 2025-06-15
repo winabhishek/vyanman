@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes";
 import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import MainLayout from "./components/MainLayout";
 import LandingPage from "./pages/LandingPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import CinematicOnboardingPage from "./pages/CinematicOnboardingPage";
@@ -36,19 +37,71 @@ function App() {
                 <Sonner />
                 <BrowserRouter>
                   <Routes>
-                    <Route path="/" element={<LandingPage />} />
-                    <Route path="/onboarding" element={<OnboardingPage />} />
-                    <Route path="/cinematic-onboarding" element={<CinematicOnboardingPage />} />
-                    <Route path="/chat" element={<Chat />} />
-                    <Route path="/meditation" element={<MeditationPage />} />
-                    <Route path="/mood-tracker" element={<MoodTrackerPage />} />
-                    <Route path="/digital-detox" element={<DigitalDetoxPage />} />
-                    <Route path="/cbt" element={<CBTPage />} />
-                    <Route path="/enhanced-cbt" element={<EnhancedCBTPage />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/auth" element={<Login />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="*" element={<NotFound />} />
+                    <Route path="/" element={
+                      <MainLayout>
+                        <LandingPage />
+                      </MainLayout>
+                    } />
+                    <Route path="/onboarding" element={
+                      <MainLayout>
+                        <OnboardingPage />
+                      </MainLayout>
+                    } />
+                    <Route path="/cinematic-onboarding" element={
+                      <MainLayout>
+                        <CinematicOnboardingPage />
+                      </MainLayout>
+                    } />
+                    <Route path="/chat" element={
+                      <MainLayout>
+                        <Chat />
+                      </MainLayout>
+                    } />
+                    <Route path="/meditation" element={
+                      <MainLayout>
+                        <MeditationPage />
+                      </MainLayout>
+                    } />
+                    <Route path="/mood-tracker" element={
+                      <MainLayout>
+                        <MoodTrackerPage />
+                      </MainLayout>
+                    } />
+                    <Route path="/digital-detox" element={
+                      <MainLayout>
+                        <DigitalDetoxPage />
+                      </MainLayout>
+                    } />
+                    <Route path="/cbt" element={
+                      <MainLayout>
+                        <CBTPage />
+                      </MainLayout>
+                    } />
+                    <Route path="/enhanced-cbt" element={
+                      <MainLayout>
+                        <EnhancedCBTPage />
+                      </MainLayout>
+                    } />
+                    <Route path="/profile" element={
+                      <MainLayout>
+                        <Profile />
+                      </MainLayout>
+                    } />
+                    <Route path="/auth" element={
+                      <MainLayout>
+                        <Login />
+                      </MainLayout>
+                    } />
+                    <Route path="/about" element={
+                      <MainLayout>
+                        <About />
+                      </MainLayout>
+                    } />
+                    <Route path="*" element={
+                      <MainLayout>
+                        <NotFound />
+                      </MainLayout>
+                    } />
                   </Routes>
                 </BrowserRouter>
               </TooltipProvider>
