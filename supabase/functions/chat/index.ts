@@ -2,7 +2,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.0';
 import { corsHeaders } from '../_shared/cors.ts';
 
-const TOGETHER_API_KEY = Deno.env.get("TOGETHER_API_KEY") || "89af2b854ed98788335333ce318bfb11f66c7d6d64ec53c3bd7a74e7e5c264a5";
+const TOGETHER_API_KEY = Deno.env.get("TOGETHER_API_KEY");
 const TOGETHER_API_URL = "https://api.together.xyz/v1/chat/completions";
 
 interface ChatRequest {
@@ -40,15 +40,32 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (!TOGETHER_API_KEY) {
+      return new Response(JSON.stringify({ 
+        error: 'Together AI API key not configured',
+        message: {
+          id: `error-${Date.now()}`,
+          content: language === 'en' 
+            ? "I'm sorry, the AI service is not properly configured. Please contact support."
+            : "माफ करें, AI सेवा सही तरीके से कॉन्फ़िगर नहीं है। कृपया समर्थन से संपर्क करें।",
+          role: 'assistant',
+          timestamp: new Date().toISOString(),
+        }
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     console.log(`Processing chat request: ${content} in language: ${language}`);
 
-    // Enhanced system prompts for more natural and engaging conversation
+    // Enhanced system prompts for more natural conversation
     const systemPrompt = language === 'en' 
       ? "You are Vyanman, a compassionate mental health companion. Respond in English with empathy and warmth. Use conversational language that feels natural and engaging. Offer emotional support and practical mental wellbeing techniques. Ask thoughtful follow-up questions to build rapport. Personalize your responses based on the user's emotions and needs. Keep responses concise (2-4 sentences)."
       : "आप व्यानमन हैं, एक सहानुभूतिपूर्ण मानसिक स्वास्थ्य साथी। हिंदी में स्वाभाविक और सहज भाषा में उत्तर दें। भावनात्मक समर्थन और व्यावहारिक मानसिक कल्याण तकनीक प्रदान करें। संबंध बनाने के लिए सार्थक अनुवर्ती प्रश्न पूछें। उपयोगकर्ता की भावनाओं और जरूरतों के अनुसार अपनी प्रतिक्रियाओं को व्यक्तिगत बनाएं। उत्तर संक्षिप्त रखें (2-4 वाक्य)।";
 
     try {
-      // First try to call Together API with chat completions endpoint for better conversation
+      // Call Together AI API
       const togetherResponse = await fetch(TOGETHER_API_URL, {
         method: "POST",
         headers: {
@@ -56,7 +73,7 @@ Deno.serve(async (req) => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "mistralai/Mistral-7B-Instruct-v0.2", // Using a more capable model
+          model: "mistralai/Mistral-7B-Instruct-v0.2",
           messages: [
             {
               role: "system",
@@ -68,52 +85,48 @@ Deno.serve(async (req) => {
             }
           ],
           max_tokens: 300,
-          temperature: 0.8, // Slightly higher temperature for more creative responses
+          temperature: 0.8,
           top_p: 0.9
         }),
       });
 
-      console.log(`API response status: ${togetherResponse.status}`);
+      console.log(`Together AI response status: ${togetherResponse.status}`);
 
       if (!togetherResponse.ok) {
         const errorData = await togetherResponse.json();
-        console.error('API error:', errorData);
-        throw new Error(errorData.message || 'Failed to get response from Together API');
+        console.error('Together AI error:', errorData);
+        throw new Error(errorData.message || 'Failed to get response from Together AI');
       }
 
       const data = await togetherResponse.json();
-      console.log('API response data:', data);
+      console.log('Together AI response data:', data);
       
       const botReply = data.choices?.[0]?.message?.content?.trim() || 
         (language === 'en' ? "I'm here for you. How can I help today?" : "मैं आपके लिए यहां हूँ। मैं आज कैसे मदद कर सकता हूं?");
 
       // Save messages in database if user is authenticated
       if (user && !userError) {
-        // Save user message in database
-        const { data: userMessageData, error: userMessageError } = await supabaseClient
+        // Save user message
+        const { error: userMessageError } = await supabaseClient
           .from('messages')
           .insert({
             user_id: user.id,
             content,
             is_bot: false,
-          })
-          .select('*')
-          .single();
+          });
 
         if (userMessageError) {
           console.error('Error saving user message:', userMessageError);
         }
 
-        // Save bot message in database
-        const { data: botMessageData, error: botMessageError } = await supabaseClient
+        // Save bot message
+        const { error: botMessageError } = await supabaseClient
           .from('messages')
           .insert({
             user_id: user.id,
             content: botReply,
             is_bot: true,
-          })
-          .select('*')
-          .single();
+          });
 
         if (botMessageError) {
           console.error('Error saving bot message:', botMessageError);
@@ -135,7 +148,7 @@ Deno.serve(async (req) => {
         }
       );
     } catch (apiError) {
-      console.error('API call error:', apiError);
+      console.error('Together AI call error:', apiError);
       throw apiError;
     }
   } catch (error) {
@@ -144,7 +157,9 @@ Deno.serve(async (req) => {
       error: error.message,
       message: {
         id: `error-${Date.now()}`,
-        content: "I'm sorry, I'm having trouble processing your request right now. Please try again later.",
+        content: language === 'en' 
+          ? "I'm sorry, I'm having trouble processing your request right now. Please try again later."
+          : "माफ करें, मुझे अभी आपके अनुरोध को संसाधित करने में समस्या हो रही है। कृपया बाद में पुनः प्रयास करें।",
         role: 'assistant',
         timestamp: new Date().toISOString(),
       }
