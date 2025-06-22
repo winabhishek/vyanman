@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
+import { Brain } from 'lucide-react';
 
 const Login: React.FC = () => {
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -61,8 +62,8 @@ const Login: React.FC = () => {
     try {
       await continueAsGuest();
       toast({
-        title: "Anonymous session started",
-        description: "You can now use Vyānamana without an account.",
+        title: "Guest session started",
+        description: "You can now use Vyanman without an account.",
       });
       
       // Redirect to chat
@@ -81,8 +82,8 @@ const Login: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-vyanamana-400 to-vyanamana-600 flex items-center justify-center mx-auto mb-4">
-          <span className="text-white font-bold text-2xl">V</span>
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-vyanmana-400 to-vyanmana-600 flex items-center justify-center mx-auto mb-4">
+          <Brain className="text-white h-8 w-8" />
         </div>
         <h1 className="text-2xl font-bold font-heading mb-2">
           {isLoginMode ? 'Welcome Back' : 'Create Your Account'}
@@ -90,7 +91,7 @@ const Login: React.FC = () => {
         <p className="text-muted-foreground">
           {isLoginMode 
             ? 'Sign in to continue your mental wellbeing journey' 
-            : 'Join Vyānamana to start your mental wellbeing journey'}
+            : 'Join Vyanman to start your mental wellbeing journey'}
         </p>
       </motion.div>
       
@@ -146,7 +147,7 @@ const Login: React.FC = () => {
           
           <Button 
             type="submit" 
-            className="w-full relative overflow-hidden group"
+            className="w-full bg-gradient-to-r from-vyanmana-500 to-vyanmana-600 hover:from-vyanmana-600 hover:to-vyanmana-700 text-white relative overflow-hidden group"
             disabled={isSubmitting}
           >
             <span className="relative z-10">
@@ -154,7 +155,6 @@ const Login: React.FC = () => {
                 ? (isLoginMode ? 'Signing In...' : 'Creating Account...') 
                 : (isLoginMode ? 'Sign In' : 'Create Account')}
             </span>
-            <span className="absolute inset-0 bg-vyanamana-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-md"></span>
           </Button>
         </form>
         
@@ -170,12 +170,11 @@ const Login: React.FC = () => {
           
           <Button
             variant="outline"
-            className="w-full mt-4 relative overflow-hidden group"
+            className="w-full mt-4 border-vyanmana-400/50 hover:bg-vyanmana-500/10 relative overflow-hidden group"
             onClick={handleGuestAccess}
             disabled={isSubmitting}
           >
             <span className="relative z-10">Continue as Guest</span>
-            <span className="absolute inset-0 bg-vyanamana-50 dark:bg-vyanamana-900 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-md"></span>
           </Button>
         </div>
         
@@ -186,7 +185,7 @@ const Login: React.FC = () => {
               <motion.button
                 type="button"
                 onClick={() => setIsLoginMode(false)}
-                className="text-vyanamana-600 hover:text-vyanamana-700 font-medium relative"
+                className="text-vyanmana-600 hover:text-vyanmana-700 font-medium relative"
                 disabled={isSubmitting}
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -200,7 +199,7 @@ const Login: React.FC = () => {
               <motion.button
                 type="button"
                 onClick={() => setIsLoginMode(true)}
-                className="text-vyanamana-600 hover:text-vyanamana-700 font-medium relative"
+                className="text-vyanmana-600 hover:text-vyanmana-700 font-medium relative"
                 disabled={isSubmitting}
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -219,12 +218,12 @@ const Login: React.FC = () => {
         transition={{ duration: 0.5, delay: 0.4 }}
       >
         <p>
-          By using Vyānamana, you agree to our{' '}
-          <Link to="/terms" className="underline hover:text-vyanamana-500 transition-colors">
+          By using Vyanman, you agree to our{' '}
+          <Link to="/terms" className="underline hover:text-vyanmana-500 transition-colors">
             Terms of Service
           </Link>{' '}
           and{' '}
-          <Link to="/privacy" className="underline hover:text-vyanamana-500 transition-colors">
+          <Link to="/privacy" className="underline hover:text-vyanmana-500 transition-colors">
             Privacy Policy
           </Link>
         </p>
