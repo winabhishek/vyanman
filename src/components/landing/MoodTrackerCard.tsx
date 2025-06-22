@@ -3,57 +3,73 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Calendar, Activity } from 'lucide-react';
+import { Heart, TrendingUp, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 const MoodTrackerCard: React.FC = () => {
   return (
     <Link to="/mood-tracker">
-      <Card className="h-full backdrop-blur-lg bg-white/70 dark:bg-gray-800/50 border border-vyanamana-100 dark:border-vyanamana-900/50 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
+      <Card className="h-full backdrop-blur-lg bg-white/70 dark:bg-gray-800/50 border border-vyanmana-100 dark:border-vyanmana-900/50 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center text-vyanamana-700 dark:text-vyanamana-300">
-            <Calendar className="mr-2 h-5 w-5" />
+          <CardTitle className="flex items-center text-vyanmana-700 dark:text-vyanmana-300">
+            <Heart className="mr-2 h-5 w-5 text-red-500" />
             Mood Tracker
           </CardTitle>
-          <CardDescription>Track and understand your emotional patterns</CardDescription>
+          <CardDescription>Track your emotional journey and discover patterns</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-center space-x-3 my-4">
-            {['😔', '😐', '🙂', '😊', '😄'].map((emoji, index) => (
+          <div className="flex justify-center space-x-2 my-4">
+            {[
+              { emoji: '😄', color: 'from-yellow-400 to-orange-400' },
+              { emoji: '😊', color: 'from-green-400 to-emerald-400' },
+              { emoji: '😐', color: 'from-gray-400 to-slate-400' },
+              { emoji: '😢', color: 'from-blue-600 to-indigo-600' },
+              { emoji: '😠', color: 'from-red-500 to-rose-500' }
+            ].map((mood, index) => (
               <motion.div 
                 key={index}
-                className="text-2xl cursor-pointer rounded-full p-2 hover:bg-vyanamana-100 dark:hover:bg-vyanamana-900/30 transition-colors duration-300"
-                whileHover={{ scale: 1.2 }}
+                className={`w-12 h-12 rounded-full bg-gradient-to-r ${mood.color} flex items-center justify-center cursor-pointer shadow-md`}
+                whileHover={{ scale: 1.2, rotate: 5 }}
                 whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
-                {emoji}
+                <span className="text-lg">{mood.emoji}</span>
               </motion.div>
             ))}
           </div>
-          <div className="bg-gradient-to-r from-vyanamana-100 to-amber-100 dark:from-vyanamana-900/30 dark:to-amber-900/30 p-3 rounded-lg">
+          
+          <div className="bg-gradient-to-r from-vyanmana-100 to-amber-100 dark:from-vyanmana-900/30 dark:to-amber-900/30 p-4 rounded-xl">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium text-vyanmana-700 dark:text-vyanmana-300">Weekly Progress</span>
+              <TrendingUp className="h-4 w-4 text-vyanmana-600 dark:text-vyanmana-400" />
+            </div>
             <div className="grid grid-cols-7 gap-1 text-xs font-medium">
               {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
-                <div key={index} className="text-center text-gray-500 dark:text-gray-400">{day}</div>
+                <div key={index} className="text-center text-gray-500 dark:text-gray-400 mb-1">{day}</div>
               ))}
-              {Array.from({ length: 28 }).map((_, index) => (
+              {Array.from({ length: 21 }).map((_, index) => (
                 <motion.div 
                   key={index}
-                  className={`h-6 rounded-full ${
-                    index % 8 === 0 ? 'bg-vyanamana-200 dark:bg-vyanamana-800/40' : 
-                    index % 7 === 3 ? 'bg-amber-200 dark:bg-amber-800/40' : 
-                    index % 5 === 0 ? 'bg-vyanamana-300 dark:bg-vyanamana-700/40' : 
-                    'bg-gray-100 dark:bg-gray-700/40'
-                  }`}
-                  whileHover={{ scale: 1.2 }}
+                  className={`h-3 rounded-full ${
+                    index % 7 === 0 ? 'bg-yellow-400' : 
+                    index % 5 === 2 ? 'bg-green-400' : 
+                    index % 4 === 0 ? 'bg-blue-400' : 
+                    index % 6 === 1 ? 'bg-red-400' :
+                    'bg-gray-200 dark:bg-gray-700'
+                  } shadow-sm`}
+                  whileHover={{ scale: 1.3 }}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.05 }}
                 />
               ))}
             </div>
           </div>
         </CardContent>
         <CardFooter className="pt-0">
-          <Button variant="ghost" className="w-full justify-center group-hover:text-vyanamana-600 dark:group-hover:text-vyanamana-300">
-            Track Your Mood
-            <Activity className="ml-2 h-4 w-4" />
+          <Button variant="ghost" className="w-full justify-center group-hover:text-vyanmana-600 dark:group-hover:text-vyanmana-300 transition-colors">
+            Start Tracking
+            <Sparkles className="ml-2 h-4 w-4" />
           </Button>
         </CardFooter>
       </Card>
