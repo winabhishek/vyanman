@@ -31,6 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('Auth state changed:', event, session);
         setSession(session);
         setUser(session?.user ?? null);
+        setIsLoading(false); // Always reset loading after auth state change
         
         // Use setTimeout to avoid Supabase deadlocks
         if (session?.user && event === 'SIGNED_IN') {
@@ -76,20 +77,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signup = async (name: string, email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Create user in Supabase
+      // Create user in Supabase with proper redirect URL
       const { error: signUpError } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
           data: {
             name,
-          }
+          },
+          emailRedirectTo: `${window.location.origin}/`
         }
       });
       
       if (signUpError) {
         throw signUpError;
       }
+      
+      // Show success message for email confirmation
+      uiToast({
+        title: "Account created!",
+        description: "Please check your email to confirm your account.",
+      });
       
       // Session will be handled by onAuthStateChange
     } catch (error: any) {

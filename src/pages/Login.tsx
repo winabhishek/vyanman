@@ -31,45 +31,47 @@ const Login: React.FC = () => {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent double submission
+    
     setIsSubmitting(true);
     
     try {
       if (isLoginMode) {
         await login(email, password);
-        toast({
-          title: "Welcome back!",
-          description: "You've successfully logged in.",
-        });
+        // Don't show toast here - it's handled in AuthContext
       } else {
         await signup(name, email, password);
-        toast({
-          title: "Account created!",
-          description: "Your account has been created successfully.",
-        });
+        // Don't show toast here - it's handled in AuthContext
       }
+      
+      // Clear form only on success
+      setEmail('');
+      setPassword('');
+      setName('');
       
       // Redirect handled by useEffect
     } catch (error) {
       console.error("Auth error:", error);
       // Toast already shown in AuthContext functions
+    } finally {
       setIsSubmitting(false);
     }
   };
   
   const handleGuestAccess = async () => {
+    if (isSubmitting) return; // Prevent double submission
+    
     setIsSubmitting(true);
     
     try {
       await continueAsGuest();
-      toast({
-        title: "Guest session started",
-        description: "You can now use Vyanman without an account.",
-      });
+      // Don't show toast here - it's handled in AuthContext
       
       // Redirect to chat
       navigate('/chat');
     } catch (error) {
       // Toast already shown in AuthContext functions
+    } finally {
       setIsSubmitting(false);
     }
   };
