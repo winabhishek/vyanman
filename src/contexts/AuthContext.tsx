@@ -34,9 +34,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsLoading(false); // Always reset loading after auth state change
         
         // Use setTimeout to avoid Supabase deadlocks
-        if (session?.user && event === 'SIGNED_IN') {
+        if (session?.user) {
           setTimeout(() => {
-            toast.success(`Welcome, ${session.user.email}`);
+            if (event === 'SIGNED_IN') {
+              toast.success(`Welcome back, ${session.user.email}`);
+            } else if (event === 'TOKEN_REFRESHED') {
+              console.log('Token refreshed successfully');
+            }
+          }, 0);
+        }
+        
+        // Handle email verification completion
+        if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
+          setTimeout(() => {
+            toast.success(`Account verified successfully! Welcome to Vyanman.`);
+            // Redirect to main app after verification
+            if (window.location.pathname === '/') {
+              window.location.href = '/chat';
+            }
           }, 0);
         }
       }
@@ -96,7 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Show success message for email confirmation
       uiToast({
         title: "Account created!",
-        description: "Please check your email to confirm your account.",
+        description: "Please check your email and click the verification link to complete your registration.",
       });
       
       // Session will be handled by onAuthStateChange
