@@ -96,12 +96,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error: signUpError } = await supabase.auth.signUp({ 
         email, 
         password,
-        options: {
-          data: {
-            name,
-          },
-          emailRedirectTo: `${window.location.origin}/`
-        }
+          options: {
+            data: {
+              name,
+            },
+            emailRedirectTo: `https://vyanman.in/auth/callback`
+          }
       });
       
       if (signUpError) {

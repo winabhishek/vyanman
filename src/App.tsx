@@ -18,6 +18,7 @@ import CBTPage from "./pages/CBTPage";
 import EnhancedCBTPage from "./pages/EnhancedCBTPage";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
+import AuthCallback from "./pages/AuthCallback";
 import MoodTrackerPage from "./pages/MoodTrackerPage";
 import DigitalDetoxPage from "./pages/DigitalDetoxPage";
 import About from "./pages/About";
@@ -95,6 +96,11 @@ function App() {
                     <Route path="/auth" element={
                       <MainLayout>
                         <Login />
+                      </MainLayout>
+                    } />
+                    <Route path="/auth/callback" element={
+                      <MainLayout>
+                        <AuthCallback />
                       </MainLayout>
                     } />
                     <Route path="/about" element={
