@@ -130,12 +130,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const continueAsGuest = async () => {
     setIsLoading(true);
     try {
-      // Simulate guest login with anonymous sign-in
-      const { data, error } = await supabase.auth.signInAnonymously();
+      // Create a temporary guest user
+      const guestUser = {
+        id: `guest_${Date.now()}`,
+        email: 'guest@example.com',
+        aud: 'authenticated',
+        role: 'authenticated',
+        created_at: new Date().toISOString(),
+        email_confirmed_at: new Date().toISOString(),
+        phone_confirmed_at: null,
+        confirmation_sent_at: null,
+        recovery_sent_at: null,
+        email_change_sent_at: null,
+        new_email: null,
+        invited_at: null,
+        action_link: null,
+        email_change: null,
+        phone_change: null,
+        phone: null,
+        confirmed_at: new Date().toISOString(),
+        email_change_confirm_status: 0,
+        phone_change_confirm_status: 0,
+        banned_until: null,
+        user_metadata: { name: 'Guest User' },
+        app_metadata: {},
+        identities: [],
+        factors: [],
+        is_anonymous: true
+      };
       
-      if (error) {
-        throw error;
-      }
+      const guestSession = {
+        access_token: 'guest_token',
+        refresh_token: 'guest_refresh',
+        expires_in: 3600,
+        expires_at: Date.now() / 1000 + 3600,
+        token_type: 'bearer',
+        user: guestUser
+      };
+
+      setSession(guestSession as any);
+      setUser(guestUser as any);
 
       toast.info("You're browsing as a guest", {
         description: "Create an account to save your progress"
