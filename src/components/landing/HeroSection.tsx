@@ -8,12 +8,6 @@ import { ArrowRight, Play } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const HeroSection: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-  
-  // Don't show hero section if user is authenticated
-  if (isAuthenticated) {
-    return null;
-  }
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background/95 to-vyanamana-950/20">

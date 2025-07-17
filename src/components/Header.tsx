@@ -54,39 +54,40 @@ const Header: React.FC = () => {
           <span className="font-bold text-xl gradient-heading">Vyanman</span>
         </Link>
         
-        <nav className="hidden md:flex items-center space-x-1">
-          {navItems.map((item) => (
-            <Link key={item.href} to={item.href}>
-              <Button 
-                variant="ghost" 
-                className={`flex items-center gap-2 relative transition-colors duration-200 ${
-                  item.highlight
-                  ? 'bg-gradient-to-r from-vyanmana-400/10 to-amber-500/10 hover:from-vyanmana-400/20 hover:to-amber-500/20'
-                  : 'hover:bg-vyanmana-400/10'
-                }`}
-              >
-                <item.icon className={`h-4 w-4 ${item.highlight ? 'text-vyanmana-500' : 'text-vyanmana-700'}`} />
-                {item.label}
-                {item.badge && (
-                  <span className={`text-xs px-2 py-0.5 rounded-full text-white font-medium ${
+        {user && (
+          <nav className="hidden md:flex items-center space-x-1">
+            {navItems.map((item) => (
+              <Link key={item.href} to={item.href}>
+                <Button 
+                  variant="ghost" 
+                  className={`flex items-center gap-2 relative transition-colors duration-200 ${
                     item.highlight
-                      ? 'bg-gradient-to-r from-vyanmana-600 to-amber-600'
-                      : 'bg-vyanmana-600'
-                  }`}>
-                    {item.badge}
-                  </span>
-                )}
-                {item.highlight && (
-                  <Sparkles className="h-3 w-3 text-amber-400 absolute -top-1 -right-1" />
-                )}
-              </Button>
-            </Link>
-          ))}
-        </nav>
+                    ? 'bg-gradient-to-r from-vyanmana-400/10 to-amber-500/10 hover:from-vyanmana-400/20 hover:to-amber-500/20'
+                    : 'hover:bg-vyanmana-400/10'
+                  }`}
+                >
+                  <item.icon className={`h-4 w-4 ${item.highlight ? 'text-vyanmana-500' : 'text-vyanmana-700'}`} />
+                  {item.label}
+                  {item.badge && (
+                    <span className={`text-xs px-2 py-0.5 rounded-full text-white font-medium ${
+                      item.highlight
+                        ? 'bg-gradient-to-r from-vyanmana-600 to-amber-600'
+                        : 'bg-vyanmana-600'
+                    }`}>
+                      {item.badge}
+                    </span>
+                  )}
+                  {item.highlight && (
+                    <Sparkles className="h-3 w-3 text-amber-400 absolute -top-1 -right-1" />
+                  )}
+                </Button>
+              </Link>
+            ))}
+          </nav>
+        )}
 
         <div className="flex items-center space-x-2">
           <LanguageToggle />
-          <ThemeToggle />
           <AuthButton />
           {user && (
             <Button
