@@ -21,7 +21,7 @@ import MeditationPlayer from '@/components/meditation/MeditationPlayer';
 // Meditation categories
 const CATEGORIES = ["All", "Beginner", "Intermediate", "Advanced", "Sleep", "Anxiety", "Focus"];
 
-// Mock meditation data
+// Enhanced guided meditations with mood-based recommendations
 const GUIDED_MEDITATIONS = [
   {
     id: '1',
@@ -30,6 +30,8 @@ const GUIDED_MEDITATIONS = [
     duration: '5 min',
     category: 'beginner',
     imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVkaXRhdGlvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60',
+    mood: 'calm',
+    transcript: 'Find a comfortable position... Close your eyes... Focus on your natural breath...'
   },
   {
     id: '2',
@@ -38,6 +40,8 @@ const GUIDED_MEDITATIONS = [
     duration: '10 min',
     category: 'beginner',
     imageUrl: 'https://images.unsplash.com/photo-1599447292180-45fd84092ef4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHJlbGF4YXRpb258ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60',
+    mood: 'peaceful',
+    transcript: 'Lie down comfortably... Start at the top of your head... Notice any tension...'
   },
   {
     id: '3',
@@ -46,6 +50,8 @@ const GUIDED_MEDITATIONS = [
     duration: '7 min',
     category: 'intermediate',
     imageUrl: 'https://images.unsplash.com/photo-1536623975707-c4b75156ac0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGxvdmV8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60',
+    mood: 'loving',
+    transcript: 'May I be happy... May I be healthy... May I be at peace... Now extend this to others...'
   },
   {
     id: '4',
@@ -54,6 +60,8 @@ const GUIDED_MEDITATIONS = [
     duration: '3 min',
     category: 'beginner',
     imageUrl: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8c3RyZXNzJTIwcmVsaWVmfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60',
+    mood: 'stressed',
+    transcript: 'Take three deep breaths... With each exhale, release the tension...'
   },
   {
     id: '5',
@@ -62,7 +70,39 @@ const GUIDED_MEDITATIONS = [
     duration: '10 min',
     category: 'advanced',
     imageUrl: 'https://images.unsplash.com/photo-1529651737248-dad5e287768e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Zm9jdXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60',
+    mood: 'focused',
+    transcript: 'Choose a single point of focus... When your mind wanders, gently return...'
   },
+  {
+    id: '6',
+    title: 'Sleep Preparation',
+    description: 'Gentle guided practice to prepare your mind and body for restful sleep.',
+    duration: '15 min',
+    category: 'sleep',
+    imageUrl: 'https://images.unsplash.com/photo-1516914589923-f105f1535f88?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8bWVkaXRhdGlvbnxlbnwwfHwwfHx8MA%3D&auto=format&fit=crop&w=800&q=60',
+    mood: 'sleepy',
+    transcript: 'Let your body sink into the bed... Release the day\'s worries...'
+  },
+  {
+    id: '7',
+    title: 'Anxiety Relief',
+    description: 'Calming meditation specifically designed to reduce anxiety and worry.',
+    duration: '8 min',
+    category: 'anxiety',
+    imageUrl: 'https://images.unsplash.com/photo-1545389336-cf090694435e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bWVkaXRhdGlvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60',
+    mood: 'anxious',
+    transcript: 'You are safe in this moment... Breathe in calm, breathe out worry...'
+  },
+  {
+    id: '8',
+    title: 'Morning Energy',
+    description: 'Energizing practice to start your day with clarity and purpose.',
+    duration: '6 min',
+    category: 'focus',
+    imageUrl: 'https://images.unsplash.com/photo-1470137237906-d8a4f71e1966?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fG1lZGl0YXRpb258ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60',
+    mood: 'energetic',
+    transcript: 'Welcome this new day... Feel energy flowing through your body...'
+  }
 ];
 
 const MeditationPage = () => {
@@ -75,12 +115,14 @@ const MeditationPage = () => {
   const [selectedSound, setSelectedSound] = useState('piano');
   const [breathingCount, setBreathingCount] = useState(4); // 4-second breathing rhythm
   
-  // Use our new audio API
+  // Use our enhanced audio API
   const { 
     getMeditationSounds, 
     playSound, 
     stopSound, 
     setVolume: setAudioVolume, 
+    getSoundsByMood,
+    getRandomSound,
     currentlyPlaying,
     isLoading 
   } = useMeditationAudioAPI();
@@ -300,23 +342,57 @@ const MeditationPage = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                       {!isLoading && sounds.map((sound) => (
                         <Button
                           key={sound.id}
                           variant={selectedSound === sound.id ? "default" : "outline"}
-                          className={selectedSound === sound.id ? "bg-amber-500 text-amber-950" : "border-amber-500/30"}
+                          className={`flex items-center justify-start gap-3 h-12 ${
+                            selectedSound === sound.id 
+                              ? "bg-amber-500 text-amber-950 border-amber-600" 
+                              : "border-amber-500/30 hover:bg-amber-500/10"
+                          }`}
                           onClick={() => handleSoundSelect(sound.id)}
                         >
-                          <span className="mr-2">{sound.icon}</span>
-                          {sound.name}
+                          <span className="text-lg">{sound.icon}</span>
+                          <div className="flex flex-col items-start">
+                            <span className="font-medium">{sound.name}</span>
+                            <span className="text-xs opacity-70">
+                              {sound.category} • {Math.floor(sound.duration / 60)}min
+                            </span>
+                          </div>
                         </Button>
                       ))}
                       {isLoading && (
-                        <div className="col-span-3 py-8 text-center">
-                          <p>Loading sounds...</p>
+                        <div className="col-span-2 py-8 text-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto"></div>
+                          <p className="mt-2 text-muted-foreground">Loading meditation sounds...</p>
                         </div>
                       )}
+                    </div>
+                    
+                    {/* Quick mood-based suggestions */}
+                    <div className="mb-4">
+                      <p className="text-sm font-medium mb-2">Quick Mood Selection:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {['calm', 'focused', 'peaceful', 'energetic'].map((mood) => (
+                          <Button
+                            key={mood}
+                            variant="outline"
+                            size="sm"
+                            className="border-amber-500/30 text-xs"
+                            onClick={() => {
+                              const moodSounds = getSoundsByMood(mood);
+                              if (moodSounds.length > 0) {
+                                const randomMoodSound = moodSounds[Math.floor(Math.random() * moodSounds.length)];
+                                handleSoundSelect(randomMoodSound.id);
+                              }
+                            }}
+                          >
+                            {mood.charAt(0).toUpperCase() + mood.slice(1)}
+                          </Button>
+                        ))}
+                      </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
