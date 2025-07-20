@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { motion } from 'framer-motion';
 
-const ThreeBreathingAnimation: React.FC = () => {
+const ThreeBreathingAnimation: React.FC<{ isPlaying?: boolean }> = ({ isPlaying = false }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -14,6 +14,8 @@ const ThreeBreathingAnimation: React.FC = () => {
   const [counter, setCounter] = useState(4);
 
   useEffect(() => {
+    if (!isPlaying) return;
+    
     // Setup breathing animation cycle
     const interval = setInterval(() => {
       setPhase(current => {
@@ -33,7 +35,7 @@ const ThreeBreathingAnimation: React.FC = () => {
       clearInterval(interval);
       clearInterval(counterInterval);
     };
-  }, []);
+  }, [isPlaying]);
 
   useEffect(() => {
     if (!containerRef.current) return;

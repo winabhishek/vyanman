@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/carousel';
 import { useMeditationAudioAPI, MeditationSound } from '@/services/meditationAPI';
 import MeditationPlayer from '@/components/meditation/MeditationPlayer';
+import GuidedMeditationPlayer from '@/components/meditation/GuidedMeditationPlayer';
 
 // Meditation categories
 const CATEGORIES = ["All", "Beginner", "Intermediate", "Advanced", "Sleep", "Anxiety", "Focus"];
@@ -210,7 +211,7 @@ const MeditationPage = () => {
       
       <motion.div variants={itemVariants} className="mb-10 text-center">
         <h1 className="text-3xl md:text-4xl font-bold gradient-heading mb-4">
-          {t('nav.meditation') || 'Meditation & Mindfulness'}
+          Meditation & Mindfulness
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Cultivate inner peace and mindfulness with guided practices and breathing exercises
@@ -290,6 +291,20 @@ const MeditationPage = () => {
                 </motion.div>
               ))}
             </div>
+            
+            {/* Guided Meditation Player */}
+            {currentMeditation && (
+              <GuidedMeditationPlayer
+                meditation={currentMeditation}
+                isPlaying={isPlaying}
+                onPlayPause={togglePlayPause}
+                onClose={() => setCurrentMeditation(null)}
+                volume={volume}
+                isMuted={isMuted}
+                onVolumeChange={handleVolumeChange}
+                onMute={toggleMute}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="breathing">
@@ -325,15 +340,18 @@ const MeditationPage = () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full gap-2 premium-button">
+                  <Button 
+                    className="w-full gap-2 premium-button"
+                    onClick={() => setIsPlaying(!isPlaying)}
+                  >
                     <Heart className="h-4 w-4" />
-                    Begin Breathing Exercise
+                    {isPlaying ? 'Stop' : 'Begin'} Breathing Exercise
                   </Button>
                 </CardFooter>
               </Card>
 
               <div className="flex flex-col space-y-4">
-                <ThreeBreathingAnimation />
+                <ThreeBreathingAnimation isPlaying={isPlaying} />
                 <Card className="glass-card-premium">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg">Background Sounds</CardTitle>
