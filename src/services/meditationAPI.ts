@@ -187,21 +187,57 @@ export const useMeditationAudioAPI = () => {
     }
   };
 
-  const generateMeditationTone = (frequency: number, type: OscillatorType = 'sine') => {
+  const generateMeditationTone = (frequency: number, type: OscillatorType = 'sine', harmonics: boolean = true) => {
     const audioContext = createAudioContext();
     if (!audioContext) return null;
 
-    const oscillator = audioContext.createOscillator();
+    const mainOscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
+    const filter = audioContext.createBiquadFilter();
 
-    oscillator.connect(gainNode);
+    // Create a warmer, more natural sound
+    mainOscillator.connect(filter);
+    filter.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
-    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-    oscillator.type = type;
-    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+    // Main tone
+    mainOscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+    mainOscillator.type = type;
+    
+    // Add subtle harmonics for richness
+    const harmonicOscillators: OscillatorNode[] = [];
+    if (harmonics) {
+      for (let i = 2; i <= 4; i++) {
+        const harmonic = audioContext.createOscillator();
+        const harmonicGain = audioContext.createGain();
+        
+        harmonic.connect(harmonicGain);
+        harmonicGain.connect(gainNode);
+        
+        harmonic.frequency.setValueAtTime(frequency * i, audioContext.currentTime);
+        harmonic.type = 'sine';
+        harmonicGain.gain.setValueAtTime(0.02 / i, audioContext.currentTime); // Subtle harmonics
+        
+        harmonicOscillators.push(harmonic);
+      }
+    }
 
-    return { oscillator, gainNode, audioContext };
+    // Low-pass filter for warmth
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(800, audioContext.currentTime);
+    filter.Q.setValueAtTime(1, audioContext.currentTime);
+
+    // Volume envelope
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.5);
+
+    return { 
+      oscillator: mainOscillator, 
+      gainNode, 
+      audioContext, 
+      harmonics: harmonicOscillators,
+      filter 
+    };
   };
 
   const playSound = async (soundId: string) => {
@@ -242,19 +278,13 @@ export const useMeditationAudioAPI = () => {
           };
           
           const frequency = moodFrequencies[sound.mood || 'calm'] || 440;
-          const toneGenerator = generateMeditationTone(frequency);
+          const toneGenerator = generateMeditationTone(frequency, 'sine', true);
           
           if (toneGenerator) {
-            const { oscillator, gainNode, audioContext } = toneGenerator;
-            
-            // Create a more complex harmonic tone
-            const harmonic = audioContext.createOscillator();
-            harmonic.connect(gainNode);
-            harmonic.frequency.setValueAtTime(frequency * 1.5, audioContext.currentTime);
-            harmonic.type = 'triangle';
+            const { oscillator, gainNode, audioContext, harmonics } = toneGenerator;
             
             oscillator.start();
-            harmonic.start();
+            harmonics?.forEach(h => h.start());
             
             setCurrentlyPlaying(soundId);
             setError(null);
@@ -264,14 +294,14 @@ export const useMeditationAudioAPI = () => {
               pause: () => {
                 try {
                   oscillator.stop();
-                  harmonic.stop();
+                  harmonics?.forEach(h => h.stop());
                   audioContext.close();
                 } catch (err) {
                   console.log('Tone already stopped');
                 }
               },
               currentTime: 0,
-              volume: 0.1,
+              volume: 0.15,
               play: () => Promise.resolve()
             } as HTMLAudioElement;
             

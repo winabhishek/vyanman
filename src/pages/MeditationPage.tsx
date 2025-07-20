@@ -157,8 +157,23 @@ const MeditationPage = () => {
   };
 
   const handleMeditationSelect = (meditation: typeof GUIDED_MEDITATIONS[0]) => {
+    // Stop any currently playing background sound
+    if (currentlyPlaying) {
+      stopSound();
+      setSelectedMeditationSound(null);
+    }
+    
     setCurrentMeditation(meditation);
     setIsPlaying(true);
+    
+    // Auto-select a mood-appropriate background sound
+    const moodSounds = getSoundsByMood(meditation.mood || 'calm');
+    if (moodSounds.length > 0) {
+      const backgroundSound = moodSounds[0];
+      setTimeout(() => {
+        handleSoundSelect(backgroundSound.id);
+      }, 1000);
+    }
   };
 
   const togglePlayPause = () => {
@@ -182,9 +197,14 @@ const MeditationPage = () => {
     const sound = sounds.find(s => s.id === soundId);
     
     if (sound) {
+      // Stop current sound if playing
+      if (currentlyPlaying && currentlyPlaying !== soundId) {
+        stopSound();
+      }
+      
       setSelectedSound(soundId);
-      playSound(soundId);
       setSelectedMeditationSound(sound);
+      playSound(soundId);
     }
   };
   
@@ -259,7 +279,7 @@ const MeditationPage = () => {
                   transition={{ duration: 0.3 }}
                 >
                   <Card 
-                    className="overflow-hidden h-full glass-card-premium cursor-pointer"
+                    className="overflow-hidden h-full glass-card-premium cursor-pointer hover:shadow-2xl hover:scale-[1.02] transition-all duration-300"
                     onClick={() => handleMeditationSelect(meditation)}
                   >
                     <div className="relative h-40 w-full overflow-hidden">
@@ -268,22 +288,29 @@ const MeditationPage = () => {
                         alt={meditation.title}
                         className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                       />
+                      <div className="absolute top-0 left-0 bg-gradient-to-r from-amber-500 to-orange-500 px-2 py-1 rounded-br-lg">
+                        <span className="text-xs font-semibold text-white uppercase tracking-wide">{meditation.category}</span>
+                      </div>
                       <div className="absolute bottom-0 right-0 bg-black/50 px-3 py-1 rounded-tl-lg">
                         <div className="flex items-center gap-1 text-white">
                           <Clock className="h-3 w-3" />
                           <span className="text-xs">{meditation.duration}</span>
                         </div>
                       </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                     </div>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-lg">{meditation.title}</CardTitle>
+                      <CardTitle className="text-lg flex items-center justify-between">
+                        {meditation.title}
+                        <span className="text-2xl">{meditation.mood === 'calm' ? '🧘' : meditation.mood === 'loving' ? '💝' : meditation.mood === 'focused' ? '🎯' : meditation.mood === 'peaceful' ? '☮️' : '✨'}</span>
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="pb-2">
                       <p className="text-sm text-muted-foreground line-clamp-2">{meditation.description}</p>
                     </CardContent>
                     <CardFooter>
-                      <Button variant="outline" size="sm" className="w-full gap-2 border-amber-500/50 hover:bg-amber-500/20">
-                        <Play className="h-4 w-4" />
+                      <Button variant="outline" size="sm" className="w-full gap-2 border-amber-500/50 hover:bg-amber-500/20 group">
+                        <Play className="h-4 w-4 group-hover:scale-110 transition-transform" />
                         Start Meditation
                       </Button>
                     </CardFooter>
@@ -342,7 +369,18 @@ const MeditationPage = () => {
                 <CardFooter>
                   <Button 
                     className="w-full gap-2 premium-button"
-                    onClick={() => setIsPlaying(!isPlaying)}
+                    onClick={() => {
+                      const newPlayingState = !isPlaying;
+                      setIsPlaying(newPlayingState);
+                      
+                      // Auto-play calm breathing sound
+                      if (newPlayingState && !currentlyPlaying) {
+                        const calmSounds = getSoundsByMood('calm');
+                        if (calmSounds.length > 0) {
+                          handleSoundSelect(calmSounds[0].id);
+                        }
+                      }
+                    }}
                   >
                     <Heart className="h-4 w-4" />
                     {isPlaying ? 'Stop' : 'Begin'} Breathing Exercise
@@ -364,20 +402,26 @@ const MeditationPage = () => {
                       {!isLoading && sounds.map((sound) => (
                         <Button
                           key={sound.id}
-                          variant={selectedSound === sound.id ? "default" : "outline"}
-                          className={`flex items-center justify-start gap-3 h-12 ${
-                            selectedSound === sound.id 
-                              ? "bg-amber-500 text-amber-950 border-amber-600" 
+                          variant={currentlyPlaying === sound.id ? "default" : "outline"}
+                          className={`flex items-center justify-start gap-3 h-16 ${
+                            currentlyPlaying === sound.id 
+                              ? "bg-amber-500 text-amber-950 border-amber-600 shadow-lg" 
                               : "border-amber-500/30 hover:bg-amber-500/10"
                           }`}
                           onClick={() => handleSoundSelect(sound.id)}
                         >
-                          <span className="text-lg">{sound.icon}</span>
-                          <div className="flex flex-col items-start">
-                            <span className="font-medium">{sound.name}</span>
-                            <span className="text-xs opacity-70">
+                          <span className="text-2xl">{sound.icon}</span>
+                          <div className="flex flex-col items-start flex-1">
+                            <span className="font-medium text-left">{sound.name}</span>
+                            <span className="text-xs opacity-70 text-left">
                               {sound.category} • {Math.floor(sound.duration / 60)}min
                             </span>
+                            {currentlyPlaying === sound.id && (
+                              <div className="flex items-center gap-1 mt-1">
+                                <div className="w-2 h-2 bg-amber-950 rounded-full animate-pulse"></div>
+                                <span className="text-xs">Playing</span>
+                              </div>
+                            )}
                           </div>
                         </Button>
                       ))}
@@ -438,12 +482,45 @@ const MeditationPage = () => {
         </Tabs>
       </motion.div>
 
-      {/* Meditation Player */}
+      {/* Current Meditation Players */}
       {selectedMeditationSound && (
-        <MeditationPlayer 
-          sound={selectedMeditationSound} 
-          onClose={closeMeditationPlayer} 
+        <MeditationPlayer
+          sound={selectedMeditationSound}
+          onClose={closeMeditationPlayer}
         />
+      )}
+      
+      {/* Global volume and playback controls */}
+      {currentlyPlaying && (
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="fixed bottom-20 right-4 bg-amber-800/90 backdrop-blur-md rounded-lg p-4 shadow-lg border border-amber-500/20 z-40"
+        >
+          <div className="flex items-center gap-3">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                stopSound();
+                setSelectedMeditationSound(null);
+              }}
+              className="text-amber-100 hover:text-white"
+            >
+              <Pause className="h-4 w-4" />
+            </Button>
+            <div className="flex items-center gap-2">
+              <Volume2 className="h-4 w-4 text-amber-200" />
+              <Slider
+                value={[volume]}
+                max={100}
+                step={1}
+                onValueChange={handleVolumeChange}
+                className="w-20"
+              />
+            </div>
+          </div>
+        </motion.div>
       )}
 
       {/* Meditation Player (shows when a guided meditation is selected) */}
