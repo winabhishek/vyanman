@@ -6,7 +6,15 @@ import { v4 as uuidv4 } from 'uuid';
 
 const detectLanguage = (text: string): 'en' | 'hi' => {
   const hindiPattern = /[\u0900-\u097F\u0980-\u09FF]/;
-  return hindiPattern.test(text) ? 'hi' : 'en';
+  const hinglishKeywords = /\b(yaar|bhai|hai|nahi|kya|main|mera|tera|bahut|thoda|bilkul|sach|ghar|kaam|time|feel|kar|ho|hoon|hota|hoti|lagta|lagti)\b/i;
+  
+  // If contains Hindi script, it's Hindi
+  if (hindiPattern.test(text)) return 'hi';
+  
+  // If contains common Hinglish words, treat as Hindi to get bilingual response
+  if (hinglishKeywords.test(text)) return 'hi';
+  
+  return 'en';
 };
 
 const analyzeUserEmotion = (content: string): string => {
@@ -30,32 +38,32 @@ const generatePersonalizedResponse = (content: string, emotion: string, language
   if (language === 'en') {
     switch (emotion) {
       case 'sad':
-        return `I can sense you're going through a difficult time. It's completely natural to feel sad sometimes. Would you like to share more about what's weighing on your heart?`;
+        return `Ohh, I can feel that you're going through something tough right now. Want to try a quick calming exercise?`;
       case 'anxious':
-        return `I understand that anxiety can feel overwhelming. Let's take this moment to breathe together. What specific thoughts are making you feel anxious right now?`;
+        return `I'm here with you. Let's take a deep breath together, okay? What's making you feel anxious?`;
       case 'angry':
-        return `I can feel the frustration in your words. Anger often signals something important to us. What's triggering these feelings right now?`;
+        return `I can sense the frustration, yaar. That sounds really hard. Want to talk about it?`;
       case 'happy':
-        return `It's wonderful to hear the positivity in your message! What's contributing to your happiness today?`;
+        return `Aww, I love hearing the positivity! What's making you feel so good today?`;
       case 'stressed':
-        return `Stress can feel overwhelming. What's the biggest source of stress in your life right now? Let's work through it together.`;
+        return `That sounds overwhelming. Let's work through this together, step by step?`;
       default:
-        return `Thank you for sharing with me. I'm here to support you on your mental wellness journey. How are you truly feeling right now?`;
+        return `I'm here for you, friend. How are you really feeling right now?`;
     }
   } else {
     switch (emotion) {
       case 'sad':
-        return `मैं समझ सकता हूं कि आप कठिन समय से गुजर रहे हैं। कभी-कभी उदास महसूस करना बिल्कुल प्राकृतिक है। क्या आप और बताना चाहेंगे?`;
+        return `Ohh, I can feel कि आप tough time से गुजर रहे हैं। Want to try something जो help कर सके?`;
       case 'anxious':
-        return `मैं समझता हूं कि चिंता अभिभूत कर सकती है। आइए इस क्षण में एक साथ सांस लें। कौन से विचार आपको चिंतित कर रहे हैं?`;
+        return `मैं यहां हूं आपके साथ। Let's take a deep breath together, चलिए? क्या बात है जो आपको anxious feel करा रही है?`;
       case 'angry':
-        return `मैं आपके शब्दों में निराशा महसूस कर सकता हूं। गुस्सा अक्सर कुछ महत्वपूर्ण संकेत देता है। क्या आपको परेशान कर रहा है?`;
+        return `I can sense the frustration यार। यह सुनकर really hard लग रहा है। बात करना चाहते हैं?`;
       case 'happy':
-        return `आपके संदेश में सकारात्मकता सुनकर बहुत अच्छा लगा! आज आपकी खुशी में क्या योगदान दे रहा है?`;
+        return `Aww, बहुत अच्छा लग रहा है सुनकर! क्या बात है जो आपको इतना good feel करा रही है?`;
       case 'stressed':
-        return `तनाव अभिभूत कर सकता है। आपके जीवन में तनाव का सबसे बड़ा स्रोत क्या है? आइए इसे एक साथ हल करें।`;
+        return `Sounds really overwhelming यार। चलिए together work करते हैं इसे, step by step?`;
       default:
-        return `मेरे साथ साझा करने के लिए धन्यवाद। मैं आपकी मानसिक कल्याण यात्रा में समर्थन के लिए यहां हूं। आप वास्तव में अभी कैसा महसूस कर रहे हैं?`;
+        return `I'm here for you, दोस्त। बताइए कि आप actually कैसा feel कर रहे हैं?`;
     }
   }
 };
