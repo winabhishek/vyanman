@@ -38,32 +38,32 @@ const generatePersonalizedResponse = (content: string, emotion: string, language
   if (language === 'en') {
     switch (emotion) {
       case 'sad':
-        return `Ohh, I can feel that you're going through something tough right now. Want to try a quick calming exercise?`;
+        return `Main samajh sakta hun ki ye kitna mushkil lag raha hoga. Thank you for sharing this with me, yaar.`;
       case 'anxious':
-        return `I'm here with you. Let's take a deep breath together, okay? What's making you feel anxious?`;
+        return `Aap jo feel kar rahe hain bilkul normal hai. Main yahan hun aapke saath. Deep breath lete hain?`;
       case 'angry':
-        return `I can sense the frustration, yaar. That sounds really hard. Want to talk about it?`;
+        return `Your feelings are completely valid, yaar. Main sun raha hun aapki baat. Want to talk about it?`;
       case 'happy':
-        return `Aww, I love hearing the positivity! What's making you feel so good today?`;
+        return `Thank you for sharing this happiness with me! Ye sun kar bahut achha laga.`;
       case 'stressed':
-        return `That sounds overwhelming. Let's work through this together, step by step?`;
+        return `I can understand kitna overwhelming lag raha hoga. Let's take it one step at a time, haan?`;
       default:
-        return `I'm here for you, friend. How are you really feeling right now?`;
+        return `Thank you for trusting me. Main yahan hun aapke liye. Kya aap bata sakte hain kya feel ho raha hai?`;
     }
   } else {
     switch (emotion) {
       case 'sad':
-        return `Ohh, I can feel कि आप tough time से गुजर रहे हैं। Want to try something जो help कर सके?`;
+        return `मैं समझ सकता हूं कि ये kitna hard लग रहा होगा। Thank you for sharing this with me, यार।`;
       case 'anxious':
-        return `मैं यहां हूं आपके साथ। Let's take a deep breath together, चलिए? क्या बात है जो आपको anxious feel करा रही है?`;
+        return `Aap jo feel कर रहे हैं वो बिल्कुल normal है। Main यहां हूं आपके साथ। Deep breath लेते हैं?`;
       case 'angry':
-        return `I can sense the frustration यार। यह सुनकर really hard लग रहा है। बात करना चाहते हैं?`;
+        return `आपकी feelings completely valid हैं, यार। Main सुन रहा हूं। Want to talk about it?`;
       case 'happy':
-        return `Aww, बहुत अच्छा लग रहा है सुनकर! क्या बात है जो आपको इतना good feel करा रही है?`;
+        return `Thank you for sharing this happiness! Ye sunkar बहुत अच्छा लगा।`;
       case 'stressed':
-        return `Sounds really overwhelming यार। चलिए together work करते हैं इसे, step by step?`;
+        return `I can understand कि kitna overwhelming लग रहा होगा। One step at a time करते हैं, हां?`;
       default:
-        return `I'm here for you, दोस्त। बताइए कि आप actually कैसा feel कर रहे हैं?`;
+        return `Thank you for trusting me। Main यहां हूं आपके लिए। क्या आप बता सकते हैं कि क्या feel हो रहा है?`;
     }
   }
 };
