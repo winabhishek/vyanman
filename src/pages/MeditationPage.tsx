@@ -16,7 +16,7 @@ import {
   CarouselPrevious 
 } from '@/components/ui/carousel';
 import { useMeditationAudioAPI, MeditationSound } from '@/services/meditationAPI';
-import MeditationPlayer from '@/components/meditation/MeditationPlayer';
+import EnhancedMeditationPlayer from '@/components/meditation/EnhancedMeditationPlayer';
 import GuidedMeditationPlayer from '@/components/meditation/GuidedMeditationPlayer';
 
 // Meditation categories
@@ -484,7 +484,7 @@ const MeditationPage = () => {
 
       {/* Current Meditation Players */}
       {selectedMeditationSound && (
-        <MeditationPlayer
+        <EnhancedMeditationPlayer
           sound={selectedMeditationSound}
           onClose={closeMeditationPlayer}
         />

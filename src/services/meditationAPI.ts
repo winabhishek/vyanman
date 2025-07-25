@@ -23,15 +23,15 @@ export interface GuidedMeditation {
   mood?: string;
 }
 
-// Enhanced meditation sounds with working audio URLs and mood-based categories
+// Enhanced meditation sounds with real working meditation audio
 const MEDITATION_SOUNDS: MeditationSound[] = [
-  // Nature Sounds
+  // Nature Sounds - Free meditation audio from Pixabay
   {
     id: 'rain',
     name: 'Rain Sounds',
     category: 'nature',
     description: 'Calming rain sounds for relaxation and stress relief',
-    audioUrl: 'https://commondatastorage.googleapis.com/codeskulptor-assets/sounddogs/soundtrack.mp3',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3',
     icon: '🌧️',
     duration: 600,
     mood: 'calm'
@@ -41,7 +41,7 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     name: 'Ocean Waves', 
     category: 'nature',
     description: 'Soothing ocean waves for deep relaxation',
-    audioUrl: 'https://commondatastorage.googleapis.com/codeskulptor-assets/week7-brrring.m4a',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/06/07/audio_0625c1539c.mp3',
     icon: '🌊',
     duration: 600,
     mood: 'peaceful'
@@ -51,7 +51,7 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     name: 'Forest Ambience',
     category: 'nature', 
     description: 'Peaceful forest sounds with birds chirping',
-    audioUrl: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/03/10/audio_4037c6a3c5.mp3',
     icon: '🌲',
     duration: 600,
     mood: 'refreshed'
@@ -61,19 +61,19 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     name: 'Morning Birds',
     category: 'nature', 
     description: 'Gentle bird songs for morning meditation',
-    audioUrl: 'https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/intromusic.ogg',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/03/09/audio_89a654cc37.mp3',
     icon: '🐦',
     duration: 600,
     mood: 'energetic'
   },
   
-  // Meditation Sounds
+  // Meditation Sounds - Free meditation music
   {
     id: 'singing-bowls',
     name: 'Tibetan Bowls',
     category: 'meditation',
     description: 'Sacred singing bowls for deep meditation',
-    audioUrl: 'https://commondatastorage.googleapis.com/codeskulptor-assets/sounddogs/thrust.mp3',
+    audioUrl: 'https://cdn.pixabay.com/audio/2023/06/06/audio_4b5d57a0b4.mp3',
     icon: '🎵',
     duration: 900,
     mood: 'focused'
@@ -83,7 +83,7 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     name: 'Meditation Bells',
     category: 'meditation',
     description: 'Traditional meditation bells for mindfulness',
-    audioUrl: 'https://commondatastorage.googleapis.com/codeskulptor-assets/sounddogs/explosion.mp3',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/11/20/audio_a820b10ee6.mp3',
     icon: '🔔',
     duration: 300,
     mood: 'mindful'
@@ -93,19 +93,19 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     name: 'Om Chanting',
     category: 'meditation',
     description: 'Sacred Om mantra for spiritual practice',
-    audioUrl: 'https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/menu.ogg',
+    audioUrl: 'https://cdn.pixabay.com/audio/2023/01/28/audio_0657c1def1.mp3',
     icon: '🕉️',
     duration: 1200,
     mood: 'spiritual'
   },
   
-  // Ambient Music
+  // Ambient Music - Relaxing piano and ambient
   {
     id: 'crystal-tones',
     name: 'Crystal Tones',
     category: 'music',
     description: 'Ethereal crystal bowl harmonics',
-    audioUrl: 'https://commondatastorage.googleapis.com/codeskulptor-demos/pang/paza-moduless.mp3',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/01/18/audio_d49bb90b96.mp3',
     icon: '💎',
     duration: 800,
     mood: 'transcendent'
@@ -115,7 +115,7 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     name: 'Gentle Piano',
     category: 'music',
     description: 'Soft piano melodies for relaxation',
-    audioUrl: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
+    audioUrl: 'https://cdn.pixabay.com/audio/2023/10/05/audio_9ebb1655c7.mp3',
     icon: '🎹',
     duration: 900,
     mood: 'serene'
@@ -125,19 +125,19 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     name: 'Ambient Drones',
     category: 'music',
     description: 'Deep atmospheric tones for focus',
-    audioUrl: 'https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/fx/engine-2.ogg',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/08/02/audio_2dde668d05.mp3',
     icon: '🌌',
     duration: 1500,
     mood: 'concentrated'
   },
   
-  // Binaural Beats
+  // Binaural Beats - Healing frequencies
   {
     id: 'alpha-waves',
     name: 'Alpha Waves',
     category: 'binaural',
     description: 'Alpha frequency for relaxed awareness',
-    audioUrl: 'https://commondatastorage.googleapis.com/codeskulptor-demos/pang/arrow.mp3',
+    audioUrl: 'https://cdn.pixabay.com/audio/2023/02/28/audio_0dc22deb8c.mp3',
     icon: '🧠',
     duration: 1800,
     mood: 'alert'
@@ -147,7 +147,7 @@ const MEDITATION_SOUNDS: MeditationSound[] = [
     name: 'Theta Waves',
     category: 'binaural',
     description: 'Theta frequency for deep meditation',
-    audioUrl: 'https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/race1.ogg',
+    audioUrl: 'https://cdn.pixabay.com/audio/2022/12/06/audio_061b37e8b3.mp3',
     icon: '🌀',
     duration: 2400,
     mood: 'deep'
