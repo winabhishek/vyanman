@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
             <div className="flex items-center space-x-2">
               <div className="w-10 h-10 flex items-center justify-center">
                 <img 
-                  src="/lovable-uploads/04602118-4a1a-43ab-ae66-6511477eabc7.png" 
+                  src="/lovable-uploads/1bc785b7-5504-4cf1-a065-d957430f5da4.png" 
                   alt="Vyanman Logo" 
                   className="w-full h-full object-contain"
                 />

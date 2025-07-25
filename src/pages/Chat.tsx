@@ -195,7 +195,7 @@ const Chat: React.FC = () => {
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
             <Avatar className="border-2 border-amber-300 dark:border-amber-500">
-              <AvatarImage src="/lovable-uploads/04602118-4a1a-43ab-ae66-6511477eabc7.png" alt="Vyanman" />
+              <AvatarImage src="/lovable-uploads/1bc785b7-5504-4cf1-a065-d957430f5da4.png" alt="Vyanman" />
               <AvatarFallback>
                 <Bot className="text-amber-500" />
               </AvatarFallback>

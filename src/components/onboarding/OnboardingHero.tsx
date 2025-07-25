@@ -43,7 +43,7 @@ const OnboardingHero: React.FC<OnboardingHeroProps> = ({ onStart }) => {
         >
           <div className="w-24 h-24 mx-auto">
             <img 
-              src="/lovable-uploads/04602118-4a1a-43ab-ae66-6511477eabc7.png" 
+              src="/lovable-uploads/1bc785b7-5504-4cf1-a065-d957430f5da4.png" 
               alt="Vyanman Logo" 
               className="w-full h-full object-contain drop-shadow-2xl"
             />
