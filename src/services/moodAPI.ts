@@ -26,7 +26,7 @@ export const moodAPI = {
       console.error('Error fetching mood entries:', error);
       
       // Fallback to localStorage
-      const storedMoods = localStorage.getItem('vyanman-moods');
+      const storedMoods = localStorage.getItem('vyanmana-moods');
       return storedMoods ? JSON.parse(storedMoods) : [];
     }
   },
@@ -63,10 +63,10 @@ export const moodAPI = {
       };
       
       // Save to localStorage
-      const storedMoods = localStorage.getItem('vyanman-moods');
+      const storedMoods = localStorage.getItem('vyanmana-moods');
       const moods = storedMoods ? JSON.parse(storedMoods) : [];
-      moods.push(newEntry);
-      localStorage.setItem('vyanman-moods', JSON.stringify(moods));
+      moods.unshift(newEntry); // Add to beginning for latest first
+      localStorage.setItem('vyanmana-moods', JSON.stringify(moods));
       
       return newEntry;
     }
