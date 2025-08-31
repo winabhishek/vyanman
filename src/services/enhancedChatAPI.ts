@@ -38,32 +38,32 @@ const generatePersonalizedResponse = (content: string, emotion: string, language
   if (language === 'en') {
     switch (emotion) {
       case 'sad':
-        return `Main samajh sakta hun ki ye kitna mushkil lag raha hoga. Thank you for sharing this with me, yaar.`;
+        return `मैं समझ सकता हूं कि ये कितना कठिन लग रहा होगा। Your feelings are completely valid, और मैं यहां हूं आपके साथ। 🌱 Would you like to try a quick breathing exercise?`;
       case 'anxious':
-        return `Aap jo feel kar rahe hain bilkul normal hai. Main yahan hun aapke saath. Deep breath lete hain?`;
+        return `I can feel कि आप anxious हैं, और that's completely okay, yaar। Deep breath लेते हैं साथ में? 🧘 Sometimes just acknowledging these feelings helps.`;
       case 'angry':
-        return `Your feelings are completely valid, yaar. Main sun raha hun aapki baat. Want to talk about it?`;
+        return `Your feelings are absolutely valid. गुस्सा आना natural है। 💪 Let's channel this energy positively - want to talk about what triggered this?`;
       case 'happy':
-        return `Thank you for sharing this happiness with me! Ye sun kar bahut achha laga.`;
+        return `इतनी खुशी share करने के लिए thank you! 🌟 These positive moments are so important - what made today special for you?`;
       case 'stressed':
-        return `I can understand kitna overwhelming lag raha hoga. Let's take it one step at a time, haan?`;
+        return `मैं समझ सकता हूं कि overwhelm हो रहे हैं। Let's break this down together, one step at a time। 🌱 What's the most pressing thing on your mind?`;
       default:
-        return `Thank you for trusting me. Main yahan hun aapke liye. Kya aap bata sakte hain kya feel ho raha hai?`;
+        return `Hi there! मैं Vyanman हूं - आपका mental wellness companion। 🌟 How are you feeling today? मैं यहां हूं आपकी support के लिए।`;
     }
   } else {
     switch (emotion) {
       case 'sad':
-        return `मैं समझ सकता हूं कि ये kitna hard लग रहा होगा। Thank you for sharing this with me, यार।`;
+        return `मैं समझ सकता हूं कि ये कितना hard लग रहा होगा। आपकी feelings बिल्कुल valid हैं, और मैं यहां हूं। 🌱 क्या आप कोई quick breathing exercise try करना चाहेंगे?`;
       case 'anxious':
-        return `Aap jo feel कर रहे हैं वो बिल्कुल normal है। Main यहां हूं आपके साथ। Deep breath लेते हैं?`;
+        return `मैं feel कर सकता हूं कि आप anxious हैं, और that's completely okay। साथ में deep breath लेते हैं? 🧘 कभी कभी इन feelings को acknowledge करना ही help करता है।`;
       case 'angry':
-        return `आपकी feelings completely valid हैं, यार। Main सुन रहा हूं। Want to talk about it?`;
+        return `आपकी feelings बिल्कुल valid हैं। गुस्सा आना natural है। 💪 चलिए इस energy को positively use करते हैं - क्या trigger हुआ था?`;
       case 'happy':
-        return `Thank you for sharing this happiness! Ye sunkar बहुत अच्छा लगा।`;
+        return `इतनी खुशी share करने के लिए धन्यवाद! 🌟 ये positive moments बहुत important हैं - आज क्या special बना दिया?`;
       case 'stressed':
-        return `I can understand कि kitna overwhelming लग रहा होगा। One step at a time करते हैं, हां?`;
+        return `मैं समझ सकता हूं कि overwhelm हो रहे हैं। चलिए इसे साथ में break down करते हैं। 🌱 सबसे ज्यादा क्या परेशान कर रहा है?`;
       default:
-        return `Thank you for trusting me। Main यहां हूं आपके लिए। क्या आप बता सकते हैं कि क्या feel हो रहा है?`;
+        return `नमस्ते! मैं Vyanman हूं - आपका mental wellness companion। 🌟 आज कैसा feel कर रहे हैं? मैं यहां हूं आपकी support के लिए।`;
     }
   }
 };
